@@ -28,26 +28,41 @@
 </head>
 <body>
 
-<ul class="container">
-  <!-- Replace the URLs with your desired websites -->
-  <li class="website">
-    <iframe src="https://www.youtube.com/@Schteiny/videos" width="100%" height="100%"></iframe>
-  </li>
-  
-  <li class="website">
-    <iframe src="https://www.youtube.com/@Schteiny/videos" width="100%" height="100%"></iframe>
-  </li>
-
-  <li class="website">
-    <iframe src="https://vmp.ethz.ch/en/events/alle_events" width="100%" height="100%"></iframe>
-  </li>
-
-  <li class="website">
-    <iframe src="https://www.ft.com/the-big-read" width="100%" height="100%"></iframe>
-  </li>
-
-  <!-- Add more websites as needed -->
+<ul id="websites" class="container">
+  <!-- Websites will be dynamically added here -->
 </ul>
+
+<script>
+  // List of website URLs
+  const websiteList = [
+    'https://www.youtube.com/@Schteiny/videos',
+    'https://www.ft.com/the-big-read',
+    'https://vmp.ethz.ch/en/events/alle_events',
+    'https://www.youtube.com/@Schteiny/videos',
+    // Add more websites as needed
+  ];
+
+  // Function to create website elements and add them to the list
+  function createWebsiteElements() {
+    const websitesContainer = document.getElementById('websites');
+
+    websiteList.forEach(url => {
+      const li = document.createElement('li');
+      li.classList.add('website');
+
+      const iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.width = '100%';
+      iframe.height = '100%';
+
+      li.appendChild(iframe);
+      websitesContainer.appendChild(li);
+    });
+  }
+
+  // Call the function to create the website elements
+  createWebsiteElements();
+</script>
 
 </body>
 </html>
