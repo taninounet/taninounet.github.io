@@ -1,41 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Four Webpages Layout</title>
-  <style>
-    /* Set up the grid container */
-    body, html {
-      height: 100%;
-      margin: 0;
-    }
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr); /* Create four equal-width columns */
-      height: 100vh; /* 100% height of the viewport */
-      width: 100%; /* 100% width of the viewport */
-      grid-gap: 0; /* No gap between grid items */
-    }
-    /* Remove margins and paddings for the iframes */
-    .grid-container iframe {
-      display: block;
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      border: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Subreddits</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="navbar">
+        <a href="#" onclick="changeFrame('fantasypl')">HOME</a>
+        <a href="#" onclick="changeFrame('coys')">Spurs</a>
+        <a href="#" onclick="changeFrame('reddevils')">ManUtd</a>
+        <a href="#" onclick="changeFrame('mcfc')">ManCity</a>
+        <a href="#" onclick="changeFrame('liverpoolfc')">Liverpool</a>
+        <a href="#" onclick="changeFrame('chelseafc')">Chelsea</a>
+        <a href="#" onclick="changeFrame('crystalpalace')">Palace</a>
+        <a href="#" onclick="changeFrame('wwfc')">Wolves</a>
+    </div>
 
-<div class="grid-container">
-  <!-- Replace the URLs with your desired webpages -->
-  <iframe src="https://www.youtube.com/@Schteiny/videos"></iframe>
-  <iframe src="https://www.ft.com/the-big-read"></iframe>
-  <iframe src="https://www.fplstatistics.co.uk"></iframe>
-  <iframe src="https://www.youtube.com/@Schteiny/videos"></iframe>
-</div>
+    <iframe id="content-frame" src="https://old.reddit.com/r/fantasypl/new" frameborder="0"></iframe>
 
+    <script>
+        function changeFrame(subreddit) {
+            document.getElementById('content-frame').src = 'https://old.reddit.com/r/' + subreddit + '/new';
+        }
+    </script>
 </body>
 </html>
