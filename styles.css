@@ -1,5 +1,5 @@
 body {
-    font-family: Verdana, Geneva, sans-serif;
+    font-family: "Roboto", Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f6f7f8;
@@ -10,7 +10,7 @@ body {
 }
 
 .navbar {
-    background-color: #ff4500;
+    background-color: #37003c;
     overflow: hidden;
     display: flex;
     justify-content: space-around;
@@ -18,19 +18,20 @@ body {
 }
 
 .navbar a {
-    color: white;
+    color: #ffffff;
     text-align: center;
     padding: 14px 20px;
     text-decoration: none;
     font-weight: bold;
+    font-family: "PremierLeague", Arial, sans-serif;
     transition: background-color 0.3s;
 }
 
 .navbar a:hover {
-    background-color: #e03d00;
+    background-color: #4e004e;
 }
 
-#content-container {
+#main-content {
     display: flex;
     flex: 1;
     overflow: hidden;
@@ -38,8 +39,9 @@ body {
 
 #content {
     padding: 20px;
-    flex: 2;
+    flex: 1;
     overflow-y: auto;
+    transition: width 0.3s ease;
 }
 
 #comments-section {
@@ -48,10 +50,34 @@ body {
     background-color: #f1f1f1;
     overflow-y: auto;
     border-left: 1px solid #ddd;
+    transition: width 0.3s ease;
 }
 
 .hidden {
     display: none;
+}
+
+#comments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+
+#comments-header button {
+    background-color: #37003c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+#comments-header button:hover {
+    background-color: #4e004e;
 }
 
 .post {
