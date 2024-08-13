@@ -32,15 +32,56 @@
             contentDiv.innerHTML = `<h2>Latest Posts from r/${subreddit}</h2>`;
             
             posts.forEach(post => {
+                const postData = post.data;
                 const postElement = document.createElement('div');
                 postElement.className = 'post';
 
-                const title = post.data.title;
-                const url = `https://www.reddit.com${post.data.permalink}`;
-                
-                postElement.innerHTML = `<a href="${url}" target="_blank">${title}</a>`;
+                const title = postData.title;
+                const url = `https://www.reddit.com${postData.permalink}`;
+                const thumbnail = postData.thumbnail && postData.thumbnail.startsWith('http') ? postData.thumbnail : 'https://www.redditinc.com/assets/images/site/reddit-logo.png';
+                const timeSince = timeAgo(postData.created_utc);
+                const comments = postData.num_comments;
+
+                postElement.innerHTML = `
+                    <div class="post-thumbnail">
+                        <img src="${thumbnail}" alt="Thumbnail">
+                    </div>
+                    <div class="post-details">
+                        <a href="${url}" target="_blank" class="post-title">${title}</a>
+                        <div class="post-meta">
+                            <span>${timeSince}</span> | 
+                            <span>${comments} comments</span>
+                        </div>
+                    </div>
+                `;
                 contentDiv.appendChild(postElement);
             });
+        }
+
+        function timeAgo(utcSeconds) {
+            const seconds = Math.floor(Date.now() / 1000) - utcSeconds;
+            let interval = seconds / 31536000;
+
+            if (interval > 1) {
+                return Math.floor(interval) + " years ago";
+            }
+            interval = seconds / 2592000;
+            if (interval > 1) {
+                return Math.floor(interval) + " months ago";
+            }
+            interval = seconds / 86400;
+            if (interval > 1) {
+                return Math.floor(interval) + " days ago";
+            }
+            interval = seconds / 3600;
+            if (interval > 1) {
+                return Math.floor(interval) + " hours ago";
+            }
+            interval = seconds / 60;
+            if (interval > 1) {
+                return Math.floor(interval) + " minutes ago";
+            }
+            return Math.floor(seconds) + " seconds ago";
         }
     </script>
 </body>
