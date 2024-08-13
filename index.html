@@ -8,7 +8,10 @@
 </head>
 <body>
     <div class="navbar">
-        <a href="#" onclick="loadSubreddit('fantasypl')">HOME</a>
+        <a href="https://www.premierleague.com/home" target="_blank">
+            <img src="https://resources.premierleague.com/premierleague/badges/t1.svg" alt="Premier League Logo" class="logo">
+        </a>
+        <a href="#" onclick="loadSubreddit('fantasypl')">Fantasy</a>
         <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
         <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
         <a href="#" onclick="loadSubreddit('mcfc')">ManCity</a>
@@ -58,24 +61,26 @@
                 postElement.className = 'post';
 
                 const title = postData.title;
-                const url = `https://www.reddit.com${postData.permalink}`;
+                const url = postData.url;
                 const thumbnail = postData.thumbnail && postData.thumbnail.startsWith('http') ? postData.thumbnail : 'https://www.redditinc.com/assets/images/site/reddit-logo.png';
                 const timeSince = timeAgo(postData.created_utc);
                 const comments = postData.num_comments;
-                const mediaUrl = postData.url;
                 const isImage = postData.post_hint === 'image';
+
+                // Determine if the link is external
+                const isExternal = !url.includes('reddit.com');
 
                 postElement.innerHTML = `
                     <div class="post-thumbnail">
                         <img src="${thumbnail}" alt="Thumbnail">
                     </div>
                     <div class="post-details">
-                        <a href="${url}" target="_blank" class="post-title">${title}</a>
+                        ${isExternal ? `<a href="${url}" target="_blank" class="post-title">${title}</a>` : `<span class="post-title">${title}</span>`}
                         <div class="post-meta">
                             <span>${timeSince}</span> | 
                             <span class="comments-link" onclick="loadComments('${postData.id}', '${subreddit}')">${comments} comments</span>
                         </div>
-                        ${isImage ? `<div class="expandable-image"><img src="${mediaUrl}" alt="Post Image"></div>` : ''}
+                        ${isImage ? `<div class="expandable-image"><img src="${url}" alt="Post Image"></div>` : ''}
                     </div>
                 `;
                 contentDiv.appendChild(postElement);
