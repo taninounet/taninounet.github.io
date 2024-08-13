@@ -18,12 +18,15 @@
         <a href="#" onclick="loadSubreddit('wwfc')">Wolves</a>
     </div>
 
-    <div id="content-container">
+    <div id="main-content">
         <div id="content">
             <!-- Posts will load here -->
         </div>
         <div id="comments-section" class="hidden">
-            <h2>Comments</h2>
+            <div id="comments-header">
+                <h2>Comments</h2>
+                <button onclick="closeComments()">X</button>
+            </div>
             <div id="comments-container" class="comments-container"></div>
         </div>
     </div>
@@ -40,6 +43,7 @@
                 after = null;
                 document.getElementById('content').innerHTML = '';
                 document.getElementById('comments-section').classList.add('hidden');
+                document.getElementById('content').style.width = '100%';
             }
             const response = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=10&after=${after}`);
             const data = await response.json();
@@ -104,6 +108,12 @@
             });
 
             document.getElementById('comments-section').classList.remove('hidden');
+            document.getElementById('content').style.width = '70%';
+        }
+
+        function closeComments() {
+            document.getElementById('comments-section').classList.add('hidden');
+            document.getElementById('content').style.width = '100%';
         }
 
         function createCommentElement(commentData) {
