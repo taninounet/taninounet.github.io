@@ -8,10 +8,9 @@
 </head>
 <body>
     <div class="navbar">
-        <a href="https://www.premierleague.com/home" target="_blank">
-            <img src="https://resources.premierleague.com/premierleague/badges/t1.svg" alt="Premier League Logo" class="logo">
+        <a href="#" onclick="loadSubreddit('fantasypl')">
+            <img src="https://www.premierleague.com/resources/rebrand/v7.151.1/i/elements/pl-main-logo.png" alt="Premier League Logo" class="logo">
         </a>
-        <a href="#" onclick="loadSubreddit('fantasypl')">Fantasy</a>
         <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
         <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
         <a href="#" onclick="loadSubreddit('mcfc')">ManCity</a>
@@ -75,7 +74,7 @@
                         <img src="${thumbnail}" alt="Thumbnail">
                     </div>
                     <div class="post-details">
-                        ${isExternal ? `<a href="${url}" target="_blank" class="post-title">${title}</a>` : `<span class="post-title">${title}</span>`}
+                        ${isExternal ? `<a href="${url}" target="_blank" class="post-title">${title}</a>` : `<span class="post-title no-link">${title}</span>`}
                         <div class="post-meta">
                             <span>${timeSince}</span> | 
                             <span class="comments-link" onclick="loadComments('${postData.id}', '${subreddit}')">${comments} comments</span>
