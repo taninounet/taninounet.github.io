@@ -32,7 +32,7 @@ body {
     height: auto;
     position: absolute;
     left: 20px;
-    top: -50px; /* Manually position the logo 50px higher */
+    top: -60px; /* Manually position the logo 60px higher */
     z-index: 2;
 }
 
@@ -63,8 +63,8 @@ body {
     align-items: center;
     background-color: #37003c;
     border-bottom: 2px solid #ffffff; /* White lower border */
-    padding-right: 10px; /* Added padding to the right */
-    width: 180px; /* Adjusted width to fit better with menu items */
+    padding-right: 5px; /* Adjusted padding to the right */
+    width: 150px; /* Adjusted width to fit better with menu items */
 }
 
 .search-bar input {
@@ -74,7 +74,7 @@ body {
     outline: none;
     background: none;
     color: #ffffff;
-    width: 120px; /* Adjusted input width */
+    width: 100px; /* Adjusted input width */
 }
 
 .search-bar input::placeholder {
