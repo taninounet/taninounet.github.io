@@ -1,27 +1,30 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f6f7f8;
+    color: #1c1c1c;
 }
 
 .navbar {
-    background-color: #333;
+    background-color: #ff4500;
     overflow: hidden;
     display: flex;
     justify-content: space-around;
+    padding: 10px 0;
 }
 
 .navbar a {
-    display: block;
     color: white;
     text-align: center;
     padding: 14px 20px;
     text-decoration: none;
+    font-weight: bold;
     transition: background-color 0.3s;
 }
 
 .navbar a:hover {
-    background-color: #575757;
+    background-color: #e03d00;
 }
 
 #content {
@@ -29,15 +32,40 @@ body {
 }
 
 .post {
+    display: flex;
+    background-color: #fff;
     margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.post a {
-    text-decoration: none;
-    color: #007bff;
+.post-thumbnail img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.post-details {
+    flex-grow: 1;
+}
+
+.post-title {
     font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
 }
 
-.post a:hover {
+.post-title:hover {
     text-decoration: underline;
+}
+
+.post-meta {
+    margin-top: 5px;
+    color: #606060;
+    font-size: 14px;
 }
