@@ -18,18 +18,17 @@
         <a href="#" onclick="loadSubreddit('wwfc')">Wolves</a>
     </div>
 
-    <div id="content">
-        <h2>Select a subreddit to see the latest posts</h2>
-    </div>
-
-    <button id="load-more" style="display: none;" onclick="loadMorePosts()">Load More</button>
-
-    <div id="comments-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeCommentsModal()">&times;</span>
+    <div id="content-container">
+        <div id="content">
+            <!-- Posts will load here -->
+        </div>
+        <div id="comments-section" class="hidden">
+            <h2>Comments</h2>
             <div id="comments-container" class="comments-container"></div>
         </div>
     </div>
+
+    <button id="load-more" style="display: none;" onclick="loadMorePosts()">Load More</button>
 
     <script>
         let after = null;
@@ -40,6 +39,7 @@
             if (reset) {
                 after = null;
                 document.getElementById('content').innerHTML = '';
+                document.getElementById('comments-section').classList.add('hidden');
             }
             const response = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=10&after=${after}`);
             const data = await response.json();
@@ -47,7 +47,6 @@
             const posts = data.data.children;
 
             let contentDiv = document.getElementById('content');
-            contentDiv.innerHTML += `<h2>Latest Posts from r/${subreddit}</h2>`;
             
             posts.forEach(post => {
                 const postData = post.data;
@@ -100,27 +99,52 @@
             comments.forEach(comment => {
                 if (comment.kind !== 't1') return; // Ensure it's a comment
 
-                const commentData = comment.data;
-                const commentElement = document.createElement('div');
-                commentElement.className = 'comment';
-
-                const author = commentData.author;
-                const body = commentData.body;
-                const timeSince = timeAgo(commentData.created_utc);
-                
-                commentElement.innerHTML = `
-                    <div class="comment-author">${author}</div>
-                    <div class="comment-time">${timeSince}</div>
-                    <div class="comment-body">${body}</div>
-                `;
+                const commentElement = createCommentElement(comment.data);
                 commentsContainer.appendChild(commentElement);
             });
 
-            document.getElementById('comments-modal').style.display = 'block';
+            document.getElementById('comments-section').classList.remove('hidden');
         }
 
-        function closeCommentsModal() {
-            document.getElementById('comments-modal').style.display = 'none';
+        function createCommentElement(commentData) {
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment';
+
+            const author = commentData.author;
+            const body = commentData.body;
+            const timeSince = timeAgo(commentData.created_utc);
+            const replies = commentData.replies ? commentData.replies.data.children : [];
+
+            commentElement.innerHTML = `
+                <div class="comment-header">
+                    <span class="comment-author">${author}</span>
+                    <span class="comment-time">${timeSince}</span>
+                </div>
+                <div class="comment-body">${body}</div>
+                ${replies.length > 0 ? `<div class="comment-replies-toggle">View ${replies.length} replies</div>` : ''}
+            `;
+
+            if (replies.length > 0) {
+                const repliesContainer = document.createElement('div');
+                repliesContainer.className = 'comment-replies hidden';
+
+                replies.forEach(reply => {
+                    if (reply.kind === 't1') {
+                        const replyElement = createCommentElement(reply.data);
+                        repliesContainer.appendChild(replyElement);
+                    }
+                });
+
+                commentElement.appendChild(repliesContainer);
+
+                const toggle = commentElement.querySelector('.comment-replies-toggle');
+                toggle.addEventListener('click', () => {
+                    repliesContainer.classList.toggle('hidden');
+                    toggle.textContent = repliesContainer.classList.contains('hidden') ? `View ${replies.length} replies` : `Hide replies`;
+                });
+            }
+
+            return commentElement;
         }
 
         function timeAgo(utcSeconds) {
