@@ -24,9 +24,20 @@ body {
     background-color: #575757;
 }
 
-iframe {
-    width: 100%;
-    height: calc(100vh - 50px);
-    border: none;
+#content {
+    padding: 20px;
 }
 
+.post {
+    margin-bottom: 15px;
+}
+
+.post a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 18px;
+}
+
+.post a:hover {
+    text-decoration: underline;
+}
