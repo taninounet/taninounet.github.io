@@ -8,21 +8,39 @@
 </head>
 <body>
     <div class="navbar">
-        <a href="#" onclick="changeFrame('fantasypl')">HOME</a>
-        <a href="#" onclick="changeFrame('coys')">Spurs</a>
-        <a href="#" onclick="changeFrame('reddevils')">ManUtd</a>
-        <a href="#" onclick="changeFrame('mcfc')">ManCity</a>
-        <a href="#" onclick="changeFrame('liverpoolfc')">Liverpool</a>
-        <a href="#" onclick="changeFrame('chelseafc')">Chelsea</a>
-        <a href="#" onclick="changeFrame('crystalpalace')">Palace</a>
-        <a href="#" onclick="changeFrame('wwfc')">Wolves</a>
+        <a href="#" onclick="loadSubreddit('fantasypl')">HOME</a>
+        <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
+        <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
+        <a href="#" onclick="loadSubreddit('mcfc')">ManCity</a>
+        <a href="#" onclick="loadSubreddit('liverpoolfc')">Liverpool</a>
+        <a href="#" onclick="loadSubreddit('chelseafc')">Chelsea</a>
+        <a href="#" onclick="loadSubreddit('crystalpalace')">Palace</a>
+        <a href="#" onclick="loadSubreddit('wwfc')">Wolves</a>
     </div>
 
-    <iframe id="content-frame" src="https://old.reddit.com/r/fantasypl/new" frameborder="0"></iframe>
+    <div id="content">
+        <h2>Select a subreddit to see the latest posts</h2>
+    </div>
 
     <script>
-        function changeFrame(subreddit) {
-            document.getElementById('content-frame').src = 'https://old.reddit.com/r/' + subreddit + '/new';
+        async function loadSubreddit(subreddit) {
+            const response = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=10`);
+            const data = await response.json();
+            const posts = data.data.children;
+
+            let contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = `<h2>Latest Posts from r/${subreddit}</h2>`;
+            
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+
+                const title = post.data.title;
+                const url = `https://www.reddit.com${post.data.permalink}`;
+                
+                postElement.innerHTML = `<a href="${url}" target="_blank">${title}</a>`;
+                contentDiv.appendChild(postElement);
+            });
         }
     </script>
 </body>
