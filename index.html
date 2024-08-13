@@ -22,7 +22,7 @@
                 <a href="#" onclick="loadSubreddit('wwfc')">Wolves</a>
             </div>
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search subreddit...">
+                <input type="text" id="search-input" placeholder=" " onkeypress="if(event.key === 'Enter') searchSubreddit()">
                 <button onclick="searchSubreddit()">
                     <img src="https://img.icons8.com/ios-glyphs/30/ffffff/search.png" alt="Search Icon">
                 </button>
