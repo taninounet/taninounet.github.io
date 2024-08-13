@@ -9,12 +9,16 @@ body {
     height: 100vh;
 }
 
+.navbar-container {
+    background-color: white; /* Ensures a white background above the purple navbar */
+    padding-top: 20px; /* Space above the navbar */
+}
+
 .navbar {
     background-color: #37003c;
-    overflow: hidden;
     display: flex;
     align-items: center;
-    padding: 10px 0; /* Add padding to create white space at the top and bottom */
+    padding: 10px 0;
     position: relative;
 }
 
@@ -24,11 +28,11 @@ body {
 }
 
 .navbar .logo {
-    width: 60px;
+    width: 80px; /* Bigger logo */
     height: auto;
     position: absolute;
     left: 20px;
-    top: -20px; /* Move the logo upwards to create the overflow effect */
+    top: -30px; /* Moves the logo upwards to create the overflow effect */
     z-index: 2;
 }
 
@@ -37,7 +41,7 @@ body {
     flex-grow: 1;
     justify-content: center;
     padding: 10px 0;
-    margin-left: 80px; /* Make space for the logo */
+    margin-left: 120px; /* Make space for the larger logo */
 }
 
 .nav-links a {
@@ -52,6 +56,34 @@ body {
 
 .nav-links a:hover {
     background-color: #4e004e;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.search-bar input {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+.search-bar button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.search-bar button:hover {
+    background-color: #0056b3;
 }
 
 #main-content {
