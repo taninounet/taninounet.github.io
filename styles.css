@@ -32,14 +32,14 @@ body {
     height: auto;
     position: absolute;
     left: 20px;
-    top: -25px; /* Move the logo upwards to align with the center of the bar */
+    top: -40px; /* Move the logo upwards by 40px to align with the center of the bar */
     z-index: 2;
 }
 
 .nav-links {
     display: flex;
     flex-grow: 1;
-    justify-content: center;
+    justify-content: space-around; /* Evenly distribute the nav items */
     padding: 10px 0;
     margin-left: 120px; /* Make space for the larger logo */
 }
@@ -47,7 +47,7 @@ body {
 .nav-links a {
     color: #ffffff;
     text-align: center;
-    padding: 0 30px; /* Increased spacing */
+    padding: 0 40px; /* Increased spacing */
     text-decoration: none;
     font-weight: bold;
     font-family: "PremierLeague", Arial, sans-serif;
@@ -61,18 +61,23 @@ body {
 .search-bar {
     display: flex;
     align-items: center;
-    margin-right: 20px;
-    border-bottom: 2px solid #ffffff;
+    background-color: #37003c;
+    border-bottom: 2px solid #ffffff; /* White lower border */
 }
 
 .search-bar input {
-    padding: 5px 10px;
+    padding: 5px;
     font-size: 14px;
     border: none;
     outline: none;
     background: none;
     color: #ffffff;
     width: 150px;
+}
+
+.search-bar input::placeholder {
+    color: #ffffff;
+    opacity: 0.7;
 }
 
 .search-bar button {
@@ -85,11 +90,6 @@ body {
 .search-bar button img {
     width: 20px;
     height: 20px;
-}
-
-.search-bar input::placeholder {
-    color: #ffffff;
-    opacity: 0.7;
 }
 
 #main-content {
