@@ -32,7 +32,7 @@ body {
     height: auto;
     position: absolute;
     left: 20px;
-    top: -40px; /* Move the logo upwards by 40px to align with the center of the bar */
+    top: -50px; /* Manually position the logo 50px higher */
     z-index: 2;
 }
 
@@ -63,6 +63,8 @@ body {
     align-items: center;
     background-color: #37003c;
     border-bottom: 2px solid #ffffff; /* White lower border */
+    padding-right: 10px; /* Added padding to the right */
+    width: 180px; /* Adjusted width to fit better with menu items */
 }
 
 .search-bar input {
@@ -72,7 +74,7 @@ body {
     outline: none;
     background: none;
     color: #ffffff;
-    width: 150px;
+    width: 120px; /* Adjusted input width */
 }
 
 .search-bar input::placeholder {
