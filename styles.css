@@ -64,7 +64,7 @@ body {
     background-color: #37003c;
     border-bottom: 2px solid #ffffff; /* White lower border */
     padding-right: 10px; /* Added padding to the right */
-    width: 180px; /* Adjusted width to fit better with menu items */
+    width: 120px; /* Adjusted width to fit better with menu items */
 }
 
 .search-bar input {
