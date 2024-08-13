@@ -7,18 +7,24 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="navbar">
-        <a href="#" onclick="loadSubreddit('fantasypl')" class="logo-link">
-            <img src="https://www.premierleague.com/resources/rebrand/v7.151.1/i/elements/pl-main-logo.png" alt="Premier League Logo" class="logo">
-        </a>
-        <div class="nav-links">
-            <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
-            <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
-            <a href="#" onclick="loadSubreddit('mcfc')">ManCity</a>
-            <a href="#" onclick="loadSubreddit('liverpoolfc')">Liverpool</a>
-            <a href="#" onclick="loadSubreddit('chelseafc')">Chelsea</a>
-            <a href="#" onclick="loadSubreddit('crystalpalace')">Palace</a>
-            <a href="#" onclick="loadSubreddit('wwfc')">Wolves</a>
+    <div class="navbar-container">
+        <div class="navbar">
+            <a href="#" onclick="loadSubreddit('fantasypl')" class="logo-link">
+                <img src="https://www.premierleague.com/resources/rebrand/v7.151.1/i/elements/pl-main-logo.png" alt="Premier League Logo" class="logo">
+            </a>
+            <div class="nav-links">
+                <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
+                <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
+                <a href="#" onclick="loadSubreddit('mcfc')">ManCity</a>
+                <a href="#" onclick="loadSubreddit('liverpoolfc')">Liverpool</a>
+                <a href="#" onclick="loadSubreddit('chelseafc')">Chelsea</a>
+                <a href="#" onclick="loadSubreddit('crystalpalace')">Palace</a>
+                <a href="#" onclick="loadSubreddit('wwfc')">Wolves</a>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search subreddit...">
+                <button onclick="searchSubreddit()">Go</button>
+            </div>
         </div>
     </div>
 
@@ -40,6 +46,13 @@
     <script>
         let after = null;
         let currentSubreddit = '';
+
+        function searchSubreddit() {
+            const query = document.getElementById('search-input').value;
+            if (query) {
+                loadSubreddit(query.toLowerCase());
+            }
+        }
 
         async function loadSubreddit(subreddit, reset = true) {
             currentSubreddit = subreddit;
