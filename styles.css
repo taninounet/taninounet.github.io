@@ -62,9 +62,8 @@ body {
     display: flex;
     align-items: center;
     background-color: #37003c;
-    border-bottom: 2px solid #ffffff; /* White lower border */
     padding-right: 5px; /* Adjusted padding to the right */
-    width: 130px; /* Further reduced width */
+    width: 130px; /* Keep the width to maintain alignment */
 }
 
 .search-bar input {
@@ -75,6 +74,7 @@ body {
     background: none;
     color: #ffffff;
     width: 80px; /* Adjusted input width */
+    border-bottom: 2px solid #ffffff; /* White lower border for the input field */
 }
 
 .search-bar input::placeholder {
