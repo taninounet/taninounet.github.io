@@ -64,7 +64,7 @@ body {
     background-color: #37003c;
     border-bottom: 2px solid #ffffff; /* White lower border */
     padding-right: 5px; /* Adjusted padding to the right */
-    width: 130px; /* Further reduced width */
+    width: 90px; /* Further reduced width */
 }
 
 .search-bar input {
