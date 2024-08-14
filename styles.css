@@ -63,8 +63,8 @@ body {
     align-items: center;
     background-color: #37003c;
     border-bottom: 2px solid #ffffff; /* White lower border */
-    padding-right: 50px; /* Adjusted padding to the right */
-    width: 120px; /* Further reduced width */
+    padding-right: 5px; /* Adjusted padding to the right */
+    width: 130px; /* Further reduced width */
 }
 
 .search-bar input {
