@@ -1,18 +1,20 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>Football Subreddits</title>
+    <title>MyFPL</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body onload="loadSubreddit('fantasypl')">
+<body>
     <div class="navbar-container">
         <div class="navbar">
-            <a href="#" onclick="loadSubreddit('fantasypl')" class="logo-link">
-                <img src="https://www.premierleague.com/resources/rebrand/v7.151.1/i/elements/pl-main-logo.png" alt="Premier League Logo" class="logo">
+            <a href="#" onclick="init()" class="logo-link">
+                <img src="https://www.premierleague.com/resources/rebrand/v7.151.1/i/elements/pl-main-logo.png" alt="MyFPL Logo" class="logo">
             </a>
             <div class="nav-links">
+                <a href="#" onclick="loadCombined()">All</a>
                 <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
                 <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
                 <a href="#" onclick="loadSubreddit('mcfc')">ManCity</a>
@@ -22,7 +24,7 @@
                 <a href="#" onclick="loadSubreddit('crystalpalace')">Palace</a>
             </div>
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder=" " onkeypress="if(event.key === 'Enter') searchSubreddit()">
+                <input type="text" id="search-input" placeholder="Search…" onkeypress="if(event.key==='Enter') searchSubreddit()">
                 <button onclick="searchSubreddit()">
                     <img src="https://img.icons8.com/ios-glyphs/30/ffffff/search.png" alt="Search Icon">
                 </button>
@@ -31,177 +33,220 @@
     </div>
 
     <div id="main-content">
-        <div id="content">
-            <!-- Posts will load here -->
-        </div>
+        <div id="content"><!-- posts here --></div>
         <div id="comments-section" class="hidden">
             <div id="comments-header">
                 <h2>Comments</h2>
                 <button onclick="closeComments()">X</button>
             </div>
+            <!-- post preview will get injected here -->
+            <div id="post-content" class="post-content"></div>
             <div id="comments-container" class="comments-container"></div>
         </div>
     </div>
 
-    <button id="load-more" style="display: none;" onclick="loadMorePosts()">Load More</button>
+    <button id="load-more" style="display:none;">Load More</button>
 
     <script>
         let after = null;
         let currentSubreddit = '';
+        let isCombined = false;
 
-        function searchSubreddit() {
-            const query = document.getElementById('search-input').value;
-            if (query) {
-                loadSubreddit(query.toLowerCase());
-            }
+        function init() {
+            const btn = document.getElementById('load-more');
+            btn.addEventListener('click', loadMorePosts);
+            btn.addEventListener('touchstart', e => { e.preventDefault(); loadMorePosts(); });
+            loadSubreddit('fantasypl');
+        }
+
+        async function searchSubreddit() {
+            const q = document.getElementById('search-input').value.trim();
+            if (!q) return;
+            isCombined = false;
+            loadSubreddit(q);
         }
 
         async function loadSubreddit(subreddit, reset = true) {
+            isCombined = false;
             currentSubreddit = subreddit;
             if (reset) {
                 after = null;
-                document.getElementById('content').innerHTML = '';
-                document.getElementById('comments-section').classList.add('hidden');
-                document.getElementById('content').style.width = '100%';
+                clearContent();
             }
-            const response = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=10&after=${after}`);
-            const data = await response.json();
-            after = data.data.after;
-            const posts = data.data.children;
+            const url = `https://www.reddit.com/r/${subreddit}/new.json?limit=10${after?`&after=${after}`:''}`;
+            const res = await fetch(url);
+            const obj = await res.json();
+            after = obj.data.after;
+            renderPosts(obj.data.children.map(c=>c.data));
+            toggleLoadMore();
+        }
 
-            let contentDiv = document.getElementById('content');
-            
-            posts.forEach(post => {
-                const postData = post.data;
-                const postElement = document.createElement('div');
-                postElement.className = 'post';
-
-                const title = postData.title;
-                const url = postData.url;
-                const thumbnail = postData.thumbnail && postData.thumbnail.startsWith('http') ? postData.thumbnail : 'https://www.redditinc.com/assets/images/site/reddit-logo.png';
-                const timeSince = timeAgo(postData.created_utc);
-                const comments = postData.num_comments;
-                const isImage = postData.post_hint === 'image';
-
-                // Determine if the link is external
-                const isExternal = !url.includes('reddit.com');
-
-                postElement.innerHTML = `
-                    <div class="post-thumbnail">
-                        <img src="${thumbnail}" alt="Thumbnail">
-                    </div>
-                    <div class="post-details">
-                        ${isExternal ? `<a href="${url}" target="_blank" class="post-title">${title}</a>` : `<span class="post-title no-link">${title}</span>`}
-                        <div class="post-meta">
-                            <span>${timeSince}</span> | 
-                            <span class="comments-link" onclick="loadComments('${postData.id}', '${subreddit}')">${comments} comments</span>
-                        </div>
-                        ${isImage ? `<div class="expandable-image"><img src="${url}" alt="Post Image"></div>` : ''}
-                    </div>
-                `;
-                contentDiv.appendChild(postElement);
-            });
-
-            if (after) {
-                document.getElementById('load-more').style.display = 'block';
-            } else {
-                document.getElementById('load-more').style.display = 'none';
+        async function loadCombined(reset = true) {
+            isCombined = true;
+            if (reset) {
+                after = null;
+                clearContent();
             }
+            const subs = ['coys','reddevils','mcfc','chelseafc','gunners','liverpoolfc','crystalpalace'];
+            const all = await Promise.all(
+                subs.map(s => fetch(`https://www.reddit.com/r/${s}/new.json?limit=10`).then(r=>r.json()).then(d=>d.data.children.map(c=>c.data)))
+            );
+            let flat = all.flat();
+            flat.sort((a,b)=>b.created_utc - a.created_utc);
+            renderPosts(flat.slice(0,10));
+            document.getElementById('load-more').style.display='none';
         }
 
         async function loadMorePosts() {
-            loadSubreddit(currentSubreddit, false);
+            const btn = document.getElementById('load-more');
+            btn.disabled = true;
+            btn.textContent = 'Loading…';
+            if (isCombined) {
+                // no pagination for combined
+            } else {
+                await loadSubreddit(currentSubreddit, false);
+            }
+            btn.disabled = false;
+            btn.textContent = 'Load More';
+        }
+
+        function clearContent() {
+            document.getElementById('content').innerHTML = '';
+            closeComments();
+        }
+
+        function toggleLoadMore() {
+            document.getElementById('load-more').style.display = after ? 'block' : 'none';
+        }
+
+        function renderPosts(posts) {
+            const container = document.getElementById('content');
+            posts.forEach(post => {
+                const el = document.createElement('div');
+                el.className = 'post';
+                el.addEventListener('click', e => {
+                    if (e.target.closest('a') || e.target.closest('button')) return;
+                    loadComments(post.id, post.subreddit);
+                });
+
+                const thumb = (post.thumbnail && post.thumbnail.startsWith('http')) ? post.thumbnail
+                              : 'https://www.redditinc.com/assets/images/site/reddit-logo.png';
+                const isExt = !post.url.includes('reddit.com');
+                const timeSince = timeAgo(post.created_utc);
+
+                el.innerHTML = `
+                    <div class="post-thumbnail"><img src="${thumb}" alt=""></div>
+                    <div class="post-details">
+                      ${isExt
+                        ? `<a href="${post.url}" target="_blank" class="post-title">${post.title}</a>`
+                        : `<span class="post-title">${post.title}</span>`}
+                      <div class="post-meta">${timeSince} | ${post.num_comments} comments</div>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
         }
 
         async function loadComments(postId, subreddit) {
-            const response = await fetch(`https://www.reddit.com/r/${subreddit}/comments/${postId}.json?sort=best`);
-            const data = await response.json();
-            const comments = data[1].data.children;
+            const res = await fetch(`https://www.reddit.com/r/${subreddit}/comments/${postId}.json?sort=best`);
+            const data = await res.json();
+            const postInfo = data[0].data.children[0].data;
+            const comments = data[1].data.children.filter(c=>c.kind==='t1').map(c=>c.data);
 
-            let commentsContainer = document.getElementById('comments-container');
-            commentsContainer.innerHTML = '';
-            
-            comments.forEach(comment => {
-                if (comment.kind !== 't1') return; // Ensure it's a comment
-
-                const commentElement = createCommentElement(comment.data);
-                commentsContainer.appendChild(commentElement);
-            });
-
+            // show preview
+            const preview = document.getElementById('post-content');
+            let html = `<h3>${postInfo.title}</h3>`;
+            if (postInfo.url && !postInfo.url.includes('reddit.com')) {
+                html += `<p><a href="${postInfo.url}" target="_blank">${postInfo.url}</a></p>`;
+            }
+            if (postInfo.selftext) {
+                html += `<p>${postInfo.selftext}</p>`;
+            }
+            // gather media
+            let media = [];
+            if (postInfo.preview && postInfo.preview.images) {
+                media = postInfo.preview.images.map(img => ({type:'image', url: img.source.url.replace(/&amp;/g,'&')}));
+            }
+            if (postInfo.is_video && postInfo.media?.reddit_video) {
+                media.push({type:'video', url: postInfo.media.reddit_video.fallback_url});
+            }
+            // render media
+            if (media.length>0) {
+                if (media.length <= 3) {
+                    media.forEach(m=>{
+                        if (m.type==='image') html+=`<img src="${m.url}" class="post-media">`;
+                        else html+=`<video src="${m.url}" controls loop class="post-media"></video>`;
+                    });
+                } else {
+                    html += `
+                      <div class="carousel">
+                        <button class="carousel-button prev">‹</button>
+                        <div class="carousel-media"><img class="carousel-item"></div>
+                        <button class="carousel-button next">›</button>
+                      </div>
+                    `;
+                }
+            }
+            preview.innerHTML = html;
             document.getElementById('comments-section').classList.remove('hidden');
-            document.getElementById('content').style.width = '70%';
+
+            // init carousel if needed
+            if (media.length > 3) {
+                let idx = 0;
+                const imgEl = preview.querySelector('.carousel-item');
+                const prev = preview.querySelector('.carousel-button.prev');
+                const next = preview.querySelector('.carousel-button.next');
+                const show = () => { imgEl.src = media[idx].url; };
+                show();
+                prev.onclick = () => { idx = (idx-1+media.length)%media.length; show(); };
+                next.onclick = () => { idx = (idx+1)%media.length; show(); };
+            }
+
+            // render comments
+            const cc = document.getElementById('comments-container');
+            cc.innerHTML = '';
+            comments.forEach(c => cc.appendChild(makeComment(c)));
         }
 
         function closeComments() {
             document.getElementById('comments-section').classList.add('hidden');
-            document.getElementById('content').style.width = '100%';
         }
 
-        function createCommentElement(commentData) {
-            const commentElement = document.createElement('div');
-            commentElement.className = 'comment';
-
-            const author = commentData.author;
-            const body = commentData.body;
-            const timeSince = timeAgo(commentData.created_utc);
-            const replies = commentData.replies ? commentData.replies.data.children : [];
-
-            commentElement.innerHTML = `
-                <div class="comment-header">
-                    <span class="comment-author">${author}</span>
-                    <span class="comment-time">${timeSince}</span>
-                </div>
-                <div class="comment-body">${body}</div>
-                ${replies.length > 0 ? `<div class="comment-replies-toggle">View ${replies.length} replies</div>` : ''}
+        function makeComment(data) {
+            const div = document.createElement('div');
+            div.className = 'comment';
+            const timeSince = timeAgo(data.created_utc);
+            div.innerHTML = `
+              <div class="comment-header">
+                <span class="comment-author">${data.author}</span>
+                <span class="comment-time">${timeSince}</span>
+              </div>
+              <div class="comment-body">${data.body}</div>
             `;
-
-            if (replies.length > 0) {
-                const repliesContainer = document.createElement('div');
-                repliesContainer.className = 'comment-replies hidden';
-
-                replies.forEach(reply => {
-                    if (reply.kind === 't1') {
-                        const replyElement = createCommentElement(reply.data);
-                        repliesContainer.appendChild(replyElement);
-                    }
-                });
-
-                commentElement.appendChild(repliesContainer);
-
-                const toggle = commentElement.querySelector('.comment-replies-toggle');
-                toggle.addEventListener('click', () => {
-                    repliesContainer.classList.toggle('hidden');
-                    toggle.textContent = repliesContainer.classList.contains('hidden') ? `View ${replies.length} replies` : `Hide replies`;
+            // replies
+            const replies = data.replies?.data?.children.filter(r=>r.kind==='t1').map(r=>r.data) || [];
+            if (replies.length) {
+                const container = document.createElement('div');
+                container.className = 'comment-replies hidden';
+                replies.forEach(r=>container.appendChild(makeComment(r)));
+                div.appendChild(container);
+                // anywhere on the comment toggles replies
+                div.addEventListener('click', e => {
+                    if (e.target.closest('a')) return;
+                    container.classList.toggle('hidden');
                 });
             }
-
-            return commentElement;
+            return div;
         }
 
-        function timeAgo(utcSeconds) {
-            const seconds = Math.floor(Date.now() / 1000) - utcSeconds;
-            let interval = seconds / 31536000;
-
-            if (interval > 1) {
-                return Math.floor(interval) + " years ago";
-            }
-            interval = seconds / 2592000;
-            if (interval > 1) {
-                return Math.floor(interval) + " months ago";
-            }
-            interval = seconds / 86400;
-            if (interval > 1) {
-                return Math.floor(interval) + " days ago";
-            }
-            interval = seconds / 3600;
-            if (interval > 1) {
-                return Math.floor(interval) + " hours ago";
-            }
-            interval = seconds / 60;
-            if (interval > 1) {
-                return Math.floor(interval) + " minutes ago";
-            }
-            return Math.floor(seconds) + " seconds ago";
+        function timeAgo(sec) {
+            const s = Math.floor(Date.now()/1000 - sec);
+            if (s>31536000) return Math.floor(s/31536000)+'y';
+            if (s>2592000)  return Math.floor(s/2592000)+'mo';
+            if (s>86400)    return Math.floor(s/86400)+'d';
+            if (s>3600)     return Math.floor(s/3600)+'h';
+            if (s>60)       return Math.floor(s/60)+'m';
+            return s+'s';
         }
     </script>
 </body>
