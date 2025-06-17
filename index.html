@@ -10,13 +10,11 @@
 <body>
     <div class="navbar-container">
         <div class="navbar">
-            <a href="#" onclick="init()" class="logo-link">
+            <a href="#" onclick="loadSubreddit('fantasypl')" class="logo-link">
                 <img src="https://www.premierleague.com/resources/rebrand/v7.151.1/i/elements/pl-main-logo.png" alt="MyFPL Logo" class="logo">
             </a>
             <div class="nav-links">
-                <a href="#" onclick="loadSubreddit('fantasypl')" class="tab-logo">
-                    <img src="https://www.premierleague.com/resources/rebrand/v7.151.1/i/elements/pl-main-logo.png" alt="FantasyPL">
-                </a>
+                <a href="#" onclick="loadSubreddit('fantasypl')">FantasyPL</a>
                 <a href="#" onclick="loadCombined()">All</a>
                 <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
                 <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
@@ -25,6 +23,12 @@
                 <a href="#" onclick="loadSubreddit('gunners')">Arsenal</a>
                 <a href="#" onclick="loadSubreddit('liverpoolfc')">Liverpool</a>
                 <a href="#" onclick="loadSubreddit('crystalpalace')">Palace</a>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search…" onkeypress="if(event.key==='Enter') searchSubreddit()">
+                <button onclick="searchSubreddit()">
+                    <img src="https://img.icons8.com/ios-glyphs/30/ffffff/search.png" alt="Search Icon">
+                </button>
             </div>
         </div>
     </div>
@@ -54,6 +58,7 @@
         };
         let after = null;
         let currentSubreddit = '';
+        let currentPostId = '';
         let isCombined = false;
         let isLoading = false;
 
@@ -69,39 +74,40 @@
             });
         }
 
+        async function searchSubreddit() {
+            const q = document.getElementById('search-input').value.trim();
+            if (!q) return;
+            isCombined = false;
+            loadSubreddit(q);
+        }
+
         async function loadSubreddit(subreddit, reset = true) {
             if (isLoading) return;
             isCombined = false;
             currentSubreddit = subreddit;
-            if (reset) {
-                after = null;
-                clearContent();
-            }
+            if (reset) { after = null; clearContent(); }
             isLoading = true;
-            const url = `https://www.reddit.com/r/${subreddit}/new.json?limit=10${after ? `&after=${after}` : ''}`;
+            const url = `https://www.reddit.com/r/${subreddit}/new.json?limit=10${after?`&after=${after}`:''}`;
             const res = await fetch(url);
             const obj = await res.json();
             after = obj.data.after;
-            renderPosts(obj.data.children.map(c => c.data));
+            renderPosts(obj.data.children.map(c=>c.data));
             isLoading = false;
         }
 
         async function loadCombined(reset = true) {
             if (isLoading) return;
             isCombined = true;
-            if (reset) {
-                after = null;
-                clearContent();
-            }
+            if (reset) { after = null; clearContent(); }
             isLoading = true;
             const subs = ['coys','reddevils','mcfc','chelseafc','gunners','liverpoolfc','crystalpalace'];
             const all = await Promise.all(
                 subs.map(s => fetch(`https://www.reddit.com/r/${s}/new.json?limit=10`)
-                    .then(r => r.json())
-                    .then(d => d.data.children.map(c => c.data)))
+                    .then(r=>r.json())
+                    .then(d=>d.data.children.map(c=>c.data)))
             );
             let flat = all.flat();
-            flat.sort((a,b) => b.created_utc - a.created_utc);
+            flat.sort((a,b)=>b.created_utc - a.created_utc);
             renderPosts(flat);
             isLoading = false;
         }
@@ -119,111 +125,95 @@
         function renderPosts(posts) {
             const container = document.getElementById('content');
             posts.forEach(post => {
-                const el = document.createElement('div');
-                el.className = 'post';
-                el.addEventListener('click', e => {
-                    if (e.target.closest('a') || e.target.closest('button')) return;
+                const el = document.createElement('div'); el.className='post';
+                el.addEventListener('click', e=>{
+                    if(e.target.closest('a')||e.target.closest('button')) return;
                     loadComments(post.id, post.subreddit);
                 });
 
                 const timeSince = timeAgo(post.created_utc);
-                const subLabel = subMap[post.subreddit] || post.subreddit;
-                const meta = isCombined
-                    ? `${subLabel} | ${timeSince} | ${post.num_comments} comments`
-                    : `${timeSince} | ${post.num_comments} comments`;
+                const subLabel = subMap[post.subreddit]||post.subreddit;
+                const meta = isCombined ? `${subLabel} | ${timeSince} | ${post.num_comments} comments` : `${timeSince} | ${post.num_comments} comments`;
 
-                // Header
-                let html = `
-                    <div class="post-header">
-                        <div class="post-thumbnail"><img src="${post.thumbnail && post.thumbnail.startsWith('http') ? post.thumbnail : 'https://www.redditinc.com/assets/images/site/reddit-logo.png'}" alt=""></div>
-                        <div class="post-details">
-                            <span class="post-title">${post.title}</span>
-                            <div class="post-meta">${meta}</div>
-                        </div>
-                    </div>
-                `;
+                // header
+                let html=`<div class="post-header">
+                    <div class="post-thumbnail"><img src="${post.thumbnail&&post.thumbnail.startsWith('http')?post.thumbnail:'https://www.redditinc.com/assets/images/site/reddit-logo.png'}"></div>
+                    <div class="post-details"><span class="post-title">${post.title}</span><div class="post-meta">${meta}</div></div>
+                </div>`;
 
-                // Media
-                let media = [];
-                if (post.preview && post.preview.images) {
-                    media = post.preview.images.map(img => ({type:'image', url: img.source.url.replace(/&amp;/g,'&')}));
-                }
-                if (post.is_video && post.media?.reddit_video) {
-                    media.push({type:'video', url: post.media.reddit_video.fallback_url});
-                }
-                if (media.length) {
-                    html += '<div class="post-media-container">';
-                    media.forEach(m => {
-                        if (m.type==='image') html += `<img src="${m.url}" class="media-item">`;
-                        else html += `<video src="${m.url}" controls loop class="media-item"></video>`;
+                // media
+                let media=[];
+                if(post.preview&&post.preview.images) media=post.preview.images.map(img=>({type:'image',url:img.source.url.replace(/&amp;/g,'&')}));
+                if(post.is_video&&post.media?.reddit_video) media.push({type:'video',url:post.media.reddit_video.fallback_url});
+                if(media.length){
+                    html+='<div class="post-media-container">';
+                    media.forEach(m=>{
+                        html+=m.type==='image'
+                            ? `<img src="${m.url}" class="media-item">`
+                            : `<video src="${m.url}" controls loop class="media-item"></video>`;
                     });
-                    html += '</div>';
+                    html+='</div>';
                 }
 
-                el.innerHTML = html;
+                el.innerHTML=html;
                 container.appendChild(el);
             });
         }
 
         async function loadComments(postId, subreddit) {
+            currentPostId=postId;
             const res = await fetch(`https://www.reddit.com/r/${subreddit}/comments/${postId}.json?sort=best`);
             const data = await res.json();
             const postInfo = data[0].data.children[0].data;
             const comments = data[1].data.children.filter(c=>c.kind==='t1').map(c=>c.data);
 
-            // Preview text and link only
             const preview = document.getElementById('post-content');
-            let html = `<h3>${postInfo.title}</h3>`;
-            if (postInfo.url && !postInfo.url.includes('reddit.com')) {
-                html += `<p><a href="${postInfo.url}" target="_blank">${postInfo.url}</a></p>`;
-            }
-            if (postInfo.selftext) html += `<p>${postInfo.selftext}</p>`;
-            preview.innerHTML = html;
+            let html=`<h3>${postInfo.title}</h3>`;
+            if(postInfo.url&&!postInfo.url.includes('reddit.com')) html+=`<p><a href="${postInfo.url}" target="_blank">${postInfo.url}</a></p>`;
+            if(postInfo.selftext) html+=`<p>${postInfo.selftext}</p>`;
+            preview.innerHTML=html;
             document.getElementById('comments-section').classList.remove('hidden');
 
-            // Comments
-            const cc = document.getElementById('comments-container');
-            cc.innerHTML = '';
-            comments.forEach(c => cc.appendChild(makeComment(c)));
+            const cc=document.getElementById('comments-container'); cc.innerHTML='';
+            comments.forEach(c=>cc.appendChild(makeComment(c,postId,subreddit)));
         }
 
-        function closeComments() {
-            document.getElementById('comments-section').classList.add('hidden');
-        }
+        function closeComments(){ document.getElementById('comments-section').classList.add('hidden'); }
 
-        function makeComment(data) {
-            const div = document.createElement('div');
-            div.className = 'comment';
-            const replies = data.replies?.data?.children.filter(r=>r.kind==='t1').map(r=>r.data) || [];
+        function makeComment(data, postId, subreddit){
+            const div=document.createElement('div'); div.className='comment';
+            const repliesCount = data.replies?.data?.children.filter(r=>r.kind==='t1').length||0;
             const timeSince = timeAgo(data.created_utc);
-            div.innerHTML = `
-              <div class="comment-header">
+            div.innerHTML=`<div class="comment-header">
                 <span class="comment-author">${data.author}</span>
                 <span class="comment-time">${timeSince}</span>
-                ${replies.length ? `<span class="comment-replies-count">${replies.length} replies</span>` : ''}
-              </div>
-              <div class="comment-body">${data.body}</div>
-            `;
-            if (replies.length) {
-                const container = document.createElement('div');
-                container.className = 'comment-replies hidden';
-                replies.forEach(r=>container.appendChild(makeComment(r)));
-                div.appendChild(container);
-                div.addEventListener('click', e=>{
-                    if (e.target.closest('a')) return;
-                    container.classList.toggle('hidden');
+                ${repliesCount?`<span class="comment-replies-count" data-id="${data.id}">${repliesCount} replies</span>`:''}
+            </div>
+            <div class="comment-body">${data.body}</div>`;
+
+            if(repliesCount){
+                const span=div.querySelector('.comment-replies-count');
+                span.addEventListener('click', async e=>{
+                    e.stopPropagation();
+                    span.remove();
+                    const resp=await fetch(`https://www.reddit.com/r/${subreddit}/comments/${postId}/_/${data.id}.json?sort=best`);
+                    const arr=await resp.json();
+                    const subcomments=arr[1].data.children.filter(c=>c.kind==='t1').map(c=>c.data);
+                    const container=document.createElement('div'); container.className='comment-replies';
+                    subcomments.forEach(sc=>container.appendChild(makeComment(sc,postId,subreddit)));
+                    div.appendChild(container);
                 });
             }
             return div;
         }
 
-        function timeAgo(sec) {
-            const s = Math.floor(Date.now()/1000 - sec);
-            if (s>31536000) return Math.floor(s/31536000)+'y';
-            if (s>2592000) return Math.floor(s/2592000)+'mo';
-            if (s>86400) return Math.floor(s/86400)+'d';
-            if (s>3600) return Math.floor(s/3600)+'h';
-            if (s>60) return Math.floor(s/60)+'m';
+        function timeAgo(sec){
+            const s=Math.floor(Date.now()/1000-sec);
+            if(s>31536000) return Math.floor(s/31536000)+'y';
+            if(s>2592000) return Math.floor(s/2592000)+'mo';
+            if(s>86400) return Math.floor(s/86400)+'d';
+            if(s>3600) return Math.floor(s/3600)+'h';
+            if(s>60) return Math.floor(s/60)+'m';
             return s+'s';
         }
     </script>
