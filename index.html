@@ -1,168 +1,374 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Reddit-style Forum</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MyFPL</title>
+  <style>
+    body {
+      font-family: "Roboto", Arial, sans-serif;
+      margin: 0; padding: 0;
+      background-color: #f6f7f8;
+      color: #1c1c1c;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .navbar-container { background-color: white; padding-top: 20px; }
+    .navbar {
+      background-color: #37003c;
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      position: relative;
+    }
+    .logo-link { position: relative; z-index: 1; }
+    .navbar .logo {
+      width: 80px;
+      position: absolute;
+      left: 20px;
+      top: -50px;
+      z-index: 2;
+    }
+    .nav-links {
+      display: flex;
+      flex-grow: 1;
+      justify-content: space-around;
+      padding: 10px 0;
+      margin-left: 120px;
+    }
+    .nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+      font-family: "PremierLeague", Arial, sans-serif;
+      padding: 0 40px;
+      transition: background-color 0.3s;
+    }
+    .nav-links a:hover { background-color: #4e004e; }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background-color: #37003c;
+      padding-right: 5px;
+      width: 130px;
+    }
+    .search-bar input {
+      padding: 5px;
+      font-size: 14px;
+      border: none;
+      border-bottom: 2px solid #ffffff;
+      background: none;
+      color: #ffffff;
+      width: 80px;
+    }
+    .search-bar input::placeholder { color: #ffffff; opacity: 0.7; }
+    .search-bar button {
+      background: none; border: none;
+      padding: 5px; cursor: pointer;
+    }
+    .search-bar button img { width: 20px; height: 20px; }
+    #main-content { display: flex; flex: 1; overflow: hidden; }
+    #content {
+      padding: 20px; flex: 1;
+      overflow-y: auto;
+      transition: width 0.3s ease;
+    }
+    #comments-section {
+      flex: 1; padding: 20px;
+      background-color: #f1f1f1;
+      overflow-y: auto;
+      border-left: 1px solid #ddd;
+      transition: width 0.3s ease;
+    }
+    .hidden { display: none; }
+    #comments-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 15px;
+    }
+    #comments-header button {
+      background-color: #37003c;
+      color: white; border: none;
+      padding: 5px 10px;
+      cursor: pointer; font-size: 14px;
+      border-radius: 5px;
+    }
+    #comments-header button:hover { background-color: #4e004e; }
+    .post {
+      display: flex;
+      background-color: #fff;
+      margin-bottom: 15px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+    .post-thumbnail img {
+      width: 70px; height: 70px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 15px;
+    }
+    .post-details { flex-grow: 1; }
+    .post-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1c1c1c;
+    }
+    .post-meta {
+      margin-top: 5px;
+      color: #606060;
+      font-size: 14px;
+    }
+    .post-multiple-images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .post-multiple-images img {
+      width: 100%;
+      max-width: calc(50% - 10px);
+      border-radius: 5px;
+    }
+    .expandable-image img {
+      width: 100%;
+      max-width: 500px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .comment {
+      background-color: #fff;
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .comment-author {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .comment-time {
+      color: #606060;
+      font-size: 12px;
+    }
+    .comment-body {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 5px;
+    }
+    .comment-replies-toggle {
+      color: #007bff;
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 5px;
+    }
+    .comment-replies-toggle:hover { text-decoration: underline; }
+    .comment-replies { margin-left: 20px; }
+    #post-text {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    #post-url {
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #007bff;
+      word-break: break-all;
+    }
+  </style>
 </head>
-<body>
-  <header>
-    <h1>r/<span id="subreddit-title"></span></h1>
-    <input id="subreddit-input" placeholder="Enter a subreddit" />
-    <button id="load-subreddit">Load</button>
-  </header>
-
-  <main>
-    <section id="posts-section">
-      <div id="posts-container"></div>
-    </section>
-
-    <section id="comments-section" class="hidden">
-      <button id="back-to-posts">← Back to posts</button>
-      <h2>Comments</h2>
-      <!-- injected post content / link goes here -->
+<body onload="init()">
+  <div class="navbar-container">
+    <div class="navbar">
+      <a href="#" onclick="loadSubreddit('fantasypl')" class="logo-link">
+        <img src="https://www.premierleague.com/resources/rebrand/v7.151.1/i/elements/pl-main-logo.png"
+             alt="Premier League Logo"
+             class="logo">
+      </a>
+      <div class="nav-links">
+        <a href="#" onclick="loadSubreddit('fantasypl')">MyFPL</a>
+        <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
+        <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
+        <a href="#" onclick="loadSubreddit('mcfc')">ManCity</a>
+        <a href="#" onclick="loadSubreddit('chelseafc')">Chelsea</a>
+        <a href="#" onclick="loadSubreddit('gunners')">Arsenal</a>
+        <a href="#" onclick="loadSubreddit('liverpoolfc')">Liverpool</a>
+        <a href="#" onclick="loadSubreddit('crystalpalace')">Palace</a>
+      </div>
+      <div class="search-bar">
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search"
+          onkeypress="if(event.key==='Enter') searchSubreddit()"
+        />
+        <button onclick="searchSubreddit()">
+          <img src="https://img.icons8.com/ios-glyphs/30/ffffff/search.png" alt="Search"/>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="main-content">
+    <div id="content"></div>
+    <div id="comments-section" class="hidden">
+      <div id="comments-header">
+        <h2>Comments</h2>
+        <button onclick="closeComments()">X</button>
+      </div>
+      <div id="post-info">
+        <div id="post-text"></div>
+        <div id="post-url"></div>
+      </div>
       <div id="comments-container"></div>
-    </section>
-  </main>
+    </div>
+  </div>
 
   <script>
-    // Basic helpers
-    function timeAgo(utcSeconds) {
-      const delta = Date.now()/1000 - utcSeconds;
-      if (delta < 60) return `${Math.floor(delta)}s ago`;
-      if (delta < 3600) return `${Math.floor(delta/60)}m ago`;
-      if (delta < 86400) return `${Math.floor(delta/3600)}h ago`;
-      return `${Math.floor(delta/86400)}d ago`;
+    let after = null;
+    let currentSubreddit = '';
+
+    function init() {
+      loadSubreddit('fantasypl');
+      const contentDiv = document.getElementById('content');
+      contentDiv.addEventListener('scroll', () => {
+        if (contentDiv.scrollTop + contentDiv.clientHeight >= contentDiv.scrollHeight - 10 && after) {
+          loadMorePosts();
+        }
+      });
     }
 
-    // Load subreddit posts
-    async function loadSubreddit(sub) {
-      document.getElementById('subreddit-title').textContent = sub;
-      const res = await fetch(`https://www.reddit.com/r/${sub}.json`);
-      const json = await res.json();
-      const posts = json.data.children.map(c => c.data);
-      const pc = document.getElementById('posts-container');
-      pc.innerHTML = '';
-      posts.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'post';
-        div.innerHTML = `
-          <h3 class="post-title">${p.title}</h3>
-          ${p.preview?.images
-             ? `<div class="post-media-container">
-                  ${p.preview.images
-                    .map(img => {
-                      const url = img.source.url.replace(/&amp;/g, '&');
-                      return `<img class="media-item" src="${url}" />`;
-                    })
-                    .join('')}
-                </div>`
-             : ''}
-          <button class="view-comments" data-id="${p.id}" data-sub="${sub}">
-            View Comments
-          </button>
+    function searchSubreddit() {
+      const query = document.getElementById('search-input').value;
+      if (query) loadSubreddit(query.toLowerCase());
+    }
+
+    async function loadSubreddit(subreddit, reset = true) {
+      currentSubreddit = subreddit;
+      if (reset) {
+        after = null;
+        document.getElementById('content').innerHTML = '';
+        document.getElementById('comments-section').classList.add('hidden');
+        document.getElementById('content').style.width = '100%';
+      }
+      const res = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=10&after=${after}`);
+      const data = await res.json();
+      after = data.data.after;
+      data.data.children.forEach(post => {
+        const d = post.data;
+        const postEl = document.createElement('div');
+        postEl.className = 'post';
+        const thumb = d.thumbnail && d.thumbnail.startsWith('http') ? d.thumbnail : 'https://www.redditinc.com/assets/images/site/reddit-logo.png';
+        const timeSince = timeAgo(d.created_utc);
+        const commentsCount = d.num_comments;
+
+        let imagesHtml = '';
+        if (d.is_gallery && d.gallery_data) {
+          imagesHtml = '<div class="post-multiple-images">';
+          d.gallery_data.items.forEach(item => {
+            const meta = d.media_metadata[item.media_id];
+            const imgUrl = meta.s.u.replaceAll('&amp;', '&');
+            imagesHtml += `<img src="${imgUrl}" alt="Gallery Image">`;
+          });
+          imagesHtml += '</div>';
+        } else if (d.post_hint === 'image') {
+          imagesHtml = `<div class="expandable-image"><img src="${d.url}" alt="Post Image"></div>`;
+        }
+
+        postEl.innerHTML = `
+          <div class="post-thumbnail"><img src="${thumb}" alt="Thumb"></div>
+          <div class="post-details">
+            <span class="post-title">${d.title}</span>
+            <div class="post-meta">${timeSince} | ${commentsCount} comments</div>
+            ${imagesHtml}
+          </div>
         `;
-        pc.appendChild(div);
-      });
-
-      // attach comment-view buttons
-      document.querySelectorAll('.view-comments').forEach(btn => {
-        btn.addEventListener('click', () => {
-          loadComments(btn.dataset.id, btn.dataset.sub);
-        });
+        postEl.addEventListener('click', () => loadComments(d.id, subreddit));
+        document.getElementById('content').appendChild(postEl);
       });
     }
 
-    // Load comments + original post content/link
-    async function loadComments(postId, sub) {
-      const res = await fetch(`https://www.reddit.com/r/${sub}/comments/${postId}.json?sort=best`);
-      const [postJson, commentsJson] = await res.json();
-      const postData = postJson.data.children[0].data;
+    function loadMorePosts() {
+      loadSubreddit(currentSubreddit, false);
+    }
 
-      const cc = document.getElementById('comments-container');
-      let html = '';
+    async function loadComments(postId, subreddit) {
+      const res = await fetch(`https://www.reddit.com/r/${subreddit}/comments/${postId}.json?sort=best`);
+      const data = await res.json();
+      const postInfo = data[0].data.children[0].data;
+      document.getElementById('post-text').innerText = postInfo.selftext || '';
+      document.getElementById('post-url').innerText = postInfo.url || '';
 
-      // Self-text or HTML
-      if (postData.selftext_html) {
-        html += `<div class="post-content">${postData.selftext_html}</div>`;
-      } else if (postData.selftext) {
-        html += `<div class="post-content">${postData.selftext}</div>`;
-      }
-      // External link
-      if (!postData.is_self && postData.url) {
-        html += `<div class="post-link">
-                   <a href="${postData.url}" target="_blank">${postData.url}</a>
-                 </div>`;
-      }
-      cc.innerHTML = html;
-
-      // Top-level comments
-      const topComments = commentsJson.data.children
-        .filter(c => c.kind === 't1')
-        .map(c => c.data);
-      topComments.forEach(c => cc.appendChild(makeComment(c, postId, sub)));
+      const comments = data[1].data.children.filter(c => c.kind === 't1');
+      const container = document.getElementById('comments-container');
+      container.innerHTML = '';
+      comments.forEach(c => container.appendChild(createCommentElement(c.data)));
 
       document.getElementById('comments-section').classList.remove('hidden');
-      document.getElementById('posts-section').classList.add('hidden');
+      document.getElementById('content').style.width = '70%';
     }
 
-    // Recursive comment builder with toggle-loading
-    function makeComment(d, postId, sub) {
-      const div = document.createElement('div');
-      div.className = 'comment';
+    function closeComments() {
+      document.getElementById('comments-section').classList.add('hidden');
+      document.getElementById('content').style.width = '100%';
+    }
 
-      const repliesCount = d.replies?.data?.children
-        .filter(r => r.kind === 't1').length || 0;
-      const t = timeAgo(d.created_utc);
+    function createCommentElement(d) {
+      const el = document.createElement('div');
+      el.className = 'comment';
+      const replies = d.replies && d.replies.data
+        ? d.replies.data.children.filter(r => r.kind === 't1').map(r => r.data)
+        : [];
 
-      div.innerHTML = `
+      el.innerHTML = `
         <div class="comment-header">
           <span class="comment-author">${d.author}</span>
-          <span class="comment-time">${t}</span>
-          ${repliesCount > 0 
-            ? `<span class="comment-replies-count">${repliesCount} replies</span>`
-            : ''}
+          <span class="comment-time">${timeAgo(d.created_utc)}</span>
         </div>
         <div class="comment-body">${d.body}</div>
+        ${replies.length > 0 ? `<div class="comment-replies-toggle">View ${replies.length} replies</div>` : ''}
       `;
 
-      if (repliesCount > 0) {
-        div.addEventListener('click', async e => {
-          e.stopPropagation();
-          let childContainer = div.querySelector('.comment-replies');
-          if (childContainer) {
-            childContainer.classList.toggle('hidden');
-            return;
-          }
-          const r2 = await fetch(
-            `https://www.reddit.com/r/${sub}/comments/${postId}/_/${d.id}.json?sort=best`
-          );
-          const j2 = await r2.json();
-          const subComments = j2[1].data.children
-            .filter(c => c.kind === 't1')
-            .map(c => c.data);
-
-          childContainer = document.createElement('div');
-          childContainer.className = 'comment-replies';
-          subComments.forEach(sc => childContainer.appendChild(makeComment(sc, postId, sub)));
-          div.appendChild(childContainer);
+      if (replies.length > 0) {
+        const replCont = document.createElement('div');
+        replCont.className = 'comment-replies hidden';
+        replies.forEach(r => replCont.appendChild(createCommentElement(r)));
+        el.appendChild(replCont);
+        el.addEventListener('click', () => {
+          replCont.classList.toggle('hidden');
+          const toggle = el.querySelector('.comment-replies-toggle');
+          if (toggle) toggle.textContent = replCont.classList.contains('hidden')
+            ? `View ${replies.length} replies`
+            : `Hide replies`;
         });
       }
-
-      return div;
+      return el;
     }
 
-    // “Back to posts” button
-    document.getElementById('back-to-posts').addEventListener('click', () => {
-      document.getElementById('comments-section').classList.add('hidden');
-      document.getElementById('posts-section').classList.remove('hidden');
-    });
-
-    // Initial binding
-    document.getElementById('load-subreddit').addEventListener('click', () => {
-      const sub = document.getElementById('subreddit-input').value.trim();
-      if (sub) loadSubreddit(sub);
-    });
+    function timeAgo(utc) {
+      const secs = Math.floor(Date.now() / 1000) - utc;
+      const intervals = [31536000, 'year', 2592000, 'month', 86400, 'day', 3600, 'hour', 60, 'minute'];
+      for (let i = 0; i < intervals.length; i += 2) {
+        const div = intervals[i];
+        const label = intervals[i + 1];
+        if (secs / div >= 1) {
+          return Math.floor(secs / div) + ` ${label}${Math.floor(secs / div) > 1 ? 's' : ''} ago`;
+        }
+      }
+      return secs + " seconds ago";
+    }
   </script>
 </body>
 </html>
