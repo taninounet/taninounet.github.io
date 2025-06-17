@@ -15,6 +15,7 @@
             </a>
             <div class="nav-links">
                 <a href="#" onclick="loadCombined()">All</a>
+                <a href="#" onclick="loadSubreddit('fantasypl')">FantasyPL</a>
                 <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
                 <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
                 <a href="#" onclick="loadSubreddit('mcfc')">ManCity</a>
@@ -33,30 +34,43 @@
     </div>
 
     <div id="main-content">
-        <div id="content"><!-- posts here --></div>
+        <div id="content"></div>
         <div id="comments-section" class="hidden">
             <div id="comments-header">
                 <h2>Comments</h2>
                 <button onclick="closeComments()">X</button>
             </div>
-            <!-- post preview will get injected here -->
             <div id="post-content" class="post-content"></div>
             <div id="comments-container" class="comments-container"></div>
         </div>
     </div>
 
-    <button id="load-more" style="display:none;">Load More</button>
-
     <script>
+        const subMap = {
+            fantasypl: 'FantasyPL',
+            coys: 'Spurs',
+            reddevils: 'ManUtd',
+            mcfc: 'ManCity',
+            chelseafc: 'Chelsea',
+            gunners: 'Arsenal',
+            liverpoolfc: 'Liverpool',
+            crystalpalace: 'Palace'
+        };
         let after = null;
         let currentSubreddit = '';
         let isCombined = false;
+        let isLoading = false;
+
+        window.addEventListener('load', init);
 
         function init() {
-            const btn = document.getElementById('load-more');
-            btn.addEventListener('click', loadMorePosts);
-            btn.addEventListener('touchstart', e => { e.preventDefault(); loadMorePosts(); });
             loadSubreddit('fantasypl');
+            const feed = document.getElementById('content');
+            feed.addEventListener('scroll', () => {
+                if (feed.scrollTop + feed.clientHeight >= feed.scrollHeight - 100) {
+                    loadMorePosts();
+                }
+            });
         }
 
         async function searchSubreddit() {
@@ -67,56 +81,50 @@
         }
 
         async function loadSubreddit(subreddit, reset = true) {
+            if (isLoading) return;
             isCombined = false;
             currentSubreddit = subreddit;
             if (reset) {
                 after = null;
                 clearContent();
             }
-            const url = `https://www.reddit.com/r/${subreddit}/new.json?limit=10${after?`&after=${after}`:''}`;
+            isLoading = true;
+            const url = `https://www.reddit.com/r/${subreddit}/new.json?limit=10${after ? `&after=${after}` : ''}`;
             const res = await fetch(url);
             const obj = await res.json();
             after = obj.data.after;
-            renderPosts(obj.data.children.map(c=>c.data));
-            toggleLoadMore();
+            renderPosts(obj.data.children.map(c => c.data));
+            isLoading = false;
         }
 
         async function loadCombined(reset = true) {
+            if (isLoading) return;
             isCombined = true;
             if (reset) {
                 after = null;
                 clearContent();
             }
-            const subs = ['coys','reddevils','mcfc','chelseafc','gunners','liverpoolfc','crystalpalace'];
+            isLoading = true;
+            const subs = Object.keys(subMap).filter(s => s !== 'fantasypl');
             const all = await Promise.all(
-                subs.map(s => fetch(`https://www.reddit.com/r/${s}/new.json?limit=10`).then(r=>r.json()).then(d=>d.data.children.map(c=>c.data)))
+                subs.map(s => fetch(`https://www.reddit.com/r/${s}/new.json?limit=10`)
+                    .then(r => r.json())
+                    .then(d => d.data.children.map(c => c.data)))
             );
             let flat = all.flat();
-            flat.sort((a,b)=>b.created_utc - a.created_utc);
-            renderPosts(flat.slice(0,10));
-            document.getElementById('load-more').style.display='none';
+            flat.sort((a, b) => b.created_utc - a.created_utc);
+            renderPosts(flat.slice(0, 10));
+            isLoading = false;
         }
 
-        async function loadMorePosts() {
-            const btn = document.getElementById('load-more');
-            btn.disabled = true;
-            btn.textContent = 'Loading…';
-            if (isCombined) {
-                // no pagination for combined
-            } else {
-                await loadSubreddit(currentSubreddit, false);
-            }
-            btn.disabled = false;
-            btn.textContent = 'Load More';
+        function loadMorePosts() {
+            if (isCombined || !after) return;
+            loadSubreddit(currentSubreddit, false);
         }
 
         function clearContent() {
             document.getElementById('content').innerHTML = '';
             closeComments();
-        }
-
-        function toggleLoadMore() {
-            document.getElementById('load-more').style.display = after ? 'block' : 'none';
         }
 
         function renderPosts(posts) {
@@ -129,20 +137,41 @@
                     loadComments(post.id, post.subreddit);
                 });
 
-                const thumb = (post.thumbnail && post.thumbnail.startsWith('http')) ? post.thumbnail
-                              : 'https://www.redditinc.com/assets/images/site/reddit-logo.png';
-                const isExt = !post.url.includes('reddit.com');
                 const timeSince = timeAgo(post.created_utc);
+                const subLabel = subMap[post.subreddit] || post.subreddit;
+                const meta = isCombined
+                    ? `${subLabel} | ${timeSince} | ${post.num_comments} comments`
+                    : `${timeSince} | ${post.num_comments} comments`;
 
-                el.innerHTML = `
-                    <div class="post-thumbnail"><img src="${thumb}" alt=""></div>
+                let html = `
+                    <div class="post-thumbnail"><img src="${
+                        post.thumbnail && post.thumbnail.startsWith('http')
+                            ? post.thumbnail
+                            : 'https://www.redditinc.com/assets/images/site/reddit-logo.png'
+                    }" alt=""></div>
                     <div class="post-details">
-                      ${isExt
-                        ? `<a href="${post.url}" target="_blank" class="post-title">${post.title}</a>`
-                        : `<span class="post-title">${post.title}</span>`}
-                      <div class="post-meta">${timeSince} | ${post.num_comments} comments</div>
+                      <span class="post-title">${post.title}</span>
+                      <div class="post-meta">${meta}</div>
                     </div>
                 `;
+
+                let media = [];
+                if (post.preview && post.preview.images) {
+                    media = post.preview.images.map(img => ({ type: 'image', url: img.source.url.replace(/&amp;/g,'&') }));
+                }
+                if (post.is_video && post.media?.reddit_video) {
+                    media.push({ type: 'video', url: post.media.reddit_video.fallback_url });
+                }
+                if (media.length) {
+                    html += '<div class="post-inline-media">';
+                    media.forEach(m => {
+                        if (m.type === 'image') html += `<img src="${m.url}" class="inline-media">`;
+                        else html += `<video src="${m.url}" controls loop class="inline-media"></video>`;
+                    });
+                    html += '</div>';
+                }
+
+                el.innerHTML = html;
                 container.appendChild(el);
             });
         }
@@ -151,31 +180,27 @@
             const res = await fetch(`https://www.reddit.com/r/${subreddit}/comments/${postId}.json?sort=best`);
             const data = await res.json();
             const postInfo = data[0].data.children[0].data;
-            const comments = data[1].data.children.filter(c=>c.kind==='t1').map(c=>c.data);
+            const comments = data[1].data.children.filter(c => c.kind === 't1').map(c => c.data);
 
-            // show preview
             const preview = document.getElementById('post-content');
             let html = `<h3>${postInfo.title}</h3>`;
             if (postInfo.url && !postInfo.url.includes('reddit.com')) {
                 html += `<p><a href="${postInfo.url}" target="_blank">${postInfo.url}</a></p>`;
             }
-            if (postInfo.selftext) {
-                html += `<p>${postInfo.selftext}</p>`;
-            }
-            // gather media
+            if (postInfo.selftext) html += `<p>${postInfo.selftext}</p>`;
+
             let media = [];
             if (postInfo.preview && postInfo.preview.images) {
-                media = postInfo.preview.images.map(img => ({type:'image', url: img.source.url.replace(/&amp;/g,'&')}));
+                media = postInfo.preview.images.map(img => ({ type: 'image', url: img.source.url.replace(/&amp;/g,'&') }));
             }
             if (postInfo.is_video && postInfo.media?.reddit_video) {
-                media.push({type:'video', url: postInfo.media.reddit_video.fallback_url});
+                media.push({ type: 'video', url: postInfo.media.reddit_video.fallback_url });
             }
-            // render media
-            if (media.length>0) {
+            if (media.length > 0) {
                 if (media.length <= 3) {
-                    media.forEach(m=>{
-                        if (m.type==='image') html+=`<img src="${m.url}" class="post-media">`;
-                        else html+=`<video src="${m.url}" controls loop class="post-media"></video>`;
+                    media.forEach(m => {
+                        if (m.type === 'image') html += `<img src="${m.url}" class="post-media">`;
+                        else html += `<video src="${m.url}" controls loop class="post-media"></video>`;
                     });
                 } else {
                     html += `
@@ -190,7 +215,6 @@
             preview.innerHTML = html;
             document.getElementById('comments-section').classList.remove('hidden');
 
-            // init carousel if needed
             if (media.length > 3) {
                 let idx = 0;
                 const imgEl = preview.querySelector('.carousel-item');
@@ -198,11 +222,10 @@
                 const next = preview.querySelector('.carousel-button.next');
                 const show = () => { imgEl.src = media[idx].url; };
                 show();
-                prev.onclick = () => { idx = (idx-1+media.length)%media.length; show(); };
-                next.onclick = () => { idx = (idx+1)%media.length; show(); };
+                prev.onclick = () => { idx = (idx - 1 + media.length) % media.length; show(); };
+                next.onclick = () => { idx = (idx + 1) % media.length; show(); };
             }
 
-            // render comments
             const cc = document.getElementById('comments-container');
             cc.innerHTML = '';
             comments.forEach(c => cc.appendChild(makeComment(c)));
@@ -223,14 +246,12 @@
               </div>
               <div class="comment-body">${data.body}</div>
             `;
-            // replies
-            const replies = data.replies?.data?.children.filter(r=>r.kind==='t1').map(r=>r.data) || [];
+            const replies = data.replies?.data?.children.filter(r => r.kind === 't1').map(r => r.data) || [];
             if (replies.length) {
                 const container = document.createElement('div');
                 container.className = 'comment-replies hidden';
-                replies.forEach(r=>container.appendChild(makeComment(r)));
+                replies.forEach(r => container.appendChild(makeComment(r)));
                 div.appendChild(container);
-                // anywhere on the comment toggles replies
                 div.addEventListener('click', e => {
                     if (e.target.closest('a')) return;
                     container.classList.toggle('hidden');
@@ -240,13 +261,13 @@
         }
 
         function timeAgo(sec) {
-            const s = Math.floor(Date.now()/1000 - sec);
-            if (s>31536000) return Math.floor(s/31536000)+'y';
-            if (s>2592000)  return Math.floor(s/2592000)+'mo';
-            if (s>86400)    return Math.floor(s/86400)+'d';
-            if (s>3600)     return Math.floor(s/3600)+'h';
-            if (s>60)       return Math.floor(s/60)+'m';
-            return s+'s';
+            const s = Math.floor(Date.now() / 1000 - sec);
+            if (s > 31536000) return Math.floor(s / 31536000) + 'y';
+            if (s > 2592000) return Math.floor(s / 2592000) + 'mo';
+            if (s > 86400) return Math.floor(s / 86400) + 'd';
+            if (s > 3600) return Math.floor(s / 3600) + 'h';
+            if (s > 60) return Math.floor(s / 60) + 'm';
+            return s + 's';
         }
     </script>
 </body>
