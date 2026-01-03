@@ -17,17 +17,15 @@
       --bg:#F7DD80;
       --text:#000;
 
-      /* sizing */
       --fs-title: clamp(56px, 5.6vw, 88px);
       --fs-subtitle: clamp(34px, 3.2vw, 50px);
       --fs-goal: clamp(20px, 2.0vw, 30px);
 
       --egg-w: min(80vw, 640px);
 
-      /* auto-set in JS */
-      --egg-gap: 48px;
+      /* AUTO-SET IN JS (NOW NEGATIVE) */
+      --egg-gap: -40px;
 
-      /* animation */
       --ease: cubic-bezier(.2,.8,.2,1);
       --t-move: 560ms;
       --t-fade: 420ms;
@@ -95,12 +93,12 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:0; /* we control spacing explicitly */
+      gap:0;
       will-change: transform, opacity;
       transition: transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
     }
 
-    /* top text sits egg-gap ABOVE egg */
+    /* negative egg-gap pulls the text DOWN closer to egg */
     #topText{
       font-size:var(--fs-title);
       line-height:1.05;
@@ -115,7 +113,7 @@
     }
     #eggHolder svg{ width:100%; height:auto; display:block; }
 
-    /* anchor sits egg-gap BELOW egg, defining breakText position */
+    /* negative egg-gap pulls the anchor UP closer to egg => breakText closer */
     #introBreakAnchor{
       margin-top: var(--egg-gap);
     }
@@ -246,7 +244,6 @@
   <script type="module">
     import { EGG_ART } from "./egg-art.js";
 
-    // egg SVG
     document.getElementById("eggHolder").innerHTML = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="egg">
         <g>
@@ -307,13 +304,11 @@
         </div>`;
     }
 
-    // ---- transition anchor logic ----
     const app = document.getElementById("app");
     const breakText = document.getElementById("breakText");
     const introAnchor = document.getElementById("introBreakAnchor");
     const goalsAnchor = document.getElementById("goalsBreakAnchor");
     const goalsScene  = document.getElementById("goalsScene");
-    const topTextEl   = document.getElementById("topText");
 
     let goalsMode = false;
 
@@ -330,16 +325,11 @@
       const svg = document.querySelector("#eggHolder svg");
       if (!svg) return 0;
 
-      // actual drawn bounds (no whitespace)
       const g = svg.querySelector("g") || svg;
 
       let bbox;
-      try{
-        bbox = g.getBBox(); // SVG units
-      }catch{
-        // fallback
-        return svg.getBoundingClientRect().height;
-      }
+      try{ bbox = g.getBBox(); }
+      catch{ return svg.getBoundingClientRect().height; }
 
       const vb = svg.viewBox?.baseVal;
       if (!vb || !vb.height) return svg.getBoundingClientRect().height;
@@ -347,34 +337,19 @@
       const rendered = svg.getBoundingClientRect();
       const scaleY = rendered.height / vb.height;
 
-      // bbox doesn't include stroke, so pad by max stroke width (roughly)
       const stroke = maxStrokeWidth(svg);
-      const K = (bbox.height + stroke) * scaleY;
-
-      return K;
+      return (bbox.height + stroke) * scaleY;
     }
 
     function syncEggGap(){
-      // ideal gap is K/3 (your rule)
       const K = eggDrawingHeightPx();
       if (!(K > 0)) return;
 
-      const ideal = K / 3;
+      // MORE NEGATIVE: pull texts toward egg
+      let gap = -(K / 5);
 
-      // BUT if it would push off-screen, cap to what fits.
-      // This replaces "negative margin hacks" with a stable auto-fit.
-      const breakH = breakText.getBoundingClientRect().height || 0;
-      const topH   = topTextEl.getBoundingClientRect().height || 0;
-      const vh     = window.innerHeight || 0;
-
-      // available space for the two gaps combined
-      const availableForGaps = Math.max(0, vh - (topH + K + breakH));
-
-      // gap must be <= half of that to keep everything inside viewport
-      const maxGapThatFits = availableForGaps / 2;
-
-      // keep a small floor so it never collapses to 0
-      const gap = Math.max(8, Math.min(ideal, maxGapThatFits));
+      // clamp so it stays sane across screens (still negative)
+      gap = Math.max(-140, Math.min(-12, gap));
 
       document.documentElement.style.setProperty("--egg-gap", `${gap}px`);
     }
@@ -403,12 +378,11 @@
     }
 
     function layoutNow(animateBreakText = false){
-      syncEggGap();        // <-- now K is true egg bounds and gap is auto-fit
+      syncEggGap();
       syncAnchorHeights();
       placeBreakText(animateBreakText);
     }
 
-    // initial (after font load for accurate heights)
     const fontsReady = document.fonts?.ready?.catch(() => null);
     if (fontsReady) await fontsReady;
 
