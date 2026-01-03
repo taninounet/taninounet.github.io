@@ -17,23 +17,20 @@
       --bg:#F7DD80;
       --text:#000;
 
-      /* bigger */
-      --fs-title: clamp(58px, 5.9vw, 92px);
-      --fs-subtitle: clamp(34px, 3.3vw, 52px);
-      --fs-goal: clamp(20px, 2.05vw, 32px);
-      --egg-w: min(82vw, 680px);
+      /* sizing */
+      --fs-title: clamp(56px, 5.6vw, 88px);
+      --fs-subtitle: clamp(34px, 3.2vw, 50px);
+      --fs-goal: clamp(20px, 2.0vw, 30px);
 
-      /* THIS is your screenshot-style positioning knob */
-      --egg-gap: 12px;   /* try 10–16px */
+      --egg-w: min(80vw, 640px);
 
-      /* animation */
+      /* THIS is the "couple pixels" gap above and below the egg */
+      --egg-gap: 10px; /* tweak to taste: 8px / 10px / 12px */
+
+      /* motion */
       --ease: cubic-bezier(.2,.8,.2,1);
-      --t-move: 620ms;
-      --t-fade: 520ms;
-
-      /* computed in JS */
-      --shiftY: 0px;   /* how far breakText travels */
-      --btH: 0px;      /* breakText height (for anchors) */
+      --t: 620ms;
+      --blur-out: 3px;
     }
 
     html,body{
@@ -45,11 +42,14 @@
       color:var(--text);
     }
 
+    /* stable centering */
     #app{
+      position:relative;
       width:100vw;
       height:100vh;
-      display:grid;
-      place-items:center;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       overflow:hidden;
     }
 
@@ -60,91 +60,91 @@
       max-width:1400px;
     }
 
-    /* --- one moving container for BOTH pages --- */
-    #pages{
+    /* shared overlay layer: the SAME "break some eggs" element on both pages */
+    #sharedLayer{
       position:absolute;
       inset:0;
-      height:200vh;
-      width:100%;
-      transform: translateY(0);
-      transition: transform var(--t-move) var(--ease);
-      will-change: transform;
-    }
-    body.mode-goals #pages{ transform: translateY(-100vh); }
-
-    .scene{
-      height:100vh;
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      pointer-events:none;
+      z-index:50;
     }
 
-    /* inner content also fades + slight vertical drift */
-    .sceneInner{
+    #breakText{
+      position:absolute;
+      left:50%;
+      top:0;
+      transform: translate(-50%, 0);
+      font-size:var(--fs-title);
+      line-height:1.05;
+      text-align:center;
+      padding:0 16px;
+      white-space:nowrap;
+      will-change: transform, opacity;
+      transition: transform var(--t) var(--ease), opacity var(--t) ease;
+    }
+
+    /* anchor placeholder reserves space so nothing re-centers */
+    .breakAnchor{
       width:100%;
-      height:100%;
+      height: var(--break-h, 0px);
+    }
+
+    /* ---------- INTRO ---------- */
+    #introScene{
+      position:absolute;
+      inset:0;
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      transition: opacity var(--t-fade) ease, transform var(--t-fade) ease;
-      will-change: opacity, transform;
+      will-change: transform, opacity, filter;
+      transition: transform var(--t) var(--ease), opacity var(--t) ease, filter var(--t) ease;
     }
 
-    /* intro fades + drifts up as it leaves */
-    #introInner{ opacity:1; transform: translateY(0); }
-    body.mode-goals #introInner{ opacity:0; transform: translateY(-36px); }
-
-    /* goals fades + drifts up into place */
-    #goalsInner{ opacity:0; transform: translateY(36px); justify-content:flex-start; }
-    body.mode-goals #goalsInner{ opacity:1; transform: translateY(0); }
-
-    /* --------- INTRO layout (screenshot-style) --------- */
+    /* Use explicit gap above egg like your screenshot */
     #topText{
       font-size:var(--fs-title);
       line-height:1.05;
       text-align:center;
       padding:0 16px;
-      margin-bottom: var(--egg-gap);
-      white-space:nowrap;
+      margin: 0 0 var(--egg-gap) 0;
     }
 
     #eggHolder{ width:var(--egg-w); }
     #eggHolder svg{ width:100%; height:auto; display:block; }
 
-    /* invisible anchor where breakText should sit (below egg) */
+    /* anchor sits exactly under egg, separated by same gap */
     #introBreakAnchor{
       margin-top: var(--egg-gap);
-      height: var(--btH);
-      width: 100%;
     }
 
-    /* --------- GOALS header anchor --------- */
+    /* ---------- GOALS ---------- */
+    #goalsScene{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      opacity:0;
+      pointer-events:none;
+      transform: translateY(80px);
+      will-change: transform, opacity, filter;
+      transition: transform var(--t) var(--ease), opacity var(--t) ease, filter var(--t) ease;
+    }
+
     #goalsHeader{
-      width:100%;
+      padding-top:18px;
       display:flex;
       justify-content:center;
-      padding-top:18px;
-      padding-bottom:10px;
-      box-sizing:border-box;
-    }
-
-    /* invisible anchor where breakText becomes title */
-    #goalsBreakAnchor{
-      height: var(--btH);
-      width: 100%;
+      align-items:flex-start;
     }
 
     #goalsBody{
       flex:1;
-      width:100%;
       min-height:0;
       display:flex;
       justify-content:center;
-      align-items:center;
+      align-items:center; /* keep goals centered regardless of zoom */
       overflow-y:auto;
-      padding:10px 14px 18px;
+      padding:10px 14px 14px;
       box-sizing:border-box;
       scrollbar-gutter: stable both-edges;
     }
@@ -165,11 +165,11 @@
       align-items:center;
       gap:6px;
     }
+
     .subtitle{
       font-size:var(--fs-subtitle);
       line-height:1.05;
       text-align:center;
-      white-space:nowrap;
     }
 
     .goalsRow{
@@ -187,6 +187,7 @@
     .goal{ flex:0 0 auto; min-width:110px; text-align:center; }
     .goalLabel{ font-size:var(--fs-goal); line-height:1.05; white-space:nowrap; }
 
+    /* tiny progress bars */
     .bar{
       margin:6px auto 0;
       width:30px;
@@ -198,30 +199,23 @@
     }
     .fill{ height:100%; width:calc(var(--pct, 0) * 1%); background:#000; }
 
-    /* --------- THE ONE shared break text (single element) --------- */
-    #breakText{
-      position:absolute;
-      left:50%;
-      top:0; /* set by JS to intro anchor's offsetTop */
-      transform: translate(-50%, 0);
-      font-size:var(--fs-title);
-      line-height:1.05;
-      text-align:center;
-      padding:0 16px;
-      white-space:nowrap;
+    /* ---------- MODE (everything moves + fades together) ---------- */
+    body.mode-goals #introScene{
+      opacity:0;
+      transform: translateY(-90px);
+      filter: blur(var(--blur-out));
       pointer-events:none;
-      z-index:60;
-      transition: transform var(--t-move) var(--ease);
-      will-change: transform;
     }
 
-    /* when going to goals, it travels by computed shift */
-    body.mode-goals #breakText{
-      transform: translate(-50%, var(--shiftY));
+    body.mode-goals #goalsScene{
+      opacity:1;
+      transform: translateY(0);
+      filter: blur(0);
+      pointer-events:auto;
     }
 
     @media (prefers-reduced-motion: reduce){
-      #pages, .sceneInner, #breakText{ transition:none !important; }
+      #introScene, #goalsScene, #breakText{ transition:none !important; }
     }
   </style>
 </head>
@@ -229,30 +223,29 @@
 <body>
   <div id="app">
     <div class="stage">
-      <div id="pages">
-        <!-- PAGE 1 -->
-        <div class="scene" id="introScene">
-          <div class="sceneInner" id="introInner">
-            <div id="topText">you wanna make an omelette</div>
-            <div id="eggHolder" aria-hidden="true"></div>
-            <div id="introBreakAnchor" aria-hidden="true"></div>
-          </div>
-        </div>
-
-        <!-- PAGE 2 -->
-        <div class="scene" id="goalsScene" aria-hidden="true">
-          <div class="sceneInner" id="goalsInner">
-            <div id="goalsHeader">
-              <div id="goalsBreakAnchor" aria-hidden="true"></div>
-            </div>
-            <div id="goalsBody">
-              <div id="goalsPanel"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SINGLE shared text that becomes the goals title -->
+      <div id="sharedLayer">
+        <!-- SINGLE shared element that moves from under egg to goals title -->
         <div id="breakText">you gotta break some eggs</div>
+      </div>
+
+      <!-- INTRO -->
+      <div id="introScene">
+        <div id="topText">you wanna make an omelette</div>
+        <div id="eggHolder" aria-hidden="true"></div>
+
+        <!-- this anchor defines the "below egg" position of breakText -->
+        <div id="introBreakAnchor" class="breakAnchor" aria-hidden="true"></div>
+      </div>
+
+      <!-- GOALS -->
+      <div id="goalsScene" aria-hidden="true">
+        <div id="goalsHeader">
+          <!-- this anchor defines the "title top" position of the SAME breakText -->
+          <div id="goalsBreakAnchor" class="breakAnchor" aria-hidden="true"></div>
+        </div>
+        <div id="goalsBody">
+          <div id="goalsPanel"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -325,50 +318,74 @@
     }
     renderGoals();
 
-    // --- single breakText travels between anchors (intro -> goals title) ---
-    const root = document.documentElement;
-    const pages = document.getElementById("pages");
+    // --- shared breakText moves between two anchors (under egg -> goals title) ---
+    const app = document.getElementById("app");
     const breakText = document.getElementById("breakText");
     const introAnchor = document.getElementById("introBreakAnchor");
     const goalsAnchor = document.getElementById("goalsBreakAnchor");
-    const goalsScene = document.getElementById("goalsScene");
+    const goalsScene  = document.getElementById("goalsScene");
 
-    function syncBreakText(){
-      // ensure anchors reserve exactly the breakText height
-      const btH = Math.ceil(breakText.getBoundingClientRect().height);
-      root.style.setProperty("--btH", btH + "px");
+    let goalsMode = false;
 
-      // offsetTop is stable even while #pages is transformed
-      const introTop = introAnchor.offsetTop;
-      const goalsTop = goalsAnchor.offsetTop;
-
-      breakText.style.top = introTop + "px";
-      root.style.setProperty("--shiftY", (goalsTop - introTop) + "px");
+    function syncAnchorHeights(){
+      const h = Math.ceil(breakText.getBoundingClientRect().height);
+      document.documentElement.style.setProperty("--break-h", h + "px");
     }
 
-    // run after layout settles
-    requestAnimationFrame(() => requestAnimationFrame(syncBreakText));
-    window.addEventListener("resize", () => {
-      requestAnimationFrame(() => requestAnimationFrame(syncBreakText));
-    });
+    function placeBreakText(animate){
+      const anchor = goalsMode ? goalsAnchor : introAnchor;
 
-    // --- page toggle ---
-    let goalsMode = false;
+      const appRect = app.getBoundingClientRect();
+      const aRect = anchor.getBoundingClientRect();
+      const btRect = breakText.getBoundingClientRect();
+
+      // Center breakText within anchor box
+      const y = (aRect.top - appRect.top) + (aRect.height - btRect.height) / 2;
+
+      if (!animate){
+        const prev = breakText.style.transition;
+        breakText.style.transition = "none";
+        breakText.style.transform = `translate(-50%, ${y}px)`;
+        requestAnimationFrame(() => { breakText.style.transition = prev; });
+      } else {
+        breakText.style.transform = `translate(-50%, ${y}px)`;
+      }
+    }
+
+    function layoutNow(){
+      syncAnchorHeights();
+      placeBreakText(false);
+    }
+
+    // initial
+    requestAnimationFrame(() => requestAnimationFrame(layoutNow));
+
+    // keep centered under zoom/resize
+    window.addEventListener("resize", () => {
+      requestAnimationFrame(() => requestAnimationFrame(layoutNow));
+    });
 
     function enterGoals(){
       if (goalsMode) return;
       goalsMode = true;
       document.body.classList.add("mode-goals");
       goalsScene.setAttribute("aria-hidden","false");
-      syncBreakText(); // keep it perfect under zoom changes
+
+      syncAnchorHeights();
+      placeBreakText(true);
     }
 
     function leaveGoals(){
       if (!goalsMode) return;
       goalsMode = false;
       document.body.classList.remove("mode-goals");
-      syncBreakText();
-      window.setTimeout(() => goalsScene.setAttribute("aria-hidden","true"), 650);
+
+      syncAnchorHeights();
+      placeBreakText(true);
+
+      window.setTimeout(() => {
+        goalsScene.setAttribute("aria-hidden","true");
+      }, 650);
     }
 
     window.addEventListener("keydown", (e) => {
