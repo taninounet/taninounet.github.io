@@ -23,7 +23,6 @@
 
       --egg-w: min(80vw, 640px);
 
-      /* AUTO-SET IN JS (NEGATIVE) */
       --egg-gap: -40px;
 
       --ease: cubic-bezier(.2,.8,.2,1);
@@ -55,10 +54,8 @@
       width:100%;
       height:100%;
       max-width:1400px;
-      max-height:100%;
     }
 
-    /* ---------- SHARED LAYER ---------- */
     #sharedLayer{
       position:absolute;
       inset:0;
@@ -85,7 +82,6 @@
       height: var(--break-h, 0px);
     }
 
-    /* ---------- INTRO ---------- */
     #introScene{
       position:absolute;
       inset:0;
@@ -93,9 +89,6 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:0;
-      will-change: transform, opacity;
-      transition: transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
     }
 
     #topText{
@@ -103,20 +96,17 @@
       line-height:1.05;
       text-align:center;
       padding:0 16px;
-      margin: 0 0 var(--egg-gap) 0;
+      margin:0 0 var(--egg-gap) 0;
     }
 
     #eggHolder{
       width:var(--egg-w);
-      margin:0;
     }
-    #eggHolder svg{ width:100%; height:auto; display:block; }
 
     #introBreakAnchor{
       margin-top: var(--egg-gap);
     }
 
-    /* ---------- GOALS ---------- */
     #goalsScene{
       position:absolute;
       inset:0;
@@ -125,228 +115,113 @@
       opacity:0;
       pointer-events:none;
       transform: translateY(80px);
-      will-change: transform, opacity;
       transition: transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
     }
 
-    #goalsHeader{
-      padding-top:18px;
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
-    }
-
-    #goalsBody{
-      flex:1;
-      min-height:0;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      overflow-y:auto;
-      padding:10px 14px 14px;
-      box-sizing:border-box;
-      scrollbar-gutter: stable both-edges;
-    }
-
-    #goalsPanel{
-      width:min(96vw, 1200px);
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      align-items:center;
-      padding:2px 0 10px;
-    }
-
-    .section{
-      width:100%;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:6px;
-    }
-
-    .subtitle{
-      font-size:var(--fs-subtitle);
-      line-height:1.05;
-      text-align:center;
-    }
-
-    .goalsRow{
-      width:100%;
-      display:flex;
-      justify-content:center;
-      gap:10px;
-      flex-wrap:nowrap;
-      overflow-x:auto;
-      padding:3px 6px 2px;
-      -webkit-overflow-scrolling:touch;
-      scrollbar-width:thin;
-    }
-
-    .goal{ flex:0 0 auto; min-width:110px; text-align:center; }
-    .goalLabel{ font-size:var(--fs-goal); line-height:1.05; white-space:nowrap; }
-
-    .bar{
-      margin:6px auto 0;
-      width:30px;
-      height:3px;
-      background:#fff;
-      border:2px solid #000;
-      border-radius:999px;
-      overflow:hidden;
-    }
-    .fill{ height:100%; width:calc(var(--pct, 0) * 1%); background:#000; }
-
-    /* ---------- MODE ---------- */
     body.mode-goals #introScene{
       opacity:0;
       transform: translateY(-90px);
       pointer-events:none;
     }
+
     body.mode-goals #goalsScene{
       opacity:1;
       transform: translateY(0);
       pointer-events:auto;
     }
-
-    @media (prefers-reduced-motion: reduce){
-      #introScene, #goalsScene, #breakText{ transition:none !important; }
-    }
   </style>
 </head>
 
 <body>
-  <div id="app">
-    <div class="stage">
-      <div id="sharedLayer">
-        <div id="breakText">you gotta break some eggs</div>
-      </div>
+<div id="app">
+  <div class="stage">
 
-      <div id="introScene">
-        <div id="topText">you wanna make an omelette</div>
-        <div id="eggHolder"></div>
-        <div id="introBreakAnchor" class="breakAnchor"></div>
-      </div>
-
-      <div id="goalsScene" aria-hidden="true">
-        <div id="goalsHeader">
-          <div id="goalsBreakAnchor" class="breakAnchor"></div>
-        </div>
-        <div id="goalsBody">
-          <div id="goalsPanel"></div>
-        </div>
-      </div>
+    <div id="sharedLayer">
+      <div id="breakText">you gotta break some eggs</div>
     </div>
+
+    <div id="introScene">
+      <div id="topText">you wanna make an omelette</div>
+      <div id="eggHolder"></div>
+      <div id="introBreakAnchor" class="breakAnchor"></div>
+    </div>
+
+    <div id="goalsScene">
+      <div class="breakAnchor" id="goalsBreakAnchor"></div>
+    </div>
+
   </div>
+</div>
 
-  <script type="module">
-    import { EGG_ART } from "./egg-art.js";
+<script type="module">
+  import { EGG_ART } from "./egg-art.js";
 
-    document.getElementById("eggHolder").innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
-        <g>
-          <path d="${EGG_ART.whitePath}" fill="#F7FCF6" stroke="#000" stroke-width="12"/>
-          <circle cx="${EGG_ART.yolk.cx}" cy="${EGG_ART.yolk.cy}" r="${EGG_ART.yolk.r}"
-                  fill="#F5C966" stroke="#000" stroke-width="12"/>
-          <ellipse cx="${EGG_ART.eyeL.cx}" cy="${EGG_ART.eyeL.cy}" rx="${EGG_ART.eyeL.rx}" ry="${EGG_ART.eyeL.ry}" fill="#000"/>
-          <ellipse cx="${EGG_ART.eyeR.cx}" cy="${EGG_ART.eyeR.cy}" rx="${EGG_ART.eyeR.rx}" ry="${EGG_ART.eyeR.ry}" fill="#000"/>
-          <path d="${EGG_ART.mouthPath}" fill="none" stroke="#000" stroke-width="7"/>
-        </g>
-      </svg>
-    `;
+  document.getElementById("eggHolder").innerHTML = `
+    <svg viewBox="0 0 1080 1080">
+      <g>
+        <path d="${EGG_ART.whitePath}" fill="#F7FCF6" stroke="#000" stroke-width="12"/>
+        <circle cx="${EGG_ART.yolk.cx}" cy="${EGG_ART.yolk.cy}" r="${EGG_ART.yolk.r}"
+                fill="#F5C966" stroke="#000" stroke-width="12"/>
+      </g>
+    </svg>
+  `;
 
-    const app = document.getElementById("app");
-    const breakText = document.getElementById("breakText");
-    const introAnchor = document.getElementById("introBreakAnchor");
-    const goalsAnchor = document.getElementById("goalsBreakAnchor");
-    const goalsScene  = document.getElementById("goalsScene");
+  const app = document.getElementById("app");
+  const breakText = document.getElementById("breakText");
+  const introAnchor = document.getElementById("introBreakAnchor");
+  const goalsAnchor = document.getElementById("goalsBreakAnchor");
 
-    let goalsMode = false;
-    let introBreakY = null;
+  let goalsMode = false;
+  let introAnchorY = null;
 
-    function eggDrawingHeightPx(){
-      const svg = document.querySelector("#eggHolder svg");
-      if (!svg) return 0;
-      return svg.getBoundingClientRect().height;
+  function placeBreakText(animate){
+    const anchor = goalsMode ? goalsAnchor : introAnchor;
+    const appTop = app.getBoundingClientRect().top;
+    const aRect = anchor.getBoundingClientRect();
+    const btRect = breakText.getBoundingClientRect();
+
+    let y;
+    if (!goalsMode && introAnchorY !== null) {
+      y = introAnchorY;
+    } else {
+      y = (aRect.top - appTop) + (aRect.height - btRect.height) / 2;
+      if (!goalsMode) introAnchorY = y;
     }
 
-    function syncEggGap(){
-      const K = eggDrawingHeightPx();
-      if (!K) return;
-      let gap = -(K / 5);
-      gap = Math.max(-140, Math.min(-12, gap));
-      document.documentElement.style.setProperty("--egg-gap", `${gap}px`);
+    if (!animate){
+      breakText.style.transition = "none";
+      breakText.style.transform = `translate(-50%, ${y}px)`;
+      requestAnimationFrame(() => breakText.style.transition = "");
+    } else {
+      breakText.style.transform = `translate(-50%, ${y}px)`;
     }
+  }
 
-    function syncAnchorHeights(){
-      const h = Math.ceil(breakText.getBoundingClientRect().height);
-      document.documentElement.style.setProperty("--break-h", h + "px");
-    }
+  function layout(animate=false){
+    placeBreakText(animate);
+  }
 
-    function placeBreakText(animate){
-      const anchor = goalsMode ? goalsAnchor : introAnchor;
-      const appRect = app.getBoundingClientRect();
-      const aRect = anchor.getBoundingClientRect();
-      const btRect = breakText.getBoundingClientRect();
+  requestAnimationFrame(() => layout(false));
+  window.addEventListener("resize", () => layout(false));
 
-      let y = (aRect.top - appRect.top) + (aRect.height - btRect.height) / 2;
+  function enterGoals(){
+    if (goalsMode) return;
+    goalsMode = true;
+    document.body.classList.add("mode-goals");
+    requestAnimationFrame(() => layout(true));
+  }
 
-      if (!goalsMode) {
-        if (introBreakY === null) introBreakY = y;
-        y = introBreakY;
-      }
+  function leaveGoals(){
+    if (!goalsMode) return;
+    goalsMode = false;
+    document.body.classList.remove("mode-goals");
+    requestAnimationFrame(() => layout(true));
+  }
 
-      if (!animate){
-        const prev = breakText.style.transition;
-        breakText.style.transition = "none";
-        breakText.style.transform = `translate(-50%, ${y}px)`;
-        requestAnimationFrame(() => breakText.style.transition = prev);
-      } else {
-        breakText.style.transform = `translate(-50%, ${y}px)`;
-      }
-    }
-
-    function layoutNow(animate=false){
-      syncEggGap();
-      syncAnchorHeights();
-      placeBreakText(animate);
-    }
-
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => layoutNow(false))
-    );
-
-    window.addEventListener("resize", () => {
-      introBreakY = null;
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => layoutNow(false))
-      );
-    });
-
-    function enterGoals(){
-      if (goalsMode) return;
-      goalsMode = true;
-      document.body.classList.add("mode-goals");
-      goalsScene.setAttribute("aria-hidden","false");
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => layoutNow(true))
-      );
-    }
-
-    function leaveGoals(){
-      if (!goalsMode) return;
-      goalsMode = false;
-      document.body.classList.remove("mode-goals");
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => layoutNow(true))
-      );
-      setTimeout(() => goalsScene.setAttribute("aria-hidden","true"), 600);
-    }
-
-    window.addEventListener("keydown", e => {
-      if (e.key === "ArrowDown"){ e.preventDefault(); enterGoals(); }
-      if (e.key === "ArrowUp"){   e.preventDefault(); leaveGoals(); }
-    }, { passive:false });
-  </script>
+  window.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown") enterGoals();
+    if (e.key === "ArrowUp") leaveGoals();
+  });
+</script>
 </body>
 </html>
