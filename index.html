@@ -22,7 +22,6 @@
       --fs-goal: clamp(20px, 2.0vw, 30px);
 
       --egg-w: min(80vw, 640px);
-
       --egg-gap: -40px;
 
       --ease: cubic-bezier(.2,.8,.2,1);
@@ -43,7 +42,6 @@
       position:relative;
       width:100vw;
       height:100vh;
-      overflow:hidden;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -67,20 +65,15 @@
       position:absolute;
       left:50%;
       top:0;
-      transform: translate(-50%, 0);
+      transform:translate(-50%,0);
       font-size:var(--fs-title);
       line-height:1.05;
-      text-align:center;
-      padding:0 16px;
-      will-change: transform, opacity;
-      transition: transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
       white-space:nowrap;
+      transition:transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
+      will-change:transform;
     }
 
-    .breakAnchor{
-      width:100%;
-      height: var(--break-h, 0px);
-    }
+    .breakAnchor{ height:var(--break-h,0px); }
 
     #introScene{
       position:absolute;
@@ -89,44 +82,38 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
+      transition:transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
     }
 
     #topText{
       font-size:var(--fs-title);
-      line-height:1.05;
-      text-align:center;
-      padding:0 16px;
       margin:0 0 var(--egg-gap) 0;
+      text-align:center;
     }
 
-    #eggHolder{
-      width:var(--egg-w);
-    }
+    #eggHolder{ width:var(--egg-w); }
+    #eggHolder svg{ width:100%; display:block; }
 
-    #introBreakAnchor{
-      margin-top: var(--egg-gap);
-    }
+    #introBreakAnchor{ margin-top:var(--egg-gap); }
 
     #goalsScene{
       position:absolute;
       inset:0;
-      display:flex;
-      flex-direction:column;
       opacity:0;
       pointer-events:none;
-      transform: translateY(80px);
-      transition: transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
+      transform:translateY(80px);
+      transition:transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
     }
 
     body.mode-goals #introScene{
       opacity:0;
-      transform: translateY(-90px);
+      transform:translateY(-90px);
       pointer-events:none;
     }
 
     body.mode-goals #goalsScene{
       opacity:1;
-      transform: translateY(0);
+      transform:none;
       pointer-events:auto;
     }
   </style>
@@ -135,7 +122,6 @@
 <body>
 <div id="app">
   <div class="stage">
-
     <div id="sharedLayer">
       <div id="breakText">you gotta break some eggs</div>
     </div>
@@ -147,9 +133,8 @@
     </div>
 
     <div id="goalsScene">
-      <div class="breakAnchor" id="goalsBreakAnchor"></div>
+      <div id="goalsBreakAnchor" class="breakAnchor"></div>
     </div>
-
   </div>
 </div>
 
@@ -172,50 +157,65 @@
   const goalsAnchor = document.getElementById("goalsBreakAnchor");
 
   let goalsMode = false;
-  let introAnchorY = null;
+  let cachedIntroY = null; // 🔒 FIX
+
+  function syncAnchorHeight(){
+    document.documentElement.style.setProperty(
+      "--break-h",
+      breakText.getBoundingClientRect().height + "px"
+    );
+  }
+
+  function computeY(anchor){
+    const appRect = app.getBoundingClientRect();
+    const a = anchor.getBoundingClientRect();
+    const b = breakText.getBoundingClientRect();
+    return (a.top - appRect.top) + (a.height - b.height)/2;
+  }
 
   function placeBreakText(animate){
-    const anchor = goalsMode ? goalsAnchor : introAnchor;
-    const appTop = app.getBoundingClientRect().top;
-    const aRect = anchor.getBoundingClientRect();
-    const btRect = breakText.getBoundingClientRect();
-
     let y;
-    if (!goalsMode && introAnchorY !== null) {
-      y = introAnchorY;
+
+    if (!goalsMode) {
+      if (cachedIntroY === null) {
+        cachedIntroY = computeY(introAnchor);
+      }
+      y = cachedIntroY;          // ✅ restore exact original
     } else {
-      y = (aRect.top - appTop) + (aRect.height - btRect.height) / 2;
-      if (!goalsMode) introAnchorY = y;
+      y = computeY(goalsAnchor);
     }
 
-    if (!animate){
+    if (!animate) {
       breakText.style.transition = "none";
       breakText.style.transform = `translate(-50%, ${y}px)`;
-      requestAnimationFrame(() => breakText.style.transition = "");
+      requestAnimationFrame(() =>
+        breakText.style.transition = ""
+      );
     } else {
       breakText.style.transform = `translate(-50%, ${y}px)`;
     }
   }
 
-  function layout(animate=false){
+  function layoutNow(animate=false){
+    syncAnchorHeight();
     placeBreakText(animate);
   }
 
-  requestAnimationFrame(() => layout(false));
-  window.addEventListener("resize", () => layout(false));
+  requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(false)));
+  window.addEventListener("resize", () => layoutNow(false));
 
   function enterGoals(){
     if (goalsMode) return;
     goalsMode = true;
     document.body.classList.add("mode-goals");
-    requestAnimationFrame(() => layout(true));
+    layoutNow(true);
   }
 
   function leaveGoals(){
     if (!goalsMode) return;
     goalsMode = false;
     document.body.classList.remove("mode-goals");
-    requestAnimationFrame(() => layout(true));
+    layoutNow(true);
   }
 
   window.addEventListener("keydown", e => {
