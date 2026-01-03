@@ -23,7 +23,7 @@
 
       --egg-w: min(80vw, 640px);
 
-      /* AUTO-SET IN JS (NOW NEGATIVE) */
+      /* AUTO-SET IN JS (NEGATIVE) */
       --egg-gap: -40px;
 
       --ease: cubic-bezier(.2,.8,.2,1);
@@ -98,7 +98,6 @@
       transition: transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
     }
 
-    /* negative egg-gap pulls the text DOWN closer to egg */
     #topText{
       font-size:var(--fs-title);
       line-height:1.05;
@@ -113,7 +112,6 @@
     }
     #eggHolder svg{ width:100%; height:auto; display:block; }
 
-    /* negative egg-gap pulls the anchor UP closer to egg => breakText closer */
     #introBreakAnchor{
       margin-top: var(--egg-gap);
     }
@@ -226,13 +224,13 @@
 
       <div id="introScene">
         <div id="topText">you wanna make an omelette</div>
-        <div id="eggHolder" aria-hidden="true"></div>
-        <div id="introBreakAnchor" class="breakAnchor" aria-hidden="true"></div>
+        <div id="eggHolder"></div>
+        <div id="introBreakAnchor" class="breakAnchor"></div>
       </div>
 
       <div id="goalsScene" aria-hidden="true">
         <div id="goalsHeader">
-          <div id="goalsBreakAnchor" class="breakAnchor" aria-hidden="true"></div>
+          <div id="goalsBreakAnchor" class="breakAnchor"></div>
         </div>
         <div id="goalsBody">
           <div id="goalsPanel"></div>
@@ -245,64 +243,17 @@
     import { EGG_ART } from "./egg-art.js";
 
     document.getElementById("eggHolder").innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="egg">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
         <g>
-          <path d="${EGG_ART.whitePath}" fill="#F7FCF6" stroke="#000" stroke-width="12"
-                stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="${EGG_ART.whitePath}" fill="#F7FCF6" stroke="#000" stroke-width="12"/>
           <circle cx="${EGG_ART.yolk.cx}" cy="${EGG_ART.yolk.cy}" r="${EGG_ART.yolk.r}"
                   fill="#F5C966" stroke="#000" stroke-width="12"/>
           <ellipse cx="${EGG_ART.eyeL.cx}" cy="${EGG_ART.eyeL.cy}" rx="${EGG_ART.eyeL.rx}" ry="${EGG_ART.eyeL.ry}" fill="#000"/>
           <ellipse cx="${EGG_ART.eyeR.cx}" cy="${EGG_ART.eyeR.cy}" rx="${EGG_ART.eyeR.rx}" ry="${EGG_ART.eyeR.ry}" fill="#000"/>
-          <path d="${EGG_ART.mouthPath}" fill="none" stroke="#000" stroke-width="7"
-                stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="${EGG_ART.mouthPath}" fill="none" stroke="#000" stroke-width="7"/>
         </g>
       </svg>
     `;
-
-    function clampPct(v){
-      const n = Number(v);
-      if (!Number.isFinite(n)) return 0;
-      return Math.max(0, Math.min(100, n));
-    }
-
-    function renderGoals({ sections, progress }){
-      const panel = document.getElementById("goalsPanel");
-      panel.innerHTML = sections.map(sec => {
-        const goals = sec.goals.map(name => {
-          const pct = clampPct(progress?.[name] ?? 0);
-          return `
-            <div class="goal">
-              <div class="goalLabel">${name}</div>
-              <div class="bar"><div class="fill" style="--pct:${pct}"></div></div>
-            </div>
-          `;
-        }).join("");
-        return `
-          <div class="section">
-            <div class="subtitle">${sec.subtitle}</div>
-            <div class="goalsRow">${goals}</div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    async function loadGoalsData(){
-      const res = await fetch("./goals-data.json", { cache: "no-store" });
-      if (!res.ok) throw new Error("Failed to load goals-data.json");
-      return await res.json();
-    }
-
-    try{
-      const data = await loadGoalsData();
-      renderGoals(data);
-    }catch(err){
-      console.error(err);
-      document.getElementById("goalsPanel").innerHTML =
-        `<div style="font-size:20px; padding:16px; text-align:center;">
-          couldn't load <b>goals-data.json</b><br/>
-          make sure it's in the same folder as <b>index.html</b>
-        </div>`;
-    }
 
     const app = document.getElementById("app");
     const breakText = document.getElementById("breakText");
@@ -311,46 +262,19 @@
     const goalsScene  = document.getElementById("goalsScene");
 
     let goalsMode = false;
-
-    function maxStrokeWidth(svg){
-      let max = 0;
-      svg.querySelectorAll("[stroke-width]").forEach(el => {
-        const v = parseFloat(el.getAttribute("stroke-width"));
-        if (Number.isFinite(v)) max = Math.max(max, v);
-      });
-      return max || 0;
-    }
+    let introBreakY = null;
 
     function eggDrawingHeightPx(){
       const svg = document.querySelector("#eggHolder svg");
       if (!svg) return 0;
-
-      const g = svg.querySelector("g") || svg;
-
-      let bbox;
-      try{ bbox = g.getBBox(); }
-      catch{ return svg.getBoundingClientRect().height; }
-
-      const vb = svg.viewBox?.baseVal;
-      if (!vb || !vb.height) return svg.getBoundingClientRect().height;
-
-      const rendered = svg.getBoundingClientRect();
-      const scaleY = rendered.height / vb.height;
-
-      const stroke = maxStrokeWidth(svg);
-      return (bbox.height + stroke) * scaleY;
+      return svg.getBoundingClientRect().height;
     }
 
     function syncEggGap(){
       const K = eggDrawingHeightPx();
-      if (!(K > 0)) return;
-
-      // MORE NEGATIVE: pull texts toward egg
+      if (!K) return;
       let gap = -(K / 5);
-
-      // clamp so it stays sane across screens (still negative)
       gap = Math.max(-140, Math.min(-12, gap));
-
       document.documentElement.style.setProperty("--egg-gap", `${gap}px`);
     }
 
@@ -365,31 +289,38 @@
       const aRect = anchor.getBoundingClientRect();
       const btRect = breakText.getBoundingClientRect();
 
-      const y = (aRect.top - appRect.top) + (aRect.height - btRect.height) / 2;
+      let y = (aRect.top - appRect.top) + (aRect.height - btRect.height) / 2;
+
+      if (!goalsMode) {
+        if (introBreakY === null) introBreakY = y;
+        y = introBreakY;
+      }
 
       if (!animate){
         const prev = breakText.style.transition;
         breakText.style.transition = "none";
         breakText.style.transform = `translate(-50%, ${y}px)`;
-        requestAnimationFrame(() => { breakText.style.transition = prev; });
+        requestAnimationFrame(() => breakText.style.transition = prev);
       } else {
         breakText.style.transform = `translate(-50%, ${y}px)`;
       }
     }
 
-    function layoutNow(animateBreakText = false){
+    function layoutNow(animate=false){
       syncEggGap();
       syncAnchorHeights();
-      placeBreakText(animateBreakText);
+      placeBreakText(animate);
     }
 
-    const fontsReady = document.fonts?.ready?.catch(() => null);
-    if (fontsReady) await fontsReady;
-
-    requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(false)));
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => layoutNow(false))
+    );
 
     window.addEventListener("resize", () => {
-      requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(false)));
+      introBreakY = null;
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => layoutNow(false))
+      );
     });
 
     function enterGoals(){
@@ -397,18 +328,22 @@
       goalsMode = true;
       document.body.classList.add("mode-goals");
       goalsScene.setAttribute("aria-hidden","false");
-      requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(true)));
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => layoutNow(true))
+      );
     }
 
     function leaveGoals(){
       if (!goalsMode) return;
       goalsMode = false;
       document.body.classList.remove("mode-goals");
-      requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(true)));
-      window.setTimeout(() => goalsScene.setAttribute("aria-hidden","true"), 600);
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => layoutNow(true))
+      );
+      setTimeout(() => goalsScene.setAttribute("aria-hidden","true"), 600);
     }
 
-    window.addEventListener("keydown", (e) => {
+    window.addEventListener("keydown", e => {
       if (e.key === "ArrowDown"){ e.preventDefault(); enterGoals(); }
       if (e.key === "ArrowUp"){   e.preventDefault(); leaveGoals(); }
     }, { passive:false });
