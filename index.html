@@ -1,208 +1,99 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <title>Football Subreddits</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Egg Pun Graphic</title>
+  <style>
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background:#f3f4f6; /* page bg (change if you want) */
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+    .wrap{
+      width:min(680px, 92vw);
+      padding: 24px;
+    }
+    /* Makes the SVG scale nicely */
+    svg{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius: 20px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.12);
+      overflow: hidden;
+    }
+  </style>
 </head>
-<body onload="loadSubreddit('fantasypl')">
-    <div class="navbar-container">
-        <div class="navbar">
-            <a href="#" onclick="loadSubreddit('fantasypl')" class="logo-link">
-                <img src="https://www.premierleague.com/resources/rebrand/v7.151.1/i/elements/pl-main-logo.png" alt="Premier League Logo" class="logo">
-            </a>
-            <div class="nav-links">
-                <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
-                <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
-                <a href="#" onclick="loadSubreddit('mcfc')">ManCity</a>
-                <a href="#" onclick="loadSubreddit('chelseafc')">Chelsea</a>
-                <a href="#" onclick="loadSubreddit('gunners')">Arsenal</a>
-                <a href="#" onclick="loadSubreddit('liverpoolfc')">Liverpool</a>
-                <a href="#" onclick="loadSubreddit('crystalpalace')">Palace</a>
-            </div>
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder=" " onkeypress="if(event.key === 'Enter') searchSubreddit()">
-                <button onclick="searchSubreddit()">
-                    <img src="https://img.icons8.com/ios-glyphs/30/ffffff/search.png" alt="Search Icon">
-                </button>
-            </div>
-        </div>
-    </div>
+<body>
+  <div class="wrap">
 
-    <div id="main-content">
-        <div id="content">
-            <!-- Posts will load here -->
-        </div>
-        <div id="comments-section" class="hidden">
-            <div id="comments-header">
-                <h2>Comments</h2>
-                <button onclick="closeComments()">X</button>
-            </div>
-            <div id="comments-container" class="comments-container"></div>
-        </div>
-    </div>
+    <!-- Original egg-pun doodle (SVG). Free to use/modify. -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Cute egg doodle with a pun">
+      <defs>
+        <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="0.6" result="b"/>
+          <feBlend in="SourceGraphic" in2="b" mode="normal"/>
+        </filter>
 
-    <button id="load-more" style="display: none;" onclick="loadMorePosts()">Load More</button>
+        <style>
+          .bg { fill: #f6dc7a; }           /* warm yellow */
+          .ink { stroke: #1a1a1a; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+          .ink2 { stroke: #1a1a1a; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+          .white { fill: #fbfbf7; }
+          .yolk { fill: #f2b64e; }
+          .txt { fill: #1a1a1a; font-family: ui-rounded, "Comic Sans MS", "Trebuchet MS", system-ui, sans-serif; font-weight: 700; }
+          .top { font-size: 52px; }
+          .bot { font-size: 54px; }
+          .small { font-size: 22px; opacity: 0.6; font-weight: 650; }
+        </style>
+      </defs>
 
-    <script>
-        let after = null;
-        let currentSubreddit = '';
+      <!-- background -->
+      <rect class="bg" x="0" y="0" width="800" height="800"/>
 
-        function searchSubreddit() {
-            const query = document.getElementById('search-input').value;
-            if (query) {
-                loadSubreddit(query.toLowerCase());
-            }
-        }
+      <!-- little doodle sparkles -->
+      <g filter="url(#soft)" opacity="0.9">
+        <path class="ink" d="M120 210 l18 0 M129 201 l0 18" />
+        <path class="ink" d="M675 585 l18 0 M684 576 l0 18" />
+        <path class="ink" d="M630 210 l14 0 M637 203 l0 14" />
+      </g>
 
-        async function loadSubreddit(subreddit, reset = true) {
-            currentSubreddit = subreddit;
-            if (reset) {
-                after = null;
-                document.getElementById('content').innerHTML = '';
-                document.getElementById('comments-section').classList.add('hidden');
-                document.getElementById('content').style.width = '100%';
-            }
-            const response = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=10&after=${after}`);
-            const data = await response.json();
-            after = data.data.after;
-            const posts = data.data.children;
+      <!-- top text -->
+      <text class="txt top" x="400" y="150" text-anchor="middle">have an egg-stra nice day!</text>
 
-            let contentDiv = document.getElementById('content');
-            
-            posts.forEach(post => {
-                const postData = post.data;
-                const postElement = document.createElement('div');
-                postElement.className = 'post';
+      <!-- egg -->
+      <g transform="translate(0,10) rotate(-3 400 390)" filter="url(#soft)">
+        <path class="white ink"
+          d="M400 250
+             C300 245, 235 320, 250 410
+             C265 500, 350 555, 400 555
+             C450 555, 535 500, 550 410
+             C565 320, 500 245, 400 250 Z"/>
 
-                const title = postData.title;
-                const url = postData.url;
-                const thumbnail = postData.thumbnail && postData.thumbnail.startsWith('http') ? postData.thumbnail : 'https://www.redditinc.com/assets/images/site/reddit-logo.png';
-                const timeSince = timeAgo(postData.created_utc);
-                const comments = postData.num_comments;
-                const isImage = postData.post_hint === 'image';
+        <path class="ink"
+          d="M270 420 C250 440, 262 470, 295 478
+             M530 420 C550 440, 538 470, 505 478" />
 
-                // Determine if the link is external
-                const isExternal = !url.includes('reddit.com');
+        <circle class="yolk ink2" cx="400" cy="385" r="78"/>
 
-                postElement.innerHTML = `
-                    <div class="post-thumbnail">
-                        <img src="${thumbnail}" alt="Thumbnail">
-                    </div>
-                    <div class="post-details">
-                        ${isExternal ? `<a href="${url}" target="_blank" class="post-title">${title}</a>` : `<span class="post-title no-link">${title}</span>`}
-                        <div class="post-meta">
-                            <span>${timeSince}</span> | 
-                            <span class="comments-link" onclick="loadComments('${postData.id}', '${subreddit}')">${comments} comments</span>
-                        </div>
-                        ${isImage ? `<div class="expandable-image"><img src="${url}" alt="Post Image"></div>` : ''}
-                    </div>
-                `;
-                contentDiv.appendChild(postElement);
-            });
+        <circle cx="380" cy="380" r="6" fill="#1a1a1a"/>
+        <circle cx="420" cy="380" r="6" fill="#1a1a1a"/>
+        <path d="M392 405 Q400 412 408 405" stroke="#1a1a1a" stroke-width="7" fill="none" stroke-linecap="round"/>
 
-            if (after) {
-                document.getElementById('load-more').style.display = 'block';
-            } else {
-                document.getElementById('load-more').style.display = 'none';
-            }
-        }
+        <circle cx="360" cy="402" r="10" fill="#e48f8f" opacity="0.35"/>
+        <circle cx="440" cy="402" r="10" fill="#e48f8f" opacity="0.35"/>
 
-        async function loadMorePosts() {
-            loadSubreddit(currentSubreddit, false);
-        }
+        <text class="txt small" x="400" y="595" text-anchor="middle">made for your site ✦</text>
+      </g>
 
-        async function loadComments(postId, subreddit) {
-            const response = await fetch(`https://www.reddit.com/r/${subreddit}/comments/${postId}.json?sort=best`);
-            const data = await response.json();
-            const comments = data[1].data.children;
+      <!-- bottom text -->
+      <text class="txt bot" x="400" y="700" text-anchor="middle">hope your day turns out sunny-side up!</text>
+    </svg>
 
-            let commentsContainer = document.getElementById('comments-container');
-            commentsContainer.innerHTML = '';
-            
-            comments.forEach(comment => {
-                if (comment.kind !== 't1') return; // Ensure it's a comment
-
-                const commentElement = createCommentElement(comment.data);
-                commentsContainer.appendChild(commentElement);
-            });
-
-            document.getElementById('comments-section').classList.remove('hidden');
-            document.getElementById('content').style.width = '70%';
-        }
-
-        function closeComments() {
-            document.getElementById('comments-section').classList.add('hidden');
-            document.getElementById('content').style.width = '100%';
-        }
-
-        function createCommentElement(commentData) {
-            const commentElement = document.createElement('div');
-            commentElement.className = 'comment';
-
-            const author = commentData.author;
-            const body = commentData.body;
-            const timeSince = timeAgo(commentData.created_utc);
-            const replies = commentData.replies ? commentData.replies.data.children : [];
-
-            commentElement.innerHTML = `
-                <div class="comment-header">
-                    <span class="comment-author">${author}</span>
-                    <span class="comment-time">${timeSince}</span>
-                </div>
-                <div class="comment-body">${body}</div>
-                ${replies.length > 0 ? `<div class="comment-replies-toggle">View ${replies.length} replies</div>` : ''}
-            `;
-
-            if (replies.length > 0) {
-                const repliesContainer = document.createElement('div');
-                repliesContainer.className = 'comment-replies hidden';
-
-                replies.forEach(reply => {
-                    if (reply.kind === 't1') {
-                        const replyElement = createCommentElement(reply.data);
-                        repliesContainer.appendChild(replyElement);
-                    }
-                });
-
-                commentElement.appendChild(repliesContainer);
-
-                const toggle = commentElement.querySelector('.comment-replies-toggle');
-                toggle.addEventListener('click', () => {
-                    repliesContainer.classList.toggle('hidden');
-                    toggle.textContent = repliesContainer.classList.contains('hidden') ? `View ${replies.length} replies` : `Hide replies`;
-                });
-            }
-
-            return commentElement;
-        }
-
-        function timeAgo(utcSeconds) {
-            const seconds = Math.floor(Date.now() / 1000) - utcSeconds;
-            let interval = seconds / 31536000;
-
-            if (interval > 1) {
-                return Math.floor(interval) + " years ago";
-            }
-            interval = seconds / 2592000;
-            if (interval > 1) {
-                return Math.floor(interval) + " months ago";
-            }
-            interval = seconds / 86400;
-            if (interval > 1) {
-                return Math.floor(interval) + " days ago";
-            }
-            interval = seconds / 3600;
-            if (interval > 1) {
-                return Math.floor(interval) + " hours ago";
-            }
-            interval = seconds / 60;
-            if (interval > 1) {
-                return Math.floor(interval) + " minutes ago";
-            }
-            return Math.floor(seconds) + " seconds ago";
-        }
-    </script>
+  </div>
 </body>
 </html>
