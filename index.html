@@ -23,7 +23,7 @@
 
       --egg-w: min(80vw, 640px);
 
-      /* AUTO-SET IN JS (NOW NEGATIVE) */
+      /* AUTO-SET IN JS (NEGATIVE) */
       --egg-gap: -40px;
 
       --ease: cubic-bezier(.2,.8,.2,1);
@@ -98,7 +98,7 @@
       transition: transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
     }
 
-    /* negative egg-gap pulls the text DOWN closer to egg */
+    /* negative egg-gap pulls text down toward egg */
     #topText{
       font-size:var(--fs-title);
       line-height:1.05;
@@ -113,7 +113,7 @@
     }
     #eggHolder svg{ width:100%; height:auto; display:block; }
 
-    /* negative egg-gap pulls the anchor UP closer to egg => breakText closer */
+    /* negative egg-gap pulls anchor up toward egg */
     #introBreakAnchor{
       margin-top: var(--egg-gap);
     }
@@ -244,6 +244,7 @@
   <script type="module">
     import { EGG_ART } from "./egg-art.js";
 
+    // egg SVG
     document.getElementById("eggHolder").innerHTML = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="egg">
         <g>
@@ -304,11 +305,13 @@
         </div>`;
     }
 
+    // ---- transition anchor logic ----
     const app = document.getElementById("app");
     const breakText = document.getElementById("breakText");
     const introAnchor = document.getElementById("introBreakAnchor");
     const goalsAnchor = document.getElementById("goalsBreakAnchor");
     const goalsScene  = document.getElementById("goalsScene");
+    const introScene  = document.getElementById("introScene");
 
     let goalsMode = false;
 
@@ -345,10 +348,10 @@
       const K = eggDrawingHeightPx();
       if (!(K > 0)) return;
 
-      // MORE NEGATIVE: pull texts toward egg
+      // negative pulls texts closer
       let gap = -(K / 5);
 
-      // clamp so it stays sane across screens (still negative)
+      // keep sane across screens
       gap = Math.max(-140, Math.min(-12, gap));
 
       document.documentElement.style.setProperty("--egg-gap", `${gap}px`);
@@ -383,6 +386,7 @@
       placeBreakText(animateBreakText);
     }
 
+    // initial (after font load for accurate heights)
     const fontsReady = document.fonts?.ready?.catch(() => null);
     if (fontsReady) await fontsReady;
 
@@ -392,19 +396,39 @@
       requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(false)));
     });
 
+    // --- FIX: snap breakText AFTER transitions finish (prevents "higher on return") ---
+    let relayoutTimer = null;
+    function relayoutAfterMotion(){
+      clearTimeout(relayoutTimer);
+      // a hair longer than --t-move (560ms)
+      relayoutTimer = setTimeout(() => layoutNow(false), 640);
+    }
+
+    introScene.addEventListener("transitionend", (e) => {
+      if (e.propertyName === "transform" && !goalsMode) layoutNow(false);
+    });
+    goalsScene.addEventListener("transitionend", (e) => {
+      if (e.propertyName === "transform" && goalsMode) layoutNow(false);
+    });
+
     function enterGoals(){
       if (goalsMode) return;
       goalsMode = true;
       document.body.classList.add("mode-goals");
       goalsScene.setAttribute("aria-hidden","false");
+
       requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(true)));
+      relayoutAfterMotion();
     }
 
     function leaveGoals(){
       if (!goalsMode) return;
       goalsMode = false;
       document.body.classList.remove("mode-goals");
+
       requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(true)));
+      relayoutAfterMotion();
+
       window.setTimeout(() => goalsScene.setAttribute("aria-hidden","true"), 600);
     }
 
