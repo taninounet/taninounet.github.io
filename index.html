@@ -17,16 +17,15 @@
       --bg:#F7DD80;
       --text:#000;
 
-      /* BIGGER overall sizing (responsive) */
+      /* sizing */
       --fs-title: clamp(56px, 5.6vw, 88px);
       --fs-subtitle: clamp(34px, 3.2vw, 50px);
       --fs-goal: clamp(20px, 2.0vw, 30px);
 
-      /* Bigger egg */
       --egg-w: min(80vw, 640px);
 
-      /* THIS WILL BE AUTO-SET IN JS: egg height K / 3 */
-      --egg-gap: 40px;
+      /* auto-set in JS */
+      --egg-gap: 48px;
 
       /* animation */
       --ease: cubic-bezier(.2,.8,.2,1);
@@ -61,7 +60,7 @@
       max-height:100%;
     }
 
-    /* ---------- SHARED LAYER (the one breakText element lives here always) ---------- */
+    /* ---------- SHARED LAYER ---------- */
     #sharedLayer{
       position:absolute;
       inset:0;
@@ -83,7 +82,6 @@
       white-space:nowrap;
     }
 
-    /* anchors reserve space so layouts NEVER re-center differently */
     .breakAnchor{
       width:100%;
       height: var(--break-h, 0px);
@@ -97,12 +95,12 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:0; /* IMPORTANT: no extra spacing — we control spacing via --egg-gap */
+      gap:0; /* we control spacing explicitly */
       will-change: transform, opacity;
       transition: transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
     }
 
-    /* top text must be K/3 ABOVE egg */
+    /* top text sits egg-gap ABOVE egg */
     #topText{
       font-size:var(--fs-title);
       line-height:1.05;
@@ -117,7 +115,7 @@
     }
     #eggHolder svg{ width:100%; height:auto; display:block; }
 
-    /* bottom text must be K/3 BELOW egg — we achieve that by putting the anchor K/3 below egg */
+    /* anchor sits egg-gap BELOW egg, defining breakText position */
     #introBreakAnchor{
       margin-top: var(--egg-gap);
     }
@@ -189,17 +187,8 @@
       scrollbar-width:thin;
     }
 
-    .goal{
-      flex:0 0 auto;
-      min-width:110px;
-      text-align:center;
-    }
-
-    .goalLabel{
-      font-size:var(--fs-goal);
-      line-height:1.05;
-      white-space:nowrap;
-    }
+    .goal{ flex:0 0 auto; min-width:110px; text-align:center; }
+    .goalLabel{ font-size:var(--fs-goal); line-height:1.05; white-space:nowrap; }
 
     .bar{
       margin:6px auto 0;
@@ -212,7 +201,7 @@
     }
     .fill{ height:100%; width:calc(var(--pct, 0) * 1%); background:#000; }
 
-    /* ---------- MODE ANIMATION (one natural vertical movement) ---------- */
+    /* ---------- MODE ---------- */
     body.mode-goals #introScene{
       opacity:0;
       transform: translateY(-90px);
@@ -233,23 +222,18 @@
 <body>
   <div id="app">
     <div class="stage">
-      <!-- shared overlay text -->
       <div id="sharedLayer">
         <div id="breakText">you gotta break some eggs</div>
       </div>
 
-      <!-- INTRO -->
       <div id="introScene">
         <div id="topText">you wanna make an omelette</div>
         <div id="eggHolder" aria-hidden="true"></div>
-        <!-- anchor reserves space + defines the intro position of shared breakText -->
         <div id="introBreakAnchor" class="breakAnchor" aria-hidden="true"></div>
       </div>
 
-      <!-- GOALS -->
       <div id="goalsScene" aria-hidden="true">
         <div id="goalsHeader">
-          <!-- anchor defines the goals-title position of the SAME shared breakText -->
           <div id="goalsBreakAnchor" class="breakAnchor" aria-hidden="true"></div>
         </div>
         <div id="goalsBody">
@@ -323,31 +307,79 @@
         </div>`;
     }
 
-    // --- Shared breakText: animate between anchors without moving DOM ---
+    // ---- transition anchor logic ----
     const app = document.getElementById("app");
     const breakText = document.getElementById("breakText");
     const introAnchor = document.getElementById("introBreakAnchor");
     const goalsAnchor = document.getElementById("goalsBreakAnchor");
     const goalsScene  = document.getElementById("goalsScene");
-    const eggSvg = () => document.querySelector("#eggHolder svg");
+    const topTextEl   = document.getElementById("topText");
 
     let goalsMode = false;
 
-    function syncEggGap(){
-      // K = egg SVG rendered height (top stroke to bottom stroke visually)
-      const svg = eggSvg();
-      if (!svg) return;
+    function maxStrokeWidth(svg){
+      let max = 0;
+      svg.querySelectorAll("[stroke-width]").forEach(el => {
+        const v = parseFloat(el.getAttribute("stroke-width"));
+        if (Number.isFinite(v)) max = Math.max(max, v);
+      });
+      return max || 0;
+    }
 
-      const K = svg.getBoundingClientRect().height;
+    function eggDrawingHeightPx(){
+      const svg = document.querySelector("#eggHolder svg");
+      if (!svg) return 0;
+
+      // actual drawn bounds (no whitespace)
+      const g = svg.querySelector("g") || svg;
+
+      let bbox;
+      try{
+        bbox = g.getBBox(); // SVG units
+      }catch{
+        // fallback
+        return svg.getBoundingClientRect().height;
+      }
+
+      const vb = svg.viewBox?.baseVal;
+      if (!vb || !vb.height) return svg.getBoundingClientRect().height;
+
+      const rendered = svg.getBoundingClientRect();
+      const scaleY = rendered.height / vb.height;
+
+      // bbox doesn't include stroke, so pad by max stroke width (roughly)
+      const stroke = maxStrokeWidth(svg);
+      const K = (bbox.height + stroke) * scaleY;
+
+      return K;
+    }
+
+    function syncEggGap(){
+      // ideal gap is K/3 (your rule)
+      const K = eggDrawingHeightPx();
       if (!(K > 0)) return;
 
-      const gap = K / 3;
-      // You can remove rounding if you want sub-pixel precision:
-      document.documentElement.style.setProperty("--egg-gap", `${Math.round(gap)}px`);
+      const ideal = K / 3;
+
+      // BUT if it would push off-screen, cap to what fits.
+      // This replaces "negative margin hacks" with a stable auto-fit.
+      const breakH = breakText.getBoundingClientRect().height || 0;
+      const topH   = topTextEl.getBoundingClientRect().height || 0;
+      const vh     = window.innerHeight || 0;
+
+      // available space for the two gaps combined
+      const availableForGaps = Math.max(0, vh - (topH + K + breakH));
+
+      // gap must be <= half of that to keep everything inside viewport
+      const maxGapThatFits = availableForGaps / 2;
+
+      // keep a small floor so it never collapses to 0
+      const gap = Math.max(8, Math.min(ideal, maxGapThatFits));
+
+      document.documentElement.style.setProperty("--egg-gap", `${gap}px`);
     }
 
     function syncAnchorHeights(){
-      // reserve the exact breakText height so each scene layout is stable
       const h = Math.ceil(breakText.getBoundingClientRect().height);
       document.documentElement.style.setProperty("--break-h", h + "px");
     }
@@ -358,7 +390,6 @@
       const aRect = anchor.getBoundingClientRect();
       const btRect = breakText.getBoundingClientRect();
 
-      // top position inside app + vertical centering within anchor
       const y = (aRect.top - appRect.top) + (aRect.height - btRect.height) / 2;
 
       if (!animate){
@@ -372,18 +403,17 @@
     }
 
     function layoutNow(animateBreakText = false){
-      syncEggGap();
+      syncEggGap();        // <-- now K is true egg bounds and gap is auto-fit
       syncAnchorHeights();
       placeBreakText(animateBreakText);
     }
 
-    // initial layout after fonts settle (important for accurate K and breakText height)
+    // initial (after font load for accurate heights)
     const fontsReady = document.fonts?.ready?.catch(() => null);
     if (fontsReady) await fontsReady;
 
     requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(false)));
 
-    // keep perfectly aligned under zoom / resize
     window.addEventListener("resize", () => {
       requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(false)));
     });
@@ -393,8 +423,6 @@
       goalsMode = true;
       document.body.classList.add("mode-goals");
       goalsScene.setAttribute("aria-hidden","false");
-
-      // recompute gaps/anchors in this mode, then animate breakText to goals anchor
       requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(true)));
     }
 
@@ -402,13 +430,8 @@
       if (!goalsMode) return;
       goalsMode = false;
       document.body.classList.remove("mode-goals");
-
-      // recompute in intro mode, then animate breakText back under egg
       requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(true)));
-
-      window.setTimeout(() => {
-        goalsScene.setAttribute("aria-hidden","true");
-      }, 600);
+      window.setTimeout(() => goalsScene.setAttribute("aria-hidden","true"), 600);
     }
 
     window.addEventListener("keydown", (e) => {
