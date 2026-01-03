@@ -6,153 +6,246 @@
   <title>Omelette</title>
 
   <style>
-    @font-face {
-      font-family: "Alphabetized Cassette Tapes";
-      src: url("./Alphabetized Cassette Tapes.ttf") format("truetype");
-      font-weight: 400;
-      font-style: normal;
+    /* put Alphabetized Cassette Tapes.ttf next to this index.html */
+    @font-face{
+      font-family:"Alphabetized Cassette Tapes";
+      src:url("./Alphabetized Cassette Tapes.ttf") format("truetype");
+      font-weight:400;
+      font-style:normal;
     }
 
     :root{
-      --bg: #F7DD80;
-      --text: #000;
+      --bg:#F7DD80;
+      --text:#000;
     }
 
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: var(--bg);
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--bg);
+      overflow:hidden; /* prevent arrow keys from scrolling the page */
+      font-family:"Alphabetized Cassette Tapes","Comic Sans MS",system-ui,sans-serif;
+      color:var(--text);
     }
 
-    body{
-      display: grid;
-      place-items: center;
-      font-family: "Alphabetized Cassette Tapes", "Comic Sans MS", system-ui, sans-serif;
-      color: var(--text);
+    /* full-screen stage */
+    #app{
+      position:relative;
+      width:100vw;
+      height:100vh;
     }
 
-    .wrap{
-      width: min(92vw, 820px);
-      display: grid;
-      gap: 18px;
-      justify-items: center;
+    /* ---------- INTRO SCENE (perfectly centered) ---------- */
+    #introScene{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:28px;
+      transition:opacity 420ms ease, transform 520ms ease;
     }
 
-    /* SVG sizing */
-    svg{
-      width: 100%;
-      height: auto;
-      display: block;
+    .introLine{
+      text-align:center;
+      line-height:1.05;
+      font-size:56px; /* big + readable */
+      padding:0 16px;
     }
 
-    /* Smooth mode transitions */
-    #topText, #bottomText, #eggGroup{
-      transition: transform 520ms ease, opacity 420ms ease;
-      transform-box: fill-box;
-      transform-origin: center;
+    #eggHolder{
+      width:min(78vw, 520px);
+      transition:opacity 420ms ease, transform 520ms ease;
     }
 
-    /* Goals panel */
+    #eggHolder svg{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    /* ---------- GOALS SCENE ---------- */
+    #goalsScene{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 420ms ease;
+    }
+
+    /* title at top (always visible in goals mode) */
+    #goalsTitle{
+      padding-top:26px;
+      text-align:center;
+      font-size:56px;
+      line-height:1.05;
+      padding-left:16px;
+      padding-right:16px;
+    }
+
+    /* remaining space: center the whole goals block */
+    #goalsBody{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      padding:20px 18px 28px;
+      box-sizing:border-box;
+    }
+
     #goalsPanel{
-      width: 100%;
-      opacity: 0;
-      transform: translateY(18px);
-      pointer-events: none;
-      transition: opacity 420ms ease, transform 520ms ease;
+      width:min(94vw, 1100px);
+      display:flex;
+      flex-direction:column;
+      gap:28px;              /* tidy spacing between sections */
+      align-items:center;
     }
 
     .section{
-      margin: 10px 0 16px;
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:12px;
     }
 
     .subtitle{
-      font-size: 34px;
-      line-height: 1.05;
-      margin: 0 0 10px;
-      text-align: center;
+      font-size:42px;        /* bigger (was tiny) */
+      line-height:1.05;
+      text-align:center;
     }
 
+    /* one-line goals row under subtitle, centered; can scroll sideways if too long */
     .goalsRow{
-      display: flex;
-      flex-wrap: nowrap;          /* keep in one line */
-      gap: 14px;
-      overflow-x: auto;           /* if too many goals, you can scroll sideways */
-      padding: 6px 2px 10px;
-      -webkit-overflow-scrolling: touch;
+      width:100%;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      gap:16px;
+      flex-wrap:nowrap;      /* keep in one line as requested */
+      overflow-x:auto;
+      overflow-y:hidden;
+      padding:6px 8px 2px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;
     }
 
     .goal{
-      flex: 0 0 auto;
-      min-width: 110px;
-      text-align: center;
+      flex:0 0 auto;
+      text-align:center;
+      min-width:120px;
     }
 
     .goalLabel{
-      font-size: 18px;
-      line-height: 1.05;
-      white-space: nowrap;
+      font-size:22px;        /* bigger + legible */
+      line-height:1.05;
+      white-space:nowrap;
     }
 
+    /* progress bar SMALLER */
     .bar{
-      margin: 8px auto 0;
-      width: 96px;
-      height: 10px;
-      background: #fff;
-      border: 2px solid #000;
-      border-radius: 999px;
-      overflow: hidden;
+      margin:8px auto 0;
+      width:56px;
+      height:6px;
+      background:#fff;
+      border:2px solid #000;
+      border-radius:999px;
+      overflow:hidden;
     }
 
     .fill{
-      height: 100%;
-      width: calc(var(--pct, 0) * 1%);
-      background: #000;
+      height:100%;
+      width:calc(var(--pct, 0) * 1%);
+      background:#000;
     }
 
-    /* --- MODE: goals (ArrowDown) --- */
-    .mode-goals #topText{
-      opacity: 0;
-      transform: translateY(-160px);
+    /* ---------- TRANSITIONS BETWEEN MODES ---------- */
+    body.mode-goals #introScene{
+      pointer-events:none;
     }
 
-    .mode-goals #eggGroup{
-      opacity: 0;
-      transform: translateY(-240px);
+    body.mode-goals #introTop{
+      opacity:0;
+      transform:translateY(-140px);
+      transition:opacity 420ms ease, transform 520ms ease;
     }
 
-    /* move "you gotta break some eggs" up to title position */
-    .mode-goals #bottomText{
-      transform: translateY(-660px);
+    body.mode-goals #eggHolder{
+      opacity:0;
+      transform:translateY(-220px);
     }
 
-    .mode-goals #goalsPanel{
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
+    body.mode-goals #introBottom{
+      opacity:0;
+      transform:translateY(-180px);
+      transition:opacity 420ms ease, transform 520ms ease;
     }
 
-    /* little hint (optional) */
-    .hint{
-      font-size: 14px;
-      opacity: 0.55;
-      text-align: center;
-      margin-top: -8px;
-      user-select: none;
+    body.mode-goals #goalsScene{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    /* small helper hint (optional) */
+    #hint{
+      position:absolute;
+      left:50%;
+      bottom:14px;
+      transform:translateX(-50%);
+      font-size:16px;
+      opacity:0.55;
+      user-select:none;
+      text-align:center;
+      padding:0 14px;
+      pointer-events:none;
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap" id="app">
-    <div id="svgHost"></div>
+  <div id="app">
+    <!-- INTRO (centered) -->
+    <div id="introScene">
+      <div class="introLine" id="introTop">you wanna make an omelette</div>
+      <div id="eggHolder" aria-hidden="true"></div>
+      <div class="introLine" id="introBottom">you gotta break some eggs</div>
+    </div>
 
-    <div id="goalsPanel" aria-hidden="true"></div>
+    <!-- GOALS (title at top + goals centered) -->
+    <div id="goalsScene" aria-hidden="true">
+      <div id="goalsTitle">you gotta break some eggs</div>
+      <div id="goalsBody">
+        <div id="goalsPanel"></div>
+      </div>
+    </div>
 
-    <div class="hint">Press ↓ for goals, ↑ to go back</div>
+    <div id="hint">Press ↓ for goals, ↑ to go back</div>
   </div>
 
   <script type="module">
     import { EGG_ART } from "./egg-art.js";
+
+    // ---- Egg SVG (NO background, just the egg) ----
+    const eggSVG = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="egg">
+        <g>
+          <path d="${EGG_ART.whitePath}"
+                fill="#F7FCF6" stroke="#000" stroke-width="12"
+                stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="${EGG_ART.yolk.cx}" cy="${EGG_ART.yolk.cy}" r="${EGG_ART.yolk.r}"
+                  fill="#F5C966" stroke="#000" stroke-width="12"/>
+          <ellipse cx="${EGG_ART.eyeL.cx}" cy="${EGG_ART.eyeL.cy}" rx="${EGG_ART.eyeL.rx}" ry="${EGG_ART.eyeL.ry}" fill="#000"/>
+          <ellipse cx="${EGG_ART.eyeR.cx}" cy="${EGG_ART.eyeR.cy}" rx="${EGG_ART.eyeR.rx}" ry="${EGG_ART.eyeR.ry}" fill="#000"/>
+          <path d="${EGG_ART.mouthPath}" fill="none" stroke="#000" stroke-width="7"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      </svg>
+    `;
+    document.getElementById("eggHolder").innerHTML = eggSVG;
 
     // ====== EDIT THESE PERCENTAGES (0–100) ======
     const PROGRESS = {
@@ -200,52 +293,14 @@
     };
 
     const SECTIONS = [
-      { subtitle: "exam egg", goals: ["analysis ii", "prob n stats", "theo inf"] },
-      { subtitle: "abs egg", goals: ["sub20 5km", "handstand", "roundoff-spring", "muscle-up", "six pack", "splits", "dunk", "back lever", "dragonfly"] },
-      { subtitle: "spy egg", goals: ["german", "italian", "portuguese", "korean", "chinese"] },
+      { subtitle: "exam egg",  goals: ["analysis ii", "prob n stats", "theo inf"] },
+      { subtitle: "abs egg",   goals: ["sub20 5km", "handstand", "roundoff-spring", "muscle-up", "six pack", "splits", "dunk", "back lever", "dragonfly"] },
+      { subtitle: "spy egg",   goals: ["german", "italian", "portuguese", "korean", "chinese"] },
       { subtitle: "quant egg", goals: ["dice problems", "green book", "heard on the street", "quant job qna", "akuna 101", "akuna 201", "optiver book", "optiver c.k.", "poker m.c."] },
       { subtitle: "coder egg", goals: ["leetcode 150", "eth algo lab"] },
-      { subtitle: "mit egg", goals: ["eprog", "data n algs", "linalg", "diskmath", "paraprog", "algos n prob", "analysis i", "ddca"] }
+      { subtitle: "mit egg",   goals: ["eprog", "data n algs", "linalg", "diskmath", "paraprog", "algos n prob", "analysis i", "ddca"] }
     ];
 
-    // ====== SVG markup (uses imported egg numbers) ======
-    const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080" role="img" aria-label="Omelette quote card">
-        <defs>
-          <style>
-            .hand { font-family: "Alphabetized Cassette Tapes", "Comic Sans MS", system-ui, sans-serif; font-weight: 400; fill: #000; }
-          </style>
-        </defs>
-
-        <rect width="1080" height="1080" fill="#F7DD80"/>
-
-        <!-- top text -->
-        <text id="topText" class="hand" x="540" y="215" font-size="111" text-anchor="middle">
-          you wanna make an omelette
-        </text>
-
-        <!-- egg -->
-        <g id="eggGroup">
-          <path d="${EGG_ART.whitePath}"
-                fill="#F7FCF6" stroke="#000" stroke-width="12"
-                stroke-linejoin="round" stroke-linecap="round"/>
-          <circle cx="${EGG_ART.yolk.cx}" cy="${EGG_ART.yolk.cy}" r="${EGG_ART.yolk.r}"
-                  fill="#F5C966" stroke="#000" stroke-width="12"/>
-          <ellipse cx="${EGG_ART.eyeL.cx}" cy="${EGG_ART.eyeL.cy}" rx="${EGG_ART.eyeL.rx}" ry="${EGG_ART.eyeL.ry}" fill="#000"/>
-          <ellipse cx="${EGG_ART.eyeR.cx}" cy="${EGG_ART.eyeR.cy}" rx="${EGG_ART.eyeR.rx}" ry="${EGG_ART.eyeR.ry}" fill="#000"/>
-          <path d="${EGG_ART.mouthPath}" fill="none" stroke="#000" stroke-width="7"
-                stroke-linecap="round" stroke-linejoin="round"/>
-        </g>
-
-        <!-- bottom text (this becomes the title in goals mode) -->
-        <text id="bottomText" class="hand" x="540" y="875" font-size="123" text-anchor="middle">
-          you gotta break some eggs
-        </text>
-      </svg>
-    `;
-    document.getElementById("svgHost").innerHTML = svg;
-
-    // ====== Build goals UI ======
     function clampPct(v){
       const n = Number(v);
       if (!Number.isFinite(n)) return 0;
@@ -276,27 +331,24 @@
     renderGoals();
 
     // ====== Mode toggle (ArrowDown / ArrowUp) ======
-    const app = document.getElementById("app");
     let goalsMode = false;
 
     function setMode(on){
       goalsMode = !!on;
       document.body.classList.toggle("mode-goals", goalsMode);
-      document.getElementById("goalsPanel").setAttribute("aria-hidden", String(!goalsMode));
+      document.getElementById("goalsScene").setAttribute("aria-hidden", String(!goalsMode));
     }
 
     window.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowDown") setMode(true);
-      if (e.key === "ArrowUp") setMode(false);
-    });
-
-    // optional: click toggles (nice on mobile)
-    window.addEventListener("click", (e) => {
-      // avoid toggling when the user is scrolling the goals row
-      const inGoalsRow = e.target.closest && e.target.closest(".goalsRow");
-      if (inGoalsRow) return;
-      setMode(!goalsMode);
-    });
+      if (e.key === "ArrowDown"){
+        e.preventDefault();
+        setMode(true);
+      }
+      if (e.key === "ArrowUp"){
+        e.preventDefault();
+        setMode(false);
+      }
+    }, { passive:false });
   </script>
 </body>
 </html>
