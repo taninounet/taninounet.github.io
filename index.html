@@ -6,7 +6,6 @@
   <title>Omelette</title>
 
   <style>
-    /* Put Alphabetized Cassette Tapes.ttf next to this file */
     @font-face{
       font-family:"Alphabetized Cassette Tapes";
       src:url("./Alphabetized Cassette Tapes.ttf") format("truetype");
@@ -14,89 +13,82 @@
       font-style:normal;
     }
 
-    :root{
-      --bg:#F7DD80;
-      --text:#000;
-    }
+    :root{ --bg:#F7DD80; --text:#000; }
 
     html,body{
       height:100%;
       margin:0;
       background:var(--bg);
-      overflow:hidden; /* prevent arrow keys from scrolling page */
+      overflow:hidden;
       font-family:"Alphabetized Cassette Tapes","Comic Sans MS",system-ui,sans-serif;
       color:var(--text);
     }
 
-    #app{
-      position:relative;
-      width:100vw;
-      height:100vh;
-    }
+    #app{ position:relative; width:100vw; height:100vh; }
 
-    /* ---------- INTRO (centered, tighter spacing) ---------- */
+    /* ---------- INTRO ---------- */
     #introScene{
-      position:absolute;
-      inset:0;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:14px; /* closer */
-      transition:opacity 380ms ease;
+      position:absolute; inset:0;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      gap:10px; /* tighter */
+      will-change: transform, opacity;
+      transition: transform 560ms cubic-bezier(.2,.8,.2,1), opacity 420ms ease;
     }
 
-    .introLine{
-      text-align:center;
-      line-height:1.05;
+    /* move top text down closer to egg */
+    #topText{
       font-size:56px;
+      line-height:1.05;
+      text-align:center;
       padding:0 16px;
+      margin-bottom:-10px; /* pull closer */
+      will-change: transform, opacity;
+      transition: transform 560ms cubic-bezier(.2,.8,.2,1), opacity 420ms ease;
     }
 
     #eggHolder{
-      width:min(72vw, 500px);
-      margin:2px 0; /* keep tight */
+      width:min(72vw, 520px);
+      margin:0;
+      will-change: transform, opacity;
+      transition: transform 560ms cubic-bezier(.2,.8,.2,1), opacity 420ms ease;
     }
+    #eggHolder svg{ width:100%; height:auto; display:block; }
 
-    #eggHolder svg{
-      width:100%;
-      height:auto;
-      display:block;
-    }
-
-    /* The ONE shared element that moves to the top */
+    /* move break text up closer to egg */
     #breakText{
+      font-size:56px;
+      line-height:1.05;
+      text-align:center;
+      padding:0 16px;
+      margin-top:-10px; /* pull closer */
       will-change: transform;
     }
 
-    /* ---------- GOALS SCENE ---------- */
+    /* ---------- GOALS ---------- */
     #goalsScene{
-      position:absolute;
-      inset:0;
-      display:flex;
-      flex-direction:column;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity 380ms ease;
+      position:absolute; inset:0;
+      display:flex; flex-direction:column;
+      opacity:0; pointer-events:none;
+      transform: translateY(60px); /* starts lower */
+      will-change: transform, opacity;
+      transition: transform 560ms cubic-bezier(.2,.8,.2,1), opacity 420ms ease;
     }
 
-    /* This is where the SAME breakText element is moved into */
     #goalsHeader{
-      padding-top:20px;
+      padding-top:18px;
       display:flex;
       justify-content:center;
       align-items:flex-start;
     }
 
-    /* Remaining area */
     #goalsBody{
       flex:1;
-      width:100%;
       display:flex;
       justify-content:center;
-      align-items:flex-start; /* so you can see more sections */
-      overflow-y:auto;        /* if screen is short */
-      padding:10px 14px 16px; /* tighter */
+      align-items:flex-start;
+      overflow-y:auto;
+      padding:8px 14px 14px;
       box-sizing:border-box;
     }
 
@@ -104,9 +96,9 @@
       width:min(96vw, 1200px);
       display:flex;
       flex-direction:column;
-      gap:16px;              /* less margin between sections */
+      gap:12px; /* less margin between sections */
       align-items:center;
-      padding:4px 0 10px;
+      padding:2px 0 10px;
     }
 
     .section{
@@ -114,11 +106,11 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:6px;               /* tighter */
+      gap:4px;
     }
 
     .subtitle{
-      font-size:34px;        /* bigger + readable but not huge */
+      font-size:32px;
       line-height:1.05;
       text-align:center;
     }
@@ -127,71 +119,76 @@
       width:100%;
       display:flex;
       justify-content:center;
-      align-items:flex-start;
-      gap:12px;
-      flex-wrap:nowrap;      /* one line */
+      gap:10px;
+      flex-wrap:nowrap;
       overflow-x:auto;
-      overflow-y:hidden;
-      padding:4px 6px 2px;   /* tighter */
+      padding:3px 6px 2px;
       -webkit-overflow-scrolling:touch;
       scrollbar-width:thin;
     }
 
-    .goal{
-      flex:0 0 auto;
-      min-width:110px;
-      text-align:center;
-    }
+    .goal{ flex:0 0 auto; min-width:104px; text-align:center; }
 
     .goalLabel{
-      font-size:20px;        /* bigger */
+      font-size:20px;
       line-height:1.05;
       white-space:nowrap;
     }
 
-    /* EVEN TINIER progress bars */
+    /* PROGRESS BARS EVEN SMALLER */
     .bar{
-      margin:6px auto 0;
-      width:40px;
-      height:4px;
+      margin:5px auto 0;
+      width:28px;
+      height:3px;
       background:#fff;
       border:2px solid #000;
       border-radius:999px;
       overflow:hidden;
     }
+    .fill{ height:100%; width:calc(var(--pct, 0) * 1%); background:#000; }
 
-    .fill{
-      height:100%;
-      width:calc(var(--pct, 0) * 1%);
-      background:#000;
+    /* ---------- MODE ANIMATION (whole page) ---------- */
+    body.mode-goals #topText{
+      opacity:0;
+      transform: translateY(-140px);
     }
-
-    /* ---------- MODE TRANSITIONS ---------- */
+    body.mode-goals #eggHolder{
+      opacity:0;
+      transform: translateY(-220px);
+    }
     body.mode-goals #introScene{
       opacity:0;
+      transform: translateY(-80px);
       pointer-events:none;
     }
 
     body.mode-goals #goalsScene{
       opacity:1;
+      transform: translateY(0);
       pointer-events:auto;
+    }
+
+    /* When leaving goals (ArrowUp): goals slide DOWN, intro comes DOWN from top */
+    body.leaving-goals #goalsScene{
+      opacity:0;
+      transform: translateY(80px);
+    }
+    body.leaving-goals #introScene{
+      opacity:1;
+      transform: translateY(-80px);
+      pointer-events:none;
     }
   </style>
 </head>
 
 <body>
   <div id="app">
-    <!-- INTRO -->
     <div id="introScene">
-      <div class="introLine" id="topText">you wanna make an omelette</div>
-
+      <div id="topText">you wanna make an omelette</div>
       <div id="eggHolder" aria-hidden="true"></div>
-
-      <!-- THIS is the element that will animate up and become title -->
-      <div class="introLine" id="breakText">you gotta break some eggs</div>
+      <div id="breakText">you gotta break some eggs</div>
     </div>
 
-    <!-- GOALS -->
     <div id="goalsScene" aria-hidden="true">
       <div id="goalsHeader"></div>
       <div id="goalsBody">
@@ -203,12 +200,11 @@
   <script type="module">
     import { EGG_ART } from "./egg-art.js";
 
-    // --- egg SVG (no background) ---
-    const eggSVG = `
+    // egg SVG
+    document.getElementById("eggHolder").innerHTML = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="egg">
         <g>
-          <path d="${EGG_ART.whitePath}"
-                fill="#F7FCF6" stroke="#000" stroke-width="12"
+          <path d="${EGG_ART.whitePath}" fill="#F7FCF6" stroke="#000" stroke-width="12"
                 stroke-linejoin="round" stroke-linecap="round"/>
           <circle cx="${EGG_ART.yolk.cx}" cy="${EGG_ART.yolk.cy}" r="${EGG_ART.yolk.r}"
                   fill="#F5C966" stroke="#000" stroke-width="12"/>
@@ -219,61 +215,33 @@
         </g>
       </svg>
     `;
-    document.getElementById("eggHolder").innerHTML = eggSVG;
 
     // ====== EDIT THESE PERCENTAGES (0–100) ======
     const PROGRESS = {
-      "analysis ii": 0,
-      "prob n stats": 0,
-      "theo inf": 0,
-
-      "sub20 5km": 0,
-      "handstand": 0,
-      "roundoff-spring": 0,
-      "muscle-up": 0,
-      "six pack": 0,
-      "splits": 0,
-      "dunk": 0,
-      "back lever": 0,
-      "dragonfly": 0,
-
-      "german": 0,
-      "italian": 0,
-      "portuguese": 0,
-      "korean": 0,
-      "chinese": 0,
-
-      "dice problems": 0,
-      "green book": 0,
-      "heard on the street": 0,
-      "quant job qna": 0,
-      "akuna 101": 0,
-      "akuna 201": 0,
-      "optiver book": 0,
-      "optiver c.k.": 0,
-      "poker m.c.": 0,
-
-      "leetcode 150": 0,
-      "eth algo lab": 0,
-
-      "eprog": 0,
-      "data n algs": 0,
-      "linalg": 0,
-      "diskmath": 0,
-      "paraprog": 0,
-      "algos n prob": 0,
-      "analysis i": 0,
-      "ddca": 0
+      "analysis ii": 0, "prob n stats": 0, "theo inf": 0,
+      "sub20 5km": 0, "handstand": 0, "roundoff-spring": 0, "muscle-up": 0, "six pack": 0,
+      "splits": 0, "dunk": 0, "back lever": 0, "dragonfly": 0,
+      "german": 0, "italian": 0, "portuguese": 0, "korean": 0, "chinese": 0,
+      "dice problems": 0, "green book": 0, "heard on the street": 0, "quant job qna": 0,
+      "akuna 101": 0, "akuna 201": 0, "optiver book": 0, "optiver c.k.": 0, "poker m.c.": 0,
+      "leetcode 150": 0, "eth algo lab": 0,
+      "eprog": 0, "data n algs": 0, "linalg": 0, "diskmath": 0, "paraprog": 0,
+      "algos n prob": 0, "analysis i": 0, "ddca": 0
     };
 
     const SECTIONS = [
-      { subtitle: "exam egg",  goals: ["analysis ii", "prob n stats", "theo inf"] },
-      { subtitle: "abs egg",   goals: ["sub20 5km", "handstand", "roundoff-spring", "muscle-up", "six pack", "splits", "dunk", "back lever", "dragonfly"] },
-      { subtitle: "spy egg",   goals: ["german", "italian", "portuguese", "korean", "chinese"] },
-      { subtitle: "quant egg", goals: ["dice problems", "green book", "heard on the street", "quant job qna", "akuna 101", "akuna 201", "optiver book", "optiver c.k.", "poker m.c."] },
-      { subtitle: "coder egg", goals: ["leetcode 150", "eth algo lab"] },
-      { subtitle: "mit egg",   goals: ["eprog", "data n algs", "linalg", "diskmath", "paraprog", "algos n prob", "analysis i", "ddca"] }
+      { subtitle: "exam egg",  goals: ["analysis ii","prob n stats","theo inf"] },
+      { subtitle: "abs egg",   goals: ["sub20 5km","handstand","roundoff-spring","muscle-up","six pack","splits","dunk","back lever","dragonfly"] },
+      { subtitle: "spy egg",   goals: ["german","italian","portuguese","korean","chinese"] },
+      { subtitle: "quant egg", goals: ["dice problems","green book","heard on the street","quant job qna","akuna 101","akuna 201","optiver book","optiver c.k.","poker m.c."] },
+      { subtitle: "coder egg", goals: ["leetcode 150","eth algo lab"] },
+      { subtitle: "mit egg",   goals: ["eprog","data n algs","linalg","diskmath","paraprog","algos n prob","analysis i","ddca"] }
     ];
+
+    const breakText = document.getElementById("breakText");
+    const introScene = document.getElementById("introScene");
+    const goalsHeader = document.getElementById("goalsHeader");
+    const goalsScene  = document.getElementById("goalsScene");
 
     function clampPct(v){
       const n = Number(v);
@@ -282,8 +250,7 @@
     }
 
     function renderGoals(){
-      const panel = document.getElementById("goalsPanel");
-      panel.innerHTML = SECTIONS.map(sec => {
+      document.getElementById("goalsPanel").innerHTML = SECTIONS.map(sec => {
         const goals = sec.goals.map(name => {
           const pct = clampPct(PROGRESS[name] ?? 0);
           return `
@@ -293,7 +260,6 @@
             </div>
           `;
         }).join("");
-
         return `
           <div class="section">
             <div class="subtitle">${sec.subtitle}</div>
@@ -304,48 +270,54 @@
     }
     renderGoals();
 
-    // ====== FLIP animation for the SAME breakText element ======
-    const breakText = document.getElementById("breakText");
-    const introScene = document.getElementById("introScene");
-    const goalsHeader = document.getElementById("goalsHeader");
-
+    // FLIP move for the SAME breakText element
     function moveWithFLIP(targetParent){
       const first = breakText.getBoundingClientRect();
       targetParent.appendChild(breakText);
       const last = breakText.getBoundingClientRect();
-
       const dx = first.left - last.left;
-      const dy = first.top - last.top;
-
+      const dy = first.top  - last.top;
       breakText.animate(
-        [
-          { transform: `translate(${dx}px, ${dy}px)` },
-          { transform: "translate(0, 0)" }
-        ],
-        { duration: 520, easing: "cubic-bezier(.2,.8,.2,1)" }
+        [{ transform:`translate(${dx}px,${dy}px)` }, { transform:"translate(0,0)" }],
+        { duration:560, easing:"cubic-bezier(.2,.8,.2,1)" }
       );
     }
 
-    // ====== Mode toggle ======
     let goalsMode = false;
 
-    function setMode(on){
-      goalsMode = !!on;
+    function enterGoals(){
+      if (goalsMode) return;
+      goalsMode = true;
 
-      // move the SAME title element to the correct place with FLIP
-      if (goalsMode) {
-        moveWithFLIP(goalsHeader);
-      } else {
-        moveWithFLIP(introScene); // goes back under egg
-      }
+      // move shared text first (so it animates while page transitions)
+      moveWithFLIP(goalsHeader);
 
-      document.body.classList.toggle("mode-goals", goalsMode);
-      document.getElementById("goalsScene").setAttribute("aria-hidden", String(!goalsMode));
+      document.body.classList.remove("leaving-goals");
+      document.body.classList.add("mode-goals");
+      goalsScene.setAttribute("aria-hidden","false");
+    }
+
+    function leaveGoals(){
+      if (!goalsMode) return;
+      goalsMode = false;
+
+      // trigger "down" animation on goals
+      document.body.classList.remove("mode-goals");
+      document.body.classList.add("leaving-goals");
+
+      // move the shared text back with FLIP
+      moveWithFLIP(introScene);
+
+      // after animation ends, fully hide goalsScene + reset intro to natural centered
+      window.setTimeout(() => {
+        goalsScene.setAttribute("aria-hidden","true");
+        document.body.classList.remove("leaving-goals");
+      }, 580);
     }
 
     window.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowDown"){ e.preventDefault(); setMode(true); }
-      if (e.key === "ArrowUp"){   e.preventDefault(); setMode(false); }
+      if (e.key === "ArrowDown"){ e.preventDefault(); enterGoals(); }
+      if (e.key === "ArrowUp"){   e.preventDefault(); leaveGoals(); }
     }, { passive:false });
   </script>
 </body>
