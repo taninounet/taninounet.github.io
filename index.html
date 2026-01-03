@@ -6,7 +6,7 @@
   <title>Omelette</title>
 
   <style>
-    /* put Alphabetized Cassette Tapes.ttf next to this index.html */
+    /* Put Alphabetized Cassette Tapes.ttf next to this file */
     @font-face{
       font-family:"Alphabetized Cassette Tapes";
       src:url("./Alphabetized Cassette Tapes.ttf") format("truetype");
@@ -23,19 +23,18 @@
       height:100%;
       margin:0;
       background:var(--bg);
-      overflow:hidden; /* prevent arrow keys from scrolling the page */
+      overflow:hidden; /* prevent arrow keys from scrolling page */
       font-family:"Alphabetized Cassette Tapes","Comic Sans MS",system-ui,sans-serif;
       color:var(--text);
     }
 
-    /* full-screen stage */
     #app{
       position:relative;
       width:100vw;
       height:100vh;
     }
 
-    /* ---------- INTRO SCENE (perfectly centered) ---------- */
+    /* ---------- INTRO (centered, tighter spacing) ---------- */
     #introScene{
       position:absolute;
       inset:0;
@@ -43,26 +42,31 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:28px;
-      transition:opacity 420ms ease, transform 520ms ease;
+      gap:14px; /* closer */
+      transition:opacity 380ms ease;
     }
 
     .introLine{
       text-align:center;
       line-height:1.05;
-      font-size:56px; /* big + readable */
+      font-size:56px;
       padding:0 16px;
     }
 
     #eggHolder{
-      width:min(78vw, 520px);
-      transition:opacity 420ms ease, transform 520ms ease;
+      width:min(72vw, 500px);
+      margin:2px 0; /* keep tight */
     }
 
     #eggHolder svg{
       width:100%;
       height:auto;
       display:block;
+    }
+
+    /* The ONE shared element that moves to the top */
+    #breakText{
+      will-change: transform;
     }
 
     /* ---------- GOALS SCENE ---------- */
@@ -73,36 +77,36 @@
       flex-direction:column;
       opacity:0;
       pointer-events:none;
-      transition:opacity 420ms ease;
+      transition:opacity 380ms ease;
     }
 
-    /* title at top (always visible in goals mode) */
-    #goalsTitle{
-      padding-top:26px;
-      text-align:center;
-      font-size:56px;
-      line-height:1.05;
-      padding-left:16px;
-      padding-right:16px;
+    /* This is where the SAME breakText element is moved into */
+    #goalsHeader{
+      padding-top:20px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
     }
 
-    /* remaining space: center the whole goals block */
+    /* Remaining area */
     #goalsBody{
       flex:1;
-      display:flex;
-      align-items:center;
-      justify-content:center;
       width:100%;
-      padding:20px 18px 28px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start; /* so you can see more sections */
+      overflow-y:auto;        /* if screen is short */
+      padding:10px 14px 16px; /* tighter */
       box-sizing:border-box;
     }
 
     #goalsPanel{
-      width:min(94vw, 1100px);
+      width:min(96vw, 1200px);
       display:flex;
       flex-direction:column;
-      gap:28px;              /* tidy spacing between sections */
+      gap:16px;              /* less margin between sections */
       align-items:center;
+      padding:4px 0 10px;
     }
 
     .section{
@@ -110,47 +114,46 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:12px;
+      gap:6px;               /* tighter */
     }
 
     .subtitle{
-      font-size:42px;        /* bigger (was tiny) */
+      font-size:34px;        /* bigger + readable but not huge */
       line-height:1.05;
       text-align:center;
     }
 
-    /* one-line goals row under subtitle, centered; can scroll sideways if too long */
     .goalsRow{
       width:100%;
       display:flex;
       justify-content:center;
       align-items:flex-start;
-      gap:16px;
-      flex-wrap:nowrap;      /* keep in one line as requested */
+      gap:12px;
+      flex-wrap:nowrap;      /* one line */
       overflow-x:auto;
       overflow-y:hidden;
-      padding:6px 8px 2px;
+      padding:4px 6px 2px;   /* tighter */
       -webkit-overflow-scrolling:touch;
       scrollbar-width:thin;
     }
 
     .goal{
       flex:0 0 auto;
+      min-width:110px;
       text-align:center;
-      min-width:120px;
     }
 
     .goalLabel{
-      font-size:22px;        /* bigger + legible */
+      font-size:20px;        /* bigger */
       line-height:1.05;
       white-space:nowrap;
     }
 
-    /* progress bar SMALLER */
+    /* EVEN TINIER progress bars */
     .bar{
-      margin:8px auto 0;
-      width:56px;
-      height:6px;
+      margin:6px auto 0;
+      width:40px;
+      height:4px;
       background:#fff;
       border:2px solid #000;
       border-radius:999px;
@@ -163,73 +166,44 @@
       background:#000;
     }
 
-    /* ---------- TRANSITIONS BETWEEN MODES ---------- */
+    /* ---------- MODE TRANSITIONS ---------- */
     body.mode-goals #introScene{
+      opacity:0;
       pointer-events:none;
-    }
-
-    body.mode-goals #introTop{
-      opacity:0;
-      transform:translateY(-140px);
-      transition:opacity 420ms ease, transform 520ms ease;
-    }
-
-    body.mode-goals #eggHolder{
-      opacity:0;
-      transform:translateY(-220px);
-    }
-
-    body.mode-goals #introBottom{
-      opacity:0;
-      transform:translateY(-180px);
-      transition:opacity 420ms ease, transform 520ms ease;
     }
 
     body.mode-goals #goalsScene{
       opacity:1;
       pointer-events:auto;
     }
-
-    /* small helper hint (optional) */
-    #hint{
-      position:absolute;
-      left:50%;
-      bottom:14px;
-      transform:translateX(-50%);
-      font-size:16px;
-      opacity:0.55;
-      user-select:none;
-      text-align:center;
-      padding:0 14px;
-      pointer-events:none;
-    }
   </style>
 </head>
 
 <body>
   <div id="app">
-    <!-- INTRO (centered) -->
+    <!-- INTRO -->
     <div id="introScene">
-      <div class="introLine" id="introTop">you wanna make an omelette</div>
+      <div class="introLine" id="topText">you wanna make an omelette</div>
+
       <div id="eggHolder" aria-hidden="true"></div>
-      <div class="introLine" id="introBottom">you gotta break some eggs</div>
+
+      <!-- THIS is the element that will animate up and become title -->
+      <div class="introLine" id="breakText">you gotta break some eggs</div>
     </div>
 
-    <!-- GOALS (title at top + goals centered) -->
+    <!-- GOALS -->
     <div id="goalsScene" aria-hidden="true">
-      <div id="goalsTitle">you gotta break some eggs</div>
+      <div id="goalsHeader"></div>
       <div id="goalsBody">
         <div id="goalsPanel"></div>
       </div>
     </div>
-
-    <div id="hint">Press ↓ for goals, ↑ to go back</div>
   </div>
 
   <script type="module">
     import { EGG_ART } from "./egg-art.js";
 
-    // ---- Egg SVG (NO background, just the egg) ----
+    // --- egg SVG (no background) ---
     const eggSVG = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="egg">
         <g>
@@ -330,24 +304,48 @@
     }
     renderGoals();
 
-    // ====== Mode toggle (ArrowDown / ArrowUp) ======
+    // ====== FLIP animation for the SAME breakText element ======
+    const breakText = document.getElementById("breakText");
+    const introScene = document.getElementById("introScene");
+    const goalsHeader = document.getElementById("goalsHeader");
+
+    function moveWithFLIP(targetParent){
+      const first = breakText.getBoundingClientRect();
+      targetParent.appendChild(breakText);
+      const last = breakText.getBoundingClientRect();
+
+      const dx = first.left - last.left;
+      const dy = first.top - last.top;
+
+      breakText.animate(
+        [
+          { transform: `translate(${dx}px, ${dy}px)` },
+          { transform: "translate(0, 0)" }
+        ],
+        { duration: 520, easing: "cubic-bezier(.2,.8,.2,1)" }
+      );
+    }
+
+    // ====== Mode toggle ======
     let goalsMode = false;
 
     function setMode(on){
       goalsMode = !!on;
+
+      // move the SAME title element to the correct place with FLIP
+      if (goalsMode) {
+        moveWithFLIP(goalsHeader);
+      } else {
+        moveWithFLIP(introScene); // goes back under egg
+      }
+
       document.body.classList.toggle("mode-goals", goalsMode);
       document.getElementById("goalsScene").setAttribute("aria-hidden", String(!goalsMode));
     }
 
     window.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowDown"){
-        e.preventDefault();
-        setMode(true);
-      }
-      if (e.key === "ArrowUp"){
-        e.preventDefault();
-        setMode(false);
-      }
+      if (e.key === "ArrowDown"){ e.preventDefault(); setMode(true); }
+      if (e.key === "ArrowUp"){   e.preventDefault(); setMode(false); }
     }, { passive:false });
   </script>
 </body>
