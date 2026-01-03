@@ -106,10 +106,11 @@
 
     #goalsBody{
       flex:1;
+      display:flex;
+      justify-content:center;   /* horizontal */
+      align-items:center;       /* ✅ vertical centering */
       overflow-y:auto;
       padding:16px;
-      display:flex;
-      justify-content:center;
     }
 
     #goalsPanel{
@@ -189,7 +190,7 @@
 <script type="module">
   import { EGG_ART } from "./egg-art.js";
 
-  /* ---------- EGG (FULL FACE RESTORED) ---------- */
+  /* ---------- EGG (FULL FACE) ---------- */
   document.getElementById("eggHolder").innerHTML = `
     <svg viewBox="0 0 1080 1080">
       <g>
