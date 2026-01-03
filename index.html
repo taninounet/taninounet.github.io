@@ -9,8 +9,6 @@
     @font-face{
       font-family:"Alphabetized Cassette Tapes";
       src:url("./Alphabetized Cassette Tapes.ttf") format("truetype");
-      font-weight:400;
-      font-style:normal;
     }
 
     :root{
@@ -19,7 +17,7 @@
 
       --fs-title: clamp(56px, 5.6vw, 88px);
       --fs-subtitle: clamp(34px, 3.2vw, 50px);
-      --fs-goal: clamp(20px, 2.0vw, 30px);
+      --fs-goal: clamp(20px, 2vw, 30px);
 
       --egg-w: min(80vw, 640px);
       --egg-gap: -40px;
@@ -34,12 +32,11 @@
       margin:0;
       background:var(--bg);
       overflow:hidden;
-      font-family:"Alphabetized Cassette Tapes","Comic Sans MS",system-ui,sans-serif;
+      font-family:"Alphabetized Cassette Tapes",system-ui,sans-serif;
       color:var(--text);
     }
 
     #app{
-      position:relative;
       width:100vw;
       height:100vh;
       display:flex;
@@ -54,6 +51,7 @@
       max-width:1400px;
     }
 
+    /* ---------- SHARED TEXT ---------- */
     #sharedLayer{
       position:absolute;
       inset:0;
@@ -64,17 +62,15 @@
     #breakText{
       position:absolute;
       left:50%;
-      top:0;
       transform:translate(-50%,0);
       font-size:var(--fs-title);
-      line-height:1.05;
       white-space:nowrap;
-      transition:transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
-      will-change:transform;
+      transition:transform var(--t-move) var(--ease), opacity var(--t-fade);
     }
 
     .breakAnchor{ height:var(--break-h,0px); }
 
+    /* ---------- INTRO ---------- */
     #introScene{
       position:absolute;
       inset:0;
@@ -82,12 +78,12 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      transition:transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
+      transition:transform var(--t-move) var(--ease), opacity var(--t-fade);
     }
 
     #topText{
       font-size:var(--fs-title);
-      margin:0 0 var(--egg-gap) 0;
+      margin:0 0 var(--egg-gap);
       text-align:center;
     }
 
@@ -96,15 +92,64 @@
 
     #introBreakAnchor{ margin-top:var(--egg-gap); }
 
+    /* ---------- GOALS ---------- */
     #goalsScene{
       position:absolute;
       inset:0;
       opacity:0;
       pointer-events:none;
       transform:translateY(80px);
-      transition:transform var(--t-move) var(--ease), opacity var(--t-fade) ease;
+      transition:transform var(--t-move) var(--ease), opacity var(--t-fade);
+      display:flex;
+      flex-direction:column;
     }
 
+    #goalsBody{
+      flex:1;
+      overflow-y:auto;
+      padding:16px;
+      display:flex;
+      justify-content:center;
+    }
+
+    #goalsPanel{
+      width:min(96vw,1200px);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      align-items:center;
+    }
+
+    .section{ width:100%; text-align:center; }
+    .subtitle{ font-size:var(--fs-subtitle); }
+
+    .goalsRow{
+      display:flex;
+      gap:12px;
+      overflow-x:auto;
+      justify-content:center;
+    }
+
+    .goal{ min-width:110px; }
+    .goalLabel{ font-size:var(--fs-goal); white-space:nowrap; }
+
+    .bar{
+      width:30px;
+      height:3px;
+      border:2px solid #000;
+      border-radius:999px;
+      margin:6px auto 0;
+      overflow:hidden;
+      background:#fff;
+    }
+
+    .fill{
+      height:100%;
+      background:#000;
+      width:calc(var(--pct,0) * 1%);
+    }
+
+    /* ---------- MODES ---------- */
     body.mode-goals #introScene{
       opacity:0;
       transform:translateY(-90px);
@@ -134,6 +179,9 @@
 
     <div id="goalsScene">
       <div id="goalsBreakAnchor" class="breakAnchor"></div>
+      <div id="goalsBody">
+        <div id="goalsPanel"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -141,86 +189,106 @@
 <script type="module">
   import { EGG_ART } from "./egg-art.js";
 
+  /* ---------- EGG (FULL FACE RESTORED) ---------- */
   document.getElementById("eggHolder").innerHTML = `
     <svg viewBox="0 0 1080 1080">
       <g>
         <path d="${EGG_ART.whitePath}" fill="#F7FCF6" stroke="#000" stroke-width="12"/>
         <circle cx="${EGG_ART.yolk.cx}" cy="${EGG_ART.yolk.cy}" r="${EGG_ART.yolk.r}"
                 fill="#F5C966" stroke="#000" stroke-width="12"/>
+        <ellipse cx="${EGG_ART.eyeL.cx}" cy="${EGG_ART.eyeL.cy}"
+                 rx="${EGG_ART.eyeL.rx}" ry="${EGG_ART.eyeL.ry}" fill="#000"/>
+        <ellipse cx="${EGG_ART.eyeR.cx}" cy="${EGG_ART.eyeR.cy}"
+                 rx="${EGG_ART.eyeR.rx}" ry="${EGG_ART.eyeR.ry}" fill="#000"/>
+        <path d="${EGG_ART.mouthPath}" fill="none" stroke="#000"
+              stroke-width="7" stroke-linecap="round"/>
       </g>
     </svg>
   `;
 
-  const app = document.getElementById("app");
-  const breakText = document.getElementById("breakText");
-  const introAnchor = document.getElementById("introBreakAnchor");
-  const goalsAnchor = document.getElementById("goalsBreakAnchor");
+  /* ---------- GOALS DATA ---------- */
+  async function loadGoals(){
+    const res = await fetch("./goals-data.json",{cache:"no-store"});
+    return res.json();
+  }
 
-  let goalsMode = false;
-  let cachedIntroY = null; // 🔒 FIX
+  function renderGoals({sections,progress}){
+    const panel=document.getElementById("goalsPanel");
+    panel.innerHTML=sections.map(sec=>`
+      <div class="section">
+        <div class="subtitle">${sec.subtitle}</div>
+        <div class="goalsRow">
+          ${sec.goals.map(g=>{
+            const pct=Math.max(0,Math.min(100,progress[g]||0));
+            return `
+              <div class="goal">
+                <div class="goalLabel">${g}</div>
+                <div class="bar"><div class="fill" style="--pct:${pct}"></div></div>
+              </div>`;
+          }).join("")}
+        </div>
+      </div>
+    `).join("");
+  }
 
-  function syncAnchorHeight(){
+  loadGoals().then(renderGoals);
+
+  /* ---------- BREAK TEXT LOCK ---------- */
+  const app=document.getElementById("app");
+  const breakText=document.getElementById("breakText");
+  const introAnchor=document.getElementById("introBreakAnchor");
+  const goalsAnchor=document.getElementById("goalsBreakAnchor");
+
+  let goalsMode=false;
+  let cachedIntroY=null;
+
+  function syncBreakHeight(){
     document.documentElement.style.setProperty(
       "--break-h",
-      breakText.getBoundingClientRect().height + "px"
+      breakText.getBoundingClientRect().height+"px"
     );
   }
 
-  function computeY(anchor){
-    const appRect = app.getBoundingClientRect();
-    const a = anchor.getBoundingClientRect();
-    const b = breakText.getBoundingClientRect();
-    return (a.top - appRect.top) + (a.height - b.height)/2;
+  function calcY(anchor){
+    const a=anchor.getBoundingClientRect();
+    const b=breakText.getBoundingClientRect();
+    const appRect=app.getBoundingClientRect();
+    return (a.top-appRect.top)+(a.height-b.height)/2;
   }
 
-  function placeBreakText(animate){
-    let y;
+  function placeBreak(animate){
+    const y=!goalsMode
+      ? (cachedIntroY ??= calcY(introAnchor))
+      : calcY(goalsAnchor);
 
-    if (!goalsMode) {
-      if (cachedIntroY === null) {
-        cachedIntroY = computeY(introAnchor);
-      }
-      y = cachedIntroY;          // ✅ restore exact original
-    } else {
-      y = computeY(goalsAnchor);
-    }
-
-    if (!animate) {
-      breakText.style.transition = "none";
-      breakText.style.transform = `translate(-50%, ${y}px)`;
-      requestAnimationFrame(() =>
-        breakText.style.transition = ""
-      );
-    } else {
-      breakText.style.transform = `translate(-50%, ${y}px)`;
+    if(!animate){
+      breakText.style.transition="none";
+      breakText.style.transform=`translate(-50%,${y}px)`;
+      requestAnimationFrame(()=>breakText.style.transition="");
+    }else{
+      breakText.style.transform=`translate(-50%,${y}px)`;
     }
   }
 
-  function layoutNow(animate=false){
-    syncAnchorHeight();
-    placeBreakText(animate);
+  function layout(animate=false){
+    syncBreakHeight();
+    placeBreak(animate);
   }
 
-  requestAnimationFrame(() => requestAnimationFrame(() => layoutNow(false)));
-  window.addEventListener("resize", () => layoutNow(false));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>layout(false)));
+  window.addEventListener("resize",()=>layout(false));
 
-  function enterGoals(){
-    if (goalsMode) return;
-    goalsMode = true;
-    document.body.classList.add("mode-goals");
-    layoutNow(true);
-  }
-
-  function leaveGoals(){
-    if (!goalsMode) return;
-    goalsMode = false;
-    document.body.classList.remove("mode-goals");
-    layoutNow(true);
-  }
-
-  window.addEventListener("keydown", e => {
-    if (e.key === "ArrowDown") enterGoals();
-    if (e.key === "ArrowUp") leaveGoals();
+  window.addEventListener("keydown",e=>{
+    if(e.key==="ArrowDown"){
+      goalsMode=true;
+      document.body.classList.add("mode-goals");
+      layout(true);
+    }
+    if(e.key==="ArrowUp"){
+      goalsMode=false;
+      document.body.classList.remove("mode-goals");
+      layout(true);
+    }
   });
 </script>
 </body>
