@@ -190,7 +190,7 @@
       scroll-snap-align: start;
       border-radius: 22px;
       overflow: hidden;
-      background: #fffdf7;
+      background: #fff;
       box-shadow: 0 4px 12px rgba(0,0,0,.07);
     }
     .gb-swap-band {
@@ -261,13 +261,12 @@
       justify-self: center;
       width: 24px;
       height: 24px;
-      border-radius: 999px;
-      background: #ddf3c8;
       color: #2f7b42;
-      font-size: 18px;
+      font-size: 28px;
       line-height: 1;
       font-weight: 1000;
-      box-shadow: inset 0 0 0 1px rgba(47,123,66,.08);
+      transform: scaleX(1.14);
+      text-shadow: 0 1px 0 rgba(47,123,66,.18);
     }
     .gb-swap-v-tags {
       align-self: end;
@@ -286,7 +285,7 @@
       .gb-swap-v-img-old { height: clamp(38px, 8.4svh, 58px); }
       .gb-swap-v-name-new { font-size: 10px; line-height: 1.03; }
       .gb-swap-v-name-old { font-size: 7.7px; line-height: 1.03; }
-      .gb-swap-up-arrow { width: 21px; height: 21px; font-size: 16px; }
+      .gb-swap-up-arrow { width: 21px; height: 21px; font-size: 25px; }
       .gb-swap-v-tags { gap: 3px; padding-top: 3px; }
       .gb-swap-v-tags .inline-flex { font-size: 7px; padding: 2.5px 5px; }
     }
@@ -299,238 +298,70 @@
       .gb-swap-v-img-old { height: clamp(30px, 7svh, 46px); }
       .gb-swap-v-name-new { font-size: 8.7px; line-height: 1.02; }
       .gb-swap-v-name-old { font-size: 6.9px; line-height: 1.02; }
-      .gb-swap-up-arrow { width: 18px; height: 18px; font-size: 14px; }
+      .gb-swap-up-arrow { width: 18px; height: 18px; font-size: 22px; }
       .gb-swap-v-tags .inline-flex { font-size: 6.4px; padding: 2px 4px; }
     }
 
 
 
-    /* v22 swap cards: white panel, larger product imagery, brown metric footer, bare thick arrow */
-    .gb-swaps-panel {
-      background: #fffdf7 !important;
-      color: #17351f !important;
-      box-shadow: 0 8px 22px rgba(20,57,31,.08) !important;
-      border: 1px solid rgba(23,53,31,.06);
-    }
-    .gb-swaps-panel .gb-swaps-title {
-      color: #17351f !important;
-    }
-    .gb-swaps-panel .gb-swaps-why {
-      background: #eef5e8 !important;
-      color: #17351f !important;
-      box-shadow: inset 0 0 0 1px rgba(47,123,66,.08);
-    }
-    .gb-swap-carousel {
-      gap: 9px;
-      padding: 0 32px 2px 0;
-    }
-    .gb-swap-vertical-card {
-      background: #ffffff !important;
-      border: 1px solid rgba(23,53,31,.07);
-      box-shadow: 0 5px 14px rgba(20,32,24,.08) !important;
-    }
-    .gb-swap-band {
-      height: 34px;
-      padding: 8px 8px 11px;
-      font-family: "Arial Rounded MT Bold", "Trebuchet MS", "Avenir Next", system-ui, sans-serif;
-      font-size: 9.6px;
-      letter-spacing: .055em;
-      text-transform: uppercase;
-      font-weight: 900;
-      text-shadow: 0 1px 3px rgba(0,0,0,.18);
-    }
+    /* v25: maximise vertical swap product imagery while preserving one-screen fit */
     .gb-swap-v-body {
-      height: calc(100% - 34px);
-      grid-template-rows: minmax(0, 1.34fr) 23px minmax(0, .98fr) 27px;
-      padding: 1px 7px 0;
+      grid-template-rows: minmax(0, 1.34fr) 18px minmax(0, 1.02fr) auto !important;
+      padding: 1px 7px 7px !important;
     }
     .gb-swap-new,
     .gb-swap-old {
-      justify-content: center;
+      justify-content: center !important;
     }
     .gb-swap-v-img-new {
-      width: min(118px, 96%);
-      height: clamp(82px, 17.5svh, 122px);
+      width: min(112px, 96%) !important;
+      height: clamp(82px, 17.8svh, 116px) !important;
     }
     .gb-swap-v-img-old {
-      width: min(102px, 92%);
-      height: clamp(58px, 12.3svh, 90px);
-      opacity: .98;
+      width: min(98px, 90%) !important;
+      height: clamp(58px, 12.2svh, 86px) !important;
     }
-    .gb-swap-v-name-new {
-      margin-top: 1px;
-      font-size: 10.7px;
-      line-height: 1.02;
-    }
-    .gb-swap-v-name-old {
-      margin-top: 0;
-      font-size: 8.0px;
-      line-height: 1.02;
-    }
+    .gb-swap-v-name-new { margin-top: 1px !important; }
+    .gb-swap-v-name-old { margin-top: 0 !important; }
     .gb-swap-up-arrow {
-      width: auto !important;
-      height: auto !important;
-      border-radius: 0 !important;
-      background: transparent !important;
-      box-shadow: none !important;
-      color: #2f7b42 !important;
-      font-family: "Arial Black", "Avenir Next", system-ui, sans-serif;
-      font-size: 27px !important;
-      line-height: .72 !important;
-      font-weight: 1000 !important;
-      transform: translateY(-1px);
-    }
-    .gb-swap-bottom {
-      align-self: stretch;
-      min-height: 27px;
-      margin: 0 -7px;
-      padding: 5px 6px 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #806546;
-      color: #fff9ed;
-      font-size: 8.4px;
-      line-height: 1;
-      font-weight: 1000;
-      letter-spacing: .015em;
-      white-space: nowrap;
+      width: 18px !important;
+      height: 18px !important;
+      font-size: 29px !important;
+      line-height: .8 !important;
     }
     @media (max-height: 740px) {
-      .gb-swap-band { height: 30px; padding: 7px 7px 10px; font-size: 8.8px; }
-      .gb-swap-v-body { height: calc(100% - 30px); grid-template-rows: minmax(0, 1.28fr) 20px minmax(0, .9fr) 24px; padding: 1px 6px 0; }
-      .gb-swap-v-img-new { height: clamp(68px, 15.7svh, 100px); width: min(104px, 96%); }
-      .gb-swap-v-img-old { height: clamp(48px, 10.4svh, 74px); width: min(92px, 92%); }
-      .gb-swap-v-name-new { font-size: 9.7px; }
-      .gb-swap-v-name-old { font-size: 7.3px; }
-      .gb-swap-up-arrow { font-size: 24px !important; }
-      .gb-swap-bottom { min-height: 24px; margin: 0 -6px; font-size: 7.7px; padding: 4px 5px 5px; }
+      .gb-swap-v-body {
+        grid-template-rows: minmax(0, 1.28fr) 17px minmax(0, .96fr) auto !important;
+        padding: 1px 6px 6px !important;
+      }
+      .gb-swap-v-img-new {
+        width: min(102px, 96%) !important;
+        height: clamp(70px, 16.2svh, 98px) !important;
+      }
+      .gb-swap-v-img-old {
+        width: min(88px, 90%) !important;
+        height: clamp(48px, 10.7svh, 70px) !important;
+      }
+      .gb-swap-up-arrow { font-size: 26px !important; }
     }
     @media (max-height: 675px) {
-      .gb-swap-carousel { gap: 7px; padding-right: 26px; }
-      .gb-swap-band { height: 27px; padding: 6px 6px 9px; font-size: 7.8px; letter-spacing: .045em; }
-      .gb-swap-v-body { height: calc(100% - 27px); grid-template-rows: minmax(0, 1.22fr) 17px minmax(0, .84fr) 22px; padding: 0 5px 0; }
-      .gb-swap-v-img-new { height: clamp(55px, 13.4svh, 78px); width: min(90px, 96%); }
-      .gb-swap-v-img-old { height: clamp(38px, 8.8svh, 58px); width: min(78px, 92%); }
-      .gb-swap-v-name-new { font-size: 8.4px; line-height: 1.01; }
-      .gb-swap-v-name-old { font-size: 6.6px; line-height: 1.01; }
-      .gb-swap-up-arrow { font-size: 20px !important; }
-      .gb-swap-bottom { min-height: 22px; margin: 0 -5px; font-size: 6.7px; padding: 3px 4px 4px; }
-    }
-
-
-
-    /* v23 final swap-card polish: full white cards, larger images, softer embedded footer tags */
-    .gb-swap-carousel {
-      gap: 10px !important;
-      padding: 0 34px 2px 0 !important;
-    }
-    .gb-swap-vertical-card {
-      position: relative !important;
-      background: #ffffff !important;
-      flex-basis: 44.5% !important;
-      border: 1px solid rgba(23,53,31,.075) !important;
-      box-shadow: 0 6px 16px rgba(20,32,24,.075) !important;
-    }
-    .gb-swap-band {
-      position: absolute !important;
-      inset: 0 0 auto 0 !important;
-      z-index: 2 !important;
-      height: 50px !important;
-      padding: 7px 8px 20px !important;
-      display: flex !important;
-      align-items: flex-start !important;
-      justify-content: center !important;
-      background-size: 100% 100% !important;
-      font-size: 9.4px !important;
-    }
-    .gb-swap-v-body {
-      height: 100% !important;
-      grid-template-rows: minmax(0, 1.42fr) 24px minmax(0, 1fr) 30px !important;
-      padding: 30px 7px 6px !important;
-      background: #ffffff !important;
-    }
-    .gb-swap-v-img-new {
-      width: min(124px, 99%) !important;
-      height: clamp(90px, 19svh, 132px) !important;
-    }
-    .gb-swap-v-img-old {
-      width: min(110px, 96%) !important;
-      height: clamp(66px, 13.7svh, 98px) !important;
-    }
-    .gb-swap-v-name-new {
-      margin-top: 0 !important;
-      font-size: 10.5px !important;
-      line-height: 1.02 !important;
-    }
-    .gb-swap-v-name-old {
-      margin-top: 0 !important;
-      font-size: 7.85px !important;
-      line-height: 1.02 !important;
-    }
-    .gb-swap-up-arrow {
-      color: #2f7b42 !important;
-      font-size: 32px !important;
-      line-height: .72 !important;
-      font-weight: 1000 !important;
-      text-shadow: 0 1px 0 rgba(47,123,66,.16);
-    }
-    .gb-swap-bottom {
-      align-self: end !important;
-      min-height: 30px !important;
-      margin: 0 !important;
-      padding: 3px 0 0 !important;
-      display: flex !important;
-      flex-wrap: wrap !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 4px !important;
-      background: transparent !important;
-      color: inherit !important;
-      white-space: normal !important;
-    }
-    .gb-swap-bottom-tag {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      padding: 3px 6px;
-      font-size: 7.4px;
-      line-height: 1;
-      font-weight: 1000;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.52);
-      border: 1px solid rgba(23,53,31,.08);
-    }
-    .gb-price-priceWinStrong { background:#e6f3df; color:#235b2f; border-color:#c7e2bf; }
-    .gb-price-priceWinSoft { background:#f0f5d7; color:#53651f; border-color:#dce7af; }
-    .gb-price-priceNeutral { background:#fff4c9; color:#705b12; border-color:#eadf9f; }
-    .gb-price-priceCostSoft { background:#fae7d7; color:#8a4e18; border-color:#eec8a8; }
-    .gb-price-priceCostStrong { background:#f8d7d2; color:#8f2f25; border-color:#efb6ad; }
-    .gb-grade-tag { background:#f4eee5; color:#6a4d2f; border-color:#ddc9ae; }
-    @media (max-height: 740px) {
-      .gb-swap-carousel { gap: 9px !important; padding-right: 30px !important; }
-      .gb-swap-band { height: 45px !important; padding: 6px 7px 18px !important; font-size: 8.5px !important; }
-      .gb-swap-v-body { grid-template-rows: minmax(0, 1.36fr) 21px minmax(0, .94fr) 27px !important; padding: 27px 6px 5px !important; }
-      .gb-swap-v-img-new { height: clamp(74px, 16.5svh, 106px) !important; width: min(108px, 99%) !important; }
-      .gb-swap-v-img-old { height: clamp(52px, 11svh, 76px) !important; width: min(96px, 96%) !important; }
-      .gb-swap-v-name-new { font-size: 9.5px !important; }
-      .gb-swap-v-name-old { font-size: 7.15px !important; }
-      .gb-swap-up-arrow { font-size: 28px !important; }
-      .gb-swap-bottom { min-height: 27px !important; gap: 3px !important; padding-top: 2px !important; }
-      .gb-swap-bottom-tag { font-size: 6.9px; padding: 2.7px 5px; }
-    }
-    @media (max-height: 675px) {
-      .gb-swap-carousel { gap: 7px !important; padding-right: 26px !important; }
-      .gb-swap-vertical-card { flex-basis: 43.5% !important; }
-      .gb-swap-band { height: 39px !important; padding: 5px 6px 15px !important; font-size: 7.6px !important; }
-      .gb-swap-v-body { grid-template-rows: minmax(0, 1.28fr) 18px minmax(0, .86fr) 24px !important; padding: 23px 5px 4px !important; }
-      .gb-swap-v-img-new { height: clamp(60px, 14svh, 82px) !important; width: min(92px, 99%) !important; }
-      .gb-swap-v-img-old { height: clamp(42px, 9.2svh, 60px) !important; width: min(80px, 96%) !important; }
-      .gb-swap-v-name-new { font-size: 8.2px !important; line-height: 1.01 !important; }
-      .gb-swap-v-name-old { font-size: 6.4px !important; line-height: 1.01 !important; }
-      .gb-swap-up-arrow { font-size: 23px !important; }
-      .gb-swap-bottom { min-height: 24px !important; }
-      .gb-swap-bottom-tag { font-size: 6.1px; padding: 2.3px 4px; }
+      .gb-swap-v-body {
+        grid-template-rows: minmax(0, 1.2fr) 15px minmax(0, .9fr) auto !important;
+        padding: 0 5px 5px !important;
+      }
+      .gb-swap-v-img-new {
+        width: min(88px, 96%) !important;
+        height: clamp(56px, 14.2svh, 78px) !important;
+      }
+      .gb-swap-v-img-old {
+        width: min(76px, 90%) !important;
+        height: clamp(38px, 8.6svh, 56px) !important;
+      }
+      .gb-swap-up-arrow {
+        width: 15px !important;
+        height: 15px !important;
+        font-size: 23px !important;
+      }
     }
 
     @media (min-width: 481px) {
@@ -1065,16 +896,16 @@ function Home() {
               <section className="gb-swaps-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-[28px] bg-[#17351f] p-2.5 text-white shadow-lg">
                 <div className="mb-2 flex items-center justify-between">
                   <h2 className="gb-swaps-title text-[25px] font-black leading-none tracking-[-0.07em]">Suggested swaps</h2>
-                  <button onClick={() => setModal("scoring")} className="gb-swaps-why rounded-full bg-white/12 px-3 py-1.5 text-[10px] font-black text-white/85">Why?</button>
+                  <button onClick={() => setModal("scoring")} className="rounded-full bg-white/12 px-3 py-1.5 text-[10px] font-black text-white/85">Why?</button>
                 </div>
                 <div className="gb-swap-carousel">
                   {swaps.map((swapItem, index) => {
                     const title = swapItem.homeBadge || (swapItem.coupon ? "CHF 1.50 off" : "Smart swap");
                     const band = swapItem.homeBadgeTone === "impact"
-                      ? "linear-gradient(180deg,#ef5a3c 0%,#ff8a57 48%,rgba(255,255,255,0) 100%)"
+                      ? "linear-gradient(180deg,#ef5a3c 0%,#ff8a57 58%,rgba(255,255,255,0) 100%)"
                       : swapItem.coupon
-                        ? "linear-gradient(180deg,#2f8ed8 0%,#62b7f4 48%,rgba(255,255,255,0) 100%)"
-                        : "linear-gradient(180deg,#2f7b42 0%,#70bf64 48%,rgba(255,255,255,0) 100%)";
+                        ? "linear-gradient(180deg,#2f8ed8 0%,#62b7f4 58%,rgba(255,255,255,0) 100%)"
+                        : "linear-gradient(180deg,#2f7b42 0%,#70bf64 58%,rgba(255,255,255,0) 100%)";
                     return (
                       <button key={swapItem.from} onClick={() => setSwap(swapItem)} className="gb-swap-vertical-card text-left text-[#172019]">
                         <div className="gb-swap-band" style={{ background: band }}>{title}</div>
@@ -1088,9 +919,9 @@ function Home() {
                             <img src={swapItem.fromImage} alt={swapItem.from} className="gb-swap-v-img-old" />
                             <p className="gb-swap-v-name-old">{swapItem.homeFrom || swapItem.from}</p>
                           </div>
-                          <div className="gb-swap-bottom">
-                            <span className={`gb-swap-bottom-tag gb-price-${priceTone(swapItem.priceChip)}`}>{swapItem.priceChip}</span>
-                            <span className="gb-swap-bottom-tag gb-grade-tag">{swapItem.gradeLift}</span>
+                          <div className="gb-swap-v-tags">
+                            <Pill tone={priceTone(swapItem.priceChip)}>{swapItem.priceChip}</Pill>
+                            <Pill tone="score">{swapItem.gradeLift}</Pill>
                           </div>
                         </div>
                       </button>
