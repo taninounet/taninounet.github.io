@@ -9,112 +9,337 @@
   <title>GreenBasket</title>
   <style>
     :root{
-      --cream:#f6f1e6; --cream2:#efe8d8; --green:#14391f; --green2:#2f7b42; --soft:#ddf3c8;
-      --blue:#e5f3ff; --yellow:#ffd982; --ink:#162016; --muted:#65725f; --card:#fffdf7;
-      --shadow:0 10px 28px rgba(20,57,31,.10);
+      --cream:#f6f1e6; --cream2:#efe8d8; --green:#133920; --green2:#2f7b42; --green3:#dceec8;
+      --blue:#dfefff; --yellow:#efd788; --yellow2:#ffe9b6; --ink:#162016; --muted:#60705f; --card:#fffdf7;
+      --softShadow:0 8px 24px rgba(20,57,31,.10); --hardShadow:0 12px 28px rgba(20,57,31,.16);
       --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-    *{box-sizing:border-box} html,body{height:100%;margin:0;overflow:hidden;background:var(--cream);color:var(--ink)}
-    body{font-family:"Avenir Next", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;-webkit-font-smoothing:antialiased;}
-    button{font:inherit;color:inherit;background:none;border:0;padding:0;-webkit-tap-highlight-color:transparent;cursor:pointer}
-    .app{height:100dvh;height:100svh;max-width:430px;margin:0 auto;background:var(--cream);display:flex;flex-direction:column;overflow:hidden;padding:calc(var(--safe-top) + 8px) 14px calc(var(--safe-bottom) + 8px);gap:9px;}
-    .topbar{height:42px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex:0 0 auto}
-    .brand{display:flex;align-items:center;gap:10px;min-width:0}.logo{width:38px;height:38px;border-radius:15px;background:var(--green);display:grid;place-items:center;font-size:22px;box-shadow:var(--shadow)}
-    .brand h1{font-size:31px;line-height:.92;margin:0;font-weight:1000;letter-spacing:-.07em;white-space:nowrap}.daily-score{border-radius:999px;background:var(--soft);color:var(--green);padding:7px 12px;font-weight:1000;font-size:14px;box-shadow:var(--shadow);white-space:nowrap}
-    .stories{height:76px;display:grid;grid-template-columns:repeat(4,1fr);gap:9px;flex:0 0 auto}.story{min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px}.story-ring{width:52px;height:52px;border-radius:50%;padding:3px;background:linear-gradient(135deg,#2f7b42,#b8ea8a,#ffd982);box-shadow:var(--shadow)}
-    .story-inner{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;background:#fffdf7;font-size:22px;font-weight:1000;overflow:hidden}.story.profile .story-inner{background:var(--green);color:white;font-size:12px;line-height:1.05;text-align:center}.story-label{max-width:100%;font-size:11px;line-height:1;font-weight:900;color:#52604d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.story.streak .story-ring{background:linear-gradient(135deg,#ffb22f,#ffe29a)}
-    .main{min-height:0;flex:1;display:flex;flex-direction:column;gap:9px;overflow:hidden}.recent{height:94px;border-radius:28px;background:var(--card);box-shadow:var(--shadow);padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;flex:0 0 auto}.grade{font-size:49px;line-height:.8;font-weight:1000;letter-spacing:-.08em;color:var(--green2)}.recent h2{font-size:13px;letter-spacing:.13em;text-transform:uppercase;margin:0 0 6px;color:var(--muted);font-weight:1000}.recent p{margin:0;font-size:14px;font-weight:800;color:#43513f;line-height:1.15}.recent .mini{font-size:12px;font-weight:1000;color:var(--green);background:var(--soft);border-radius:999px;padding:7px 10px;white-space:nowrap}.recent .view{font-size:11px;font-weight:1000;color:var(--muted);text-align:right;margin-top:5px}
-    .swaps{min-height:0;flex:1;background:var(--green);border-radius:31px;padding:13px;display:flex;flex-direction:column;gap:9px;overflow:hidden}.swaps-head{height:34px;display:flex;align-items:center;justify-content:space-between;flex:0 0 auto}.swaps-head h2{margin:0;color:white;font-size:31px;line-height:.9;font-weight:1000;letter-spacing:-.065em}.why{background:rgba(255,255,255,.15);color:white;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:1000;white-space:nowrap}.swap-list{min-height:0;flex:1;display:flex;flex-direction:column;gap:8px}.swap-card{min-height:0;flex:1;border-radius:24px;background:white;padding:10px 11px;display:grid;grid-template-columns:1fr 28px 1.12fr;gap:8px;align-items:center;box-shadow:0 4px 12px rgba(0,0,0,.05)}.product{min-width:0;display:grid;grid-template-columns:54px 1fr;gap:9px;align-items:center}.product.after{grid-template-columns:62px 1fr}.product img{width:100%;height:64px;object-fit:contain;display:block}.pname{font-size:13px;line-height:1.04;font-weight:1000;color:var(--green);letter-spacing:-.02em}.pmeta{font-size:11px;line-height:1.05;font-weight:900;color:#6a5b48;margin-top:3px}.arrow{font-size:24px;font-weight:1000;color:var(--green2);text-align:center}.benefit{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:1000;line-height:1;border:1px solid #d6c6a5;background:#f2e5cc;color:#5a4d3a}.pill.yellow{background:#fff1ad;color:#6b5711;border-color:#e8d680}.pill.coupon{background:#dff4ff;color:#16415f;border-color:#9dd0f2}.note{font-size:11.5px;line-height:1.18;font-weight:800;color:#52604d;margin-top:5px}.bottom{height:76px;display:grid;grid-template-columns:1fr 76px 1fr;gap:10px;align-items:center;flex:0 0 auto}.wing{height:58px;border-radius:20px;background:var(--soft);display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px;font-size:13px;font-weight:1000;color:var(--green);box-shadow:var(--shadow)}.wing.history{background:var(--blue);color:#16415f}.scan{height:76px;width:76px;border-radius:50%;display:grid;place-items:center;background:var(--green2);color:white;box-shadow:0 10px 22px rgba(47,123,66,.25);font-size:29px}.scan span{display:block;font-size:10px;font-weight:1000;margin-top:1px}.scan div{text-align:center;line-height:1}
-    .modal{position:fixed;inset:0;z-index:20;background:rgba(12,18,12,.35);backdrop-filter:blur(7px);display:none;align-items:flex-end;justify-content:center;padding:calc(var(--safe-top) + 12px) 12px calc(var(--safe-bottom) + 12px)}.modal.open{display:flex}.sheet{width:min(430px,100%);max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px);overflow:auto;border-radius:31px;background:#fbf6eb;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.25)}.sheet.dark{background:var(--green);color:white}.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.sheet h3{font-size:26px;line-height:.95;margin:0;font-weight:1000;letter-spacing:-.06em}.close{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.85);display:grid;place-items:center;font-size:24px;font-weight:900;color:var(--ink)}.dark .close{background:rgba(255,255,255,.14);color:white}.offer-card,.info-card,.history-row{border-radius:22px;background:white;padding:15px;margin-top:10px;box-shadow:var(--shadow)}.offer-card h4,.info-card h4{margin:8px 0 5px;font-size:20px;line-height:1;font-weight:1000;letter-spacing:-.04em}.offer-card p,.info-card p,.history-row p{margin:0;color:#566450;font-size:14px;line-height:1.35;font-weight:750}.story-view{min-height:520px;border-radius:28px;padding:18px;display:flex;flex-direction:column;background:linear-gradient(180deg,#17351f,#23572d);color:white}.story-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:24px}.story-bars i{display:block;height:4px;background:#b8ea8a;border-radius:999px;opacity:.35}.story-bars i.active{opacity:1}.story-view .big{font-size:68px;margin:18px 0 14px}.story-view h4{font-size:36px;line-height:.88;letter-spacing:-.08em;margin:0 0 16px;font-weight:1000}.story-view p{font-size:17px;line-height:1.35;font-weight:750;color:rgba(255,255,255,.78);margin:0}.story-actions{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}.story-actions button{border-radius:999px;background:rgba(255,255,255,.13);color:white;padding:13px;font-weight:1000}.community-card{border-radius:24px;background:var(--soft);padding:16px}.progress{height:10px;border-radius:999px;background:rgba(20,57,31,.12);overflow:hidden}.progress b{display:block;height:100%;width:64%;background:var(--green2);border-radius:999px}.history-row{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:12px}.store{font-weight:1000;color:#f36a21;font-size:13px}.hist-grade{font-size:24px;font-weight:1000;color:var(--green2)}
-    @media (max-height:720px){.app{gap:7px;padding-left:12px;padding-right:12px}.topbar{height:38px}.brand h1{font-size:27px}.logo{width:34px;height:34px}.stories{height:67px}.story-ring{width:46px;height:46px}.story-label{font-size:10px}.recent{height:80px;border-radius:24px;padding:10px 12px}.grade{font-size:42px}.recent h2{font-size:11px;margin-bottom:4px}.recent p{font-size:12px}.swaps{padding:11px;border-radius:27px}.swaps-head{height:29px}.swaps-head h2{font-size:27px}.swap-card{border-radius:21px;padding:8px;gap:6px}.product{grid-template-columns:48px 1fr;gap:7px}.product.after{grid-template-columns:55px 1fr}.product img{height:56px}.pname{font-size:12px}.pmeta{font-size:10px}.note{font-size:10px}.pill{font-size:10.5px;padding:4px 7px}.bottom{height:66px;grid-template-columns:1fr 66px 1fr}.scan{height:66px;width:66px;font-size:25px}.wing{height:52px;font-size:12px}}
-    @media (max-width:370px){.brand h1{font-size:25px}.daily-score{font-size:12px;padding:7px 9px}.swap-card{grid-template-columns:1fr 22px 1.08fr}.arrow{font-size:20px}.pname{font-size:11px}.product{grid-template-columns:42px 1fr}.product.after{grid-template-columns:48px 1fr}.wing{font-size:11px;padding:0 8px}}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--cream);color:var(--ink);overflow:hidden}
+    body{font-family:"Avenir Next",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+    button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .app{
+      width:min(430px,100vw); height:100svh; height:100dvh; margin:0 auto; overflow:hidden; background:var(--cream);
+      padding:calc(var(--safe-top) + 10px) 14px calc(var(--safe-bottom) + 10px);
+      display:grid; grid-template-rows:84px 110px minmax(0,1fr) 92px; gap:10px;
+    }
+
+    /* Story row */
+    .stories{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; align-items:start}
+    .story{display:flex; justify-content:center}
+    .story-circle{
+      width:74px; height:74px; border-radius:50%; background:linear-gradient(180deg,#eff7e5,#dceec8);
+      border:4px solid #83bd72; box-shadow:var(--softShadow); padding:9px 8px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; text-align:center;
+      color:var(--green); line-height:1;
+    }
+    .story.offers .story-circle{background:linear-gradient(180deg,#fff7d7,#f6e493); border-color:#e6ca67}
+    .story.guide .story-circle{background:linear-gradient(180deg,#edf8ea,#d0eabf); border-color:#88bf75}
+    .story.streak .story-circle{background:linear-gradient(180deg,#fff0d7,#f2d99b); border-color:#f0bb54}
+    .story.profile .story-circle{background:linear-gradient(180deg,#255130,#183d21); border-color:#bfd980; color:#fffef8}
+    .story-circle svg{width:20px; height:20px; flex:0 0 auto}
+    .story-circle .big{width:22px;height:22px}
+    .story-title{font-size:10px; font-weight:1000; letter-spacing:-.02em}
+    .story-sub{font-size:8px; font-weight:900; opacity:.9; line-height:1.05}
+    .story.profile .story-title{font-size:9px}
+
+    /* Recent basket */
+    .recent{
+      background:var(--card); border-radius:30px; box-shadow:var(--softShadow); padding:14px 16px;
+      display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; overflow:hidden;
+    }
+    .grade-col{display:flex; align-items:flex-end; gap:8px}
+    .grade{font-size:56px; line-height:.82; font-weight:1000; letter-spacing:-.08em; color:var(--green2)}
+    .score-chip{margin-bottom:7px; font-size:15px; font-weight:1000; color:#536450; white-space:nowrap}
+    .recent-main{min-width:0}
+    .recent-eyebrow{font-size:11px; font-weight:1000; text-transform:uppercase; letter-spacing:.18em; color:#667461; margin-bottom:3px}
+    .recent-headline{font-size:18px; line-height:1.05; font-weight:1000; color:var(--green); letter-spacing:-.03em; margin-bottom:7px}
+    .pill-row{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:7px}
+    .mini-pill{padding:5px 9px; border-radius:999px; background:var(--cream2); color:#5d654f; font-size:11px; font-weight:1000; white-space:nowrap}
+    .mini-pill strong{color:var(--green)}
+    .basket-note{font-size:12px; line-height:1.18; font-weight:850; color:#586656}
+    .view-basket{align-self:stretch; display:flex; flex-direction:column; justify-content:center; gap:8px; align-items:center}
+    .view-btn{width:78px; height:52px; border-radius:22px; background:var(--green3); display:grid; place-items:center; box-shadow:inset 0 0 0 1px rgba(47,123,66,.06)}
+    .view-btn span{font-size:14px; font-weight:1000; color:var(--green)}
+    .view-meta{font-size:11px; line-height:1.1; font-weight:1000; color:#6b7468; text-align:center}
+
+    /* Swaps */
+    .swaps{background:var(--green); border-radius:32px; box-shadow:var(--hardShadow); padding:12px; display:grid; grid-template-rows:auto minmax(0,1fr); gap:8px; overflow:hidden}
+    .swaps-head{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .swaps-head h2{margin:0; color:white; font-size:31px; line-height:.9; font-weight:1000; letter-spacing:-.07em}
+    .why{border-radius:999px; background:rgba(255,255,255,.14); color:white; padding:10px 15px; font-size:14px; font-weight:1000; white-space:nowrap}
+    .swap-list{display:grid; grid-template-rows:repeat(3,1fr); gap:8px; min-height:0}
+    .swap-card{background:white; border-radius:24px; padding:10px; display:grid; grid-template-columns:1fr 30px 1.1fr; gap:8px; align-items:center; min-height:0; box-shadow:0 4px 10px rgba(0,0,0,.06)}
+    .product{display:grid; grid-template-columns:56px 1fr; gap:8px; align-items:center; min-width:0}
+    .product.after{grid-template-columns:58px 1fr}
+    .product img{width:100%; height:62px; object-fit:contain; display:block}
+    .ptext{min-width:0}
+    .pname{font-size:13px; line-height:1.03; font-weight:1000; color:var(--green); letter-spacing:-.02em; margin:0 0 3px}
+    .pmeta{font-size:10.5px; line-height:1.02; font-weight:1000; color:#6e654f; margin:0}
+    .note{font-size:11px; line-height:1.1; font-weight:850; color:#5a6858; margin-top:4px}
+    .arrow-wrap{display:flex; align-items:center; justify-content:center}
+    .arrow-icon{width:26px;height:26px;color:var(--green2)}
+    .benefit{display:flex; flex-wrap:wrap; gap:6px; margin-top:5px}
+    .pill{display:inline-flex; align-items:center; border-radius:999px; padding:5px 10px; font-size:11px; line-height:1; font-weight:1000; border:1px solid #d3c4a0; background:#f2e6cf; color:#5b4f39; white-space:nowrap}
+    .pill.yellow{background:#fff1ad; color:#6a580f; border-color:#e7d681}
+    .pill.blue{background:#dff3ff; color:#16415f; border-color:#9fd2f2}
+
+    /* Bottom wing nav */
+    .bottom{display:grid; grid-template-columns:1fr 88px 1fr; gap:8px; align-items:center}
+    .wing{
+      height:84px; position:relative; overflow:hidden; box-shadow:var(--softShadow); padding:13px 18px;
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    .wing.community{
+      background:linear-gradient(180deg,#dceec8,#d0e6ba); color:var(--green); border-radius:26px 18px 18px 26px;
+      clip-path:polygon(0 0, 82% 0, 100% 50%, 82% 100%, 0 100%);
+    }
+    .wing.history{
+      background:linear-gradient(180deg,#dfefff,#d3e8fb); color:#16415f; border-radius:18px 26px 26px 18px;
+      clip-path:polygon(18% 0, 100% 0, 100% 100%, 18% 100%, 0 50%);
+    }
+    .wing-title{display:flex; align-items:center; gap:7px; font-size:12px; font-weight:1000; margin-bottom:6px; letter-spacing:-.02em}
+    .wing-title svg{width:16px;height:16px; flex:0 0 auto}
+    .wing-main{font-size:12px; line-height:1.1; font-weight:900}
+    .wing-sub{font-size:10px; line-height:1.08; font-weight:850; opacity:.86; margin-top:4px}
+    .progress{margin-top:8px; height:8px; border-radius:999px; background:rgba(20,57,31,.12); overflow:hidden; width:86%}
+    .progress b{display:block; height:100%; width:64%; background:var(--green2); border-radius:999px}
+    .history-lines{display:grid; gap:5px; margin-top:4px}
+    .history-line{display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:10px; font-weight:1000}
+    .history-line em{font-style:normal; opacity:.8; font-weight:850}
+    .scan{height:88px; width:88px; border-radius:50%; box-shadow:0 14px 28px rgba(47,123,66,.28); background:linear-gradient(180deg,#3a8b4d,#2f7b42); display:grid; place-items:center; color:white}
+    .scan-inner{text-align:center; line-height:1}
+    .scan-inner svg{width:28px; height:28px; margin-bottom:5px}
+    .scan-inner span{display:block; font-size:12px; font-weight:1000}
+
+    /* Modals */
+    .modal{position:fixed; inset:0; z-index:50; background:rgba(11,17,11,.38); backdrop-filter:blur(7px); display:none; align-items:flex-end; justify-content:center; padding:calc(var(--safe-top) + 12px) 12px calc(var(--safe-bottom) + 12px)}
+    .modal.open{display:flex}
+    .sheet{width:min(430px,100%); max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px); overflow:auto; border-radius:32px; background:#fbf6eb; padding:18px; box-shadow:0 28px 60px rgba(0,0,0,.28)}
+    .sheet.dark{background:var(--green); color:white}
+    .sheet-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px}
+    .sheet h3{margin:0; font-size:28px; line-height:.95; letter-spacing:-.06em; font-weight:1000}
+    .close{width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.88); display:grid; place-items:center; font-size:24px; font-weight:1000; color:var(--ink)}
+    .dark .close{background:rgba(255,255,255,.14); color:white}
+    .card{background:white; border-radius:24px; padding:15px; box-shadow:var(--softShadow); margin-top:10px}
+    .card h4{margin:0 0 6px; font-size:21px; line-height:1; font-weight:1000; letter-spacing:-.04em}
+    .card p{margin:0; font-size:14px; line-height:1.35; font-weight:800; color:#576653}
+    .story-view{border-radius:28px; min-height:520px; background:linear-gradient(180deg,#17351f,#255a31); color:white; padding:18px; display:flex; flex-direction:column}
+    .story-bars{display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-bottom:24px}
+    .story-bars i{display:block; height:4px; background:#b8ea8a; border-radius:999px; opacity:.3}
+    .story-bars i.active{opacity:1}
+    .story-icon{width:74px; height:74px; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.10); margin:8px 0 16px}
+    .story-icon svg{width:34px; height:34px}
+    .story-view h4{margin:0 0 14px; font-size:35px; line-height:.9; font-weight:1000; letter-spacing:-.08em}
+    .story-view p{margin:0; font-size:17px; line-height:1.35; font-weight:800; color:rgba(255,255,255,.8)}
+    .story-actions{margin-top:auto; display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .story-actions button{padding:13px; border-radius:999px; background:rgba(255,255,255,.12); color:white; font-size:15px; font-weight:1000}
+    .history-row{display:grid; grid-template-columns:52px 1fr auto; gap:12px; align-items:center}
+    .store{font-size:13px; font-weight:1000; color:#f36a21}
+    .hist-grade{font-size:24px; font-weight:1000; color:var(--green2)}
+
+    @media (max-height:760px){
+      .app{grid-template-rows:76px 98px minmax(0,1fr) 82px; gap:8px; padding-left:12px; padding-right:12px}
+      .story-circle{width:66px;height:66px;padding:7px}.story-title{font-size:9px}.story-sub{font-size:7px}
+      .recent{padding:12px 14px}.grade{font-size:49px}.recent-headline{font-size:16px}.basket-note{font-size:11px}.view-btn{width:72px;height:46px}
+      .swaps{padding:10px;border-radius:28px}.swaps-head h2{font-size:28px}.why{padding:8px 13px;font-size:13px}
+      .swap-card{padding:8px;gap:6px}.product{grid-template-columns:50px 1fr}.product.after{grid-template-columns:52px 1fr}.product img{height:56px}.pname{font-size:12px}.note{font-size:10px}.pill{font-size:10px;padding:4px 8px}
+      .bottom{grid-template-columns:1fr 78px 1fr}.scan{height:78px;width:78px}.wing{height:76px;padding:11px 15px}.wing-title{font-size:11px;margin-bottom:5px}.wing-main{font-size:11px}.wing-sub{font-size:9px}
+    }
+    @media (max-width:370px){
+      .story-circle{width:62px;height:62px}.grade{font-size:46px}.recent-headline{font-size:15px}.recent{grid-template-columns:auto 1fr 70px; gap:9px}
+      .swaps-head h2{font-size:26px}.swap-card{grid-template-columns:1fr 24px 1.05fr}.product{grid-template-columns:46px 1fr}.product.after{grid-template-columns:48px 1fr}.pname{font-size:11px}.pmeta{font-size:9.5px}
+      .wing{padding:10px 12px}.wing-main{font-size:10px}
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="topbar">
-      <div class="brand"><div class="logo">🧺</div><h1>GreenBasket</h1></div>
-      <button class="daily-score" data-modal="streak">🔥 4 weeks</button>
-    </div>
-
     <section class="stories" aria-label="quick sections">
-      <button class="story profile" data-modal="profile"><div class="story-ring"><div class="story-inner">@clara<br>Zurich</div></div><div class="story-label">Profile</div></button>
-      <button class="story" data-modal="offers"><div class="story-ring"><div class="story-inner">🎁</div></div><div class="story-label">Offers</div></button>
-      <button class="story" data-modal="info"><div class="story-ring"><div class="story-inner">🌱</div></div><div class="story-label">Guide</div></button>
-      <button class="story streak" data-modal="streak"><div class="story-ring"><div class="story-inner">🔥</div></div><div class="story-label">Streak</div></button>
+      <button class="story profile" data-modal="profile">
+        <div class="story-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 0 0-16 0"></path><circle cx="12" cy="8" r="4"></circle></svg>
+          <div class="story-title">@clara</div>
+          <div class="story-sub">Zurich</div>
+        </div>
+      </button>
+      <button class="story offers" data-modal="offers">
+        <div class="story-circle">
+          <svg class="big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v8H4v-8"></path><path d="M2 7h20v5H2z"></path><path d="M12 20V7"></path><path d="M12 7H7.5a2.5 2.5 0 1 1 0-5C10 2 12 7 12 7Z"></path><path d="M12 7h4.5a2.5 2.5 0 1 0 0-5C14 2 12 7 12 7Z"></path></svg>
+          <div class="story-title">Offers</div>
+          <div class="story-sub">3 live</div>
+        </div>
+      </button>
+      <button class="story guide" data-modal="info">
+        <div class="story-circle">
+          <svg class="big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-4.35-6-10a6 6 0 0 1 12 0c0 5.65-6 10-6 10Z"></path><path d="M12 7c-1.8 0-3.4.94-4.3 2.36"></path><path d="M12 7c1.8 0 3.4.94 4.3 2.36"></path></svg>
+          <div class="story-title">Guide</div>
+          <div class="story-sub">Seasonal</div>
+        </div>
+      </button>
+      <button class="story streak" data-modal="streak">
+        <div class="story-circle">
+          <svg class="big" viewBox="0 0 24 24" fill="currentColor"><path d="M13.8 2c.35 2.14-.37 3.83-1.6 5.24-1.23 1.4-2.96 2.53-3.65 4.65-.79 2.43.5 5.11 2.74 6.23 2.34 1.17 5.15.54 6.61-1.38 1.7-2.23 1.34-5.07-.2-7.01-.73-.93-1.67-1.62-2.48-2.5-1.17-1.27-2-2.78-1.42-5.23Z"></path><path d="M10.8 13.1c-.83 1.18-.76 2.77.27 3.83 1.13 1.16 2.96 1.28 4.18.18 1.17-1.06 1.28-2.83.46-4.02-.55-.8-1.35-1.28-2.17-1.94-.88.55-1.9 1.01-2.74 1.95Z"></path></svg>
+          <div class="story-title">Streak</div>
+          <div class="story-sub">4 weeks</div>
+        </div>
+      </button>
     </section>
 
-    <main class="main">
-      <button class="recent" data-modal="basket">
+    <button class="recent" data-modal="basket" aria-label="open recent basket details">
+      <div class="grade-col">
         <div class="grade">B+</div>
-        <div>
-          <h2>Recent basket</h2>
-          <p>70/100 · Protein is your biggest opportunity.</p>
-          <p style="font-size:12px;color:#73806c;margin-top:4px">Last shop: Coop · CHF 23.25 · B+</p>
+        <div class="score-chip">70/100</div>
+      </div>
+      <div class="recent-main">
+        <div class="recent-eyebrow">Recent basket</div>
+        <div class="recent-headline">Protein is your biggest opportunity.</div>
+        <div class="pill-row">
+          <span class="mini-pill">Last shop <strong>Coop</strong></span>
+          <span class="mini-pill">Total <strong>CHF 23.25</strong></span>
+          <span class="mini-pill">Next step <strong>1 smart swap</strong></span>
         </div>
-        <div><div class="mini">View</div><div class="view">details</div></div>
+        <div class="basket-note">Strong on local produce. Easiest next gain: lighter protein and yoghurt choices.</div>
+      </div>
+      <div class="view-basket">
+        <div class="view-btn"><span>View</span></div>
+        <div class="view-meta">basket<br>details</div>
+      </div>
+    </button>
+
+    <section class="swaps" aria-label="suggested swaps">
+      <div class="swaps-head">
+        <h2>Suggested swaps</h2>
+        <button class="why" data-modal="why">Why?</button>
+      </div>
+      <div class="swap-list">
+        <button class="swap-card" data-swap="0">
+          <div class="product">
+            <img src="https://www.coop.ch/img/produkte/155_155/RGB/7369961_002.jpg?_=1766530152565" alt="Lean beef mince">
+            <div class="ptext">
+              <p class="pname">Lean beef mince</p>
+              <p class="pmeta">Coop · 600g</p>
+            </div>
+          </div>
+          <div class="arrow-wrap"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h12"></path><path d="m12 5 7 7-7 7"></path></svg></div>
+          <div class="product after">
+            <img src="https://www.coop.ch/img/produkte/155_155/RGB/3030958_001.jpg?_=1749770085446" alt="Organic lentils">
+            <div class="ptext">
+              <p class="pname">Organic lentils</p>
+              <p class="pmeta">Coop · 500g</p>
+              <div class="note">Similar protein, lower footprint.</div>
+              <div class="benefit"><span class="pill">-CHF 9.25</span><span class="pill yellow">C → A-</span></div>
+            </div>
+          </div>
+        </button>
+        <button class="swap-card" data-swap="1">
+          <div class="product">
+            <img src="https://image.migros.ch/d/mo-boxed/v-w-1000-h-1000/o-af-1-t.clr-fff/469531769f9c7117db405eef1d2a8680ed3cb4da/bio-blueberries.jpg" alt="Bio blueberries">
+            <div class="ptext">
+              <p class="pname">Bio blueberries</p>
+              <p class="pmeta">Migros · 250g</p>
+            </div>
+          </div>
+          <div class="arrow-wrap"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h12"></path><path d="m12 5 7 7-7 7"></path></svg></div>
+          <div class="product after">
+            <img src="https://image.migros.ch/d/mo-boxed/v-w-960-h-720/o-af-1-t.clr-fff/c97e0c09968deb7a66bf5644e78563eda3e8e94a/bio-aepfel-gala.jpg" alt="Gala apples">
+            <div class="ptext">
+              <p class="pname">Gala apples</p>
+              <p class="pmeta">Migros · pack</p>
+              <div class="note">Seasonal domestic fruit.</div>
+              <div class="benefit"><span class="pill">-CHF 0.90</span><span class="pill yellow">B → A</span></div>
+            </div>
+          </div>
+        </button>
+        <button class="swap-card" data-swap="2">
+          <div class="product">
+            <img src="https://image.migros.ch/d/2017-large/cc96137d44101981b58af4bd0fea3fc059328110.png" alt="Natural yoghurt">
+            <div class="ptext">
+              <p class="pname">Natural yoghurt</p>
+              <p class="pmeta">Migros · 500g</p>
+            </div>
+          </div>
+          <div class="arrow-wrap"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h12"></path><path d="m12 5 7 7-7 7"></path></svg></div>
+          <div class="product after">
+            <img src="https://digitalcontent.api.tesco.com/v2/media/ghs/0be57439-a50b-4c54-a005-7f2fd13bfc6d/546630ea-d352-4a6b-a45e-07630d68cc9e_276289086.jpeg?h=960&w=960" alt="Oatly Oatgurt Plain">
+            <div class="ptext">
+              <p class="pname">Oatly Oatgurt</p>
+              <p class="pmeta">400g</p>
+              <div class="note">Plant-based breakfast swap.</div>
+              <div class="benefit"><span class="pill blue">CHF 1.50 coupon</span><span class="pill yellow">B- → B+</span></div>
+            </div>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <nav class="bottom" aria-label="bottom actions">
+      <button class="wing community" data-modal="community">
+        <div class="wing-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="3"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span>Community</span>
+        </div>
+        <div class="wing-main">5,420 swaps · 64%</div>
+        <div class="progress"><b></b></div>
+        <div class="wing-sub">VBZ reward progress</div>
       </button>
-
-      <section class="swaps">
-        <div class="swaps-head"><h2>Suggested swaps</h2><button class="why" data-modal="why">Why?</button></div>
-        <div class="swap-list">
-          <button class="swap-card" data-swap="0">
-            <div class="product"><img src="https://www.coop.ch/img/produkte/155_155/RGB/7369961_002.jpg?_=1766530152565" alt="Lean beef mince"><div><div class="pname">Lean beef mince</div><div class="pmeta">Coop · 600g</div></div></div>
-            <div class="arrow">→</div>
-            <div class="product after"><img src="https://www.coop.ch/img/produkte/155_155/RGB/3030958_001.jpg?_=1749770085446" alt="Organic lentils"><div><div class="pname">Organic lentils</div><div class="pmeta">Coop · 500g</div><div class="note">Similar protein, lower footprint.</div><div class="benefit"><span class="pill">-CHF 9.25</span><span class="pill yellow">C → A-</span></div></div></div>
-          </button>
-          <button class="swap-card" data-swap="1">
-            <div class="product"><img src="https://image.migros.ch/d/mo-boxed/v-w-1000-h-1000/o-af-1-t.clr-fff/469531769f9c7117db405eef1d2a8680ed3cb4da/bio-blueberries.jpg" alt="Blueberries"><div><div class="pname">Bio blueberries</div><div class="pmeta">Migros · 250g</div></div></div>
-            <div class="arrow">→</div>
-            <div class="product after"><img src="https://image.migros.ch/d/mo-boxed/v-w-960-h-720/o-af-1-t.clr-fff/c97e0c09968deb7a66bf5644e78563eda3e8e94a/bio-aepfel-gala.jpg" alt="Gala apples"><div><div class="pname">Gala apples</div><div class="pmeta">Migros · pack</div><div class="note">Seasonal domestic fruit.</div><div class="benefit"><span class="pill">-CHF 0.90</span><span class="pill yellow">B → A</span></div></div></div>
-          </button>
-          <button class="swap-card" data-swap="2">
-            <div class="product"><img src="https://image.migros.ch/d/2017-large/cc96137d44101981b58af4bd0fea3fc059328110.png" alt="Yoghurt"><div><div class="pname">Natural yoghurt</div><div class="pmeta">Migros · 500g</div></div></div>
-            <div class="arrow">→</div>
-            <div class="product after"><img src="https://digitalcontent.api.tesco.com/v2/media/ghs/0be57439-a50b-4c54-a005-7f2fd13bfc6d/546630ea-d352-4a6b-a45e-07630d68cc9e_276289086.jpeg?h=960&w=960" alt="Oatly Oatgurt"><div><div class="pname">Oatly Oatgurt</div><div class="pmeta">400g</div><div class="note">Plant-based breakfast swap.</div><div class="benefit"><span class="pill coupon">coupon</span><span class="pill yellow">B- → B+</span></div></div></div>
-          </button>
+      <button class="scan" data-modal="scan">
+        <div class="scan-inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h2l1.4-1.7h4.2L15.5 6h2A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-8Z"></path><circle cx="12" cy="12.5" r="3.2"></circle></svg>
+          <span>Scan</span>
         </div>
-      </section>
-    </main>
-
-    <nav class="bottom" aria-label="bottom navigation">
-      <button class="wing" data-modal="community">👥 Community</button>
-      <button class="scan" data-modal="scan"><div>📷<span>Scan</span></div></button>
-      <button class="wing history" data-modal="history">🧾 History</button>
+      </button>
+      <button class="wing history" data-modal="history">
+        <div class="wing-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"></path><path d="M14 2v6h6"></path><path d="M8 13h8"></path><path d="M8 17h8"></path><path d="M8 9h3"></path></svg>
+          <span>History</span>
+        </div>
+        <div class="history-lines">
+          <div class="history-line"><span>16.05 <em>Coop</em></span><strong>B+</strong></div>
+          <div class="history-line"><span>09.05 <em>Migros</em></span><strong>A-</strong></div>
+        </div>
+        <div class="wing-sub">Recent baskets</div>
+      </button>
     </nav>
   </div>
 
-  <div class="modal" id="profile"><div class="sheet"><div class="sheet-head"><h3>@clara.meier</h3><button class="close">×</button></div><div class="community-card"><h4 style="margin:0 0 6px;font-size:24px">Zurich shopper profile</h4><p style="margin:0;color:#52604d;font-weight:800">Recent basket average: <b>B+ · 70/100</b><br>Preferred stores: Coop, Migros, Aldi<br>Current goal: one smart swap per weekly shop.</p></div></div></div>
+  <div class="modal" id="profile"><div class="sheet"><div class="sheet-head"><h3>@clara.meier</h3><button class="close">×</button></div><div class="card"><h4>Zurich shopper profile</h4><p>Recent basket average: <b>B+ · 70/100</b><br>Preferred stores: Coop, Migros, Aldi<br>Current goal: one smart swap per weekly shop.</p></div></div></div>
 
-  <div class="modal" id="offers"><div class="sheet"><div class="sheet-head"><h3>Offers</h3><button class="close">×</button></div><div class="story-view" data-story="offers"><div class="story-bars"><i class="active"></i><i></i><i></i></div><div class="big">🥣</div><h4>CHF 1.50 off Oatly Oatgurt</h4><p>Triggered by your recent dairy yoghurt basket. Valid at Coop or Migros this week.</p><div class="story-actions"><button data-prev>Back</button><button data-next>Next</button></div></div></div></div>
+  <div class="modal" id="offers"><div class="sheet"><div class="sheet-head"><h3>Offers</h3><button class="close">×</button></div><div class="story-view" data-story="offers"><div class="story-bars"><i class="active"></i><i></i><i></i></div><div class="story-icon"></div><h4></h4><p></p><div class="story-actions"><button data-prev>Back</button><button data-next>Next</button></div></div></div></div>
 
-  <div class="modal" id="info"><div class="sheet"><div class="sheet-head"><h3>Today’s guide</h3><button class="close">×</button></div><div class="story-view" data-story="info"><div class="story-bars"><i class="active"></i><i></i><i></i></div><div class="big">🍎</div><h4>Choose seasonal fruit first</h4><p>Swiss and nearby seasonal fruit is usually the easiest low-friction win: familiar, cheap, and available.</p><div class="story-actions"><button data-prev>Back</button><button data-next>Next</button></div></div></div></div>
+  <div class="modal" id="info"><div class="sheet"><div class="sheet-head"><h3>Guide</h3><button class="close">×</button></div><div class="story-view" data-story="info"><div class="story-bars"><i class="active"></i><i></i><i></i></div><div class="story-icon"></div><h4></h4><p></p><div class="story-actions"><button data-prev>Back</button><button data-next>Next</button></div></div></div></div>
 
-  <div class="modal" id="streak"><div class="sheet"><div class="sheet-head"><h3>Shopping rhythm</h3><button class="close">×</button></div><div class="offer-card" style="background:#ffd982"><h4>🔥 4-week streak</h4><p>At least one improved shop each week. Six logged shops improved versus your previous pattern.</p></div><div class="offer-card"><h4>Best recent basket: A-</h4><p>Mostly local produce and legumes. Your next opportunity is lighter protein swaps.</p></div></div></div>
+  <div class="modal" id="streak"><div class="sheet"><div class="sheet-head"><h3>Shopping rhythm</h3><button class="close">×</button></div><div class="card" style="background:#fff2cf"><h4>4-week streak</h4><p>At least one improved shop each week. Six logged shops improved versus your previous pattern.</p></div><div class="card"><h4>Best recent basket: A-</h4><p>Mostly local produce and legumes. Your next opportunity is lighter protein swaps.</p></div></div></div>
 
-  <div class="modal" id="basket"><div class="sheet"><div class="sheet-head"><h3>Recent basket</h3><button class="close">×</button></div><div class="community-card"><h4 style="margin:0 0 4px;font-size:34px;color:#2f7b42">B+ · 70/100</h4><p style="margin:0;color:#52604d;font-weight:800">Your strongest pattern is local produce. Biggest opportunity: lighter protein and yoghurt swaps.</p></div><div class="history-row"><div class="store">COOP</div><div><p><b>Today · CHF 23.25</b><br>Beef, blueberries, yoghurt, pasta</p></div><div class="hist-grade">B+</div></div></div></div>
+  <div class="modal" id="basket"><div class="sheet"><div class="sheet-head"><h3>Recent basket</h3><button class="close">×</button></div><div class="card"><h4 style="font-size:34px;color:#2f7b42">B+ · 70/100</h4><p>Your strongest pattern is local produce. Biggest opportunity: lighter protein and yoghurt swaps.</p></div><div class="card history-row"><div class="store">COOP</div><div><p><b>Today · CHF 23.25</b><br>Beef, blueberries, yoghurt, pasta</p></div><div class="hist-grade">B+</div></div></div></div>
 
-  <div class="modal" id="why"><div class="sheet"><div class="sheet-head"><h3>Why these swaps?</h3><button class="close">×</button></div><div class="info-card"><h4>Same role, better basket</h4><p>The app compares products that play a similar role in your shop: protein for protein, fruit for fruit, breakfast item for breakfast item.</p></div><div class="info-card"><h4>Price-sensitive by default</h4><p>Swaps are prioritised when they improve the basket score without making the shop noticeably more expensive.</p></div></div></div>
+  <div class="modal" id="why"><div class="sheet"><div class="sheet-head"><h3>Why these swaps?</h3><button class="close">×</button></div><div class="card"><h4>Same role, better basket</h4><p>The app compares products that play a similar role in your shop: protein for protein, fruit for fruit, breakfast for breakfast.</p></div><div class="card"><h4>Price-sensitive by default</h4><p>Swaps are prioritised when they improve the basket score without making the shop noticeably more expensive.</p></div></div></div>
 
-  <div class="modal" id="community"><div class="sheet"><div class="sheet-head"><h3>Zurich community</h3><button class="close">×</button></div><div class="community-card"><h4 style="margin:0 0 8px;font-size:26px">5,420 price-neutral swaps</h4><p style="margin:0 0 12px;color:#52604d;font-weight:800">City challenge progress towards a VBZ public transport reward raffle.</p><div class="progress"><b></b></div><p style="margin:8px 0 0;color:#52604d;font-weight:1000">64% unlocked</p></div></div></div>
+  <div class="modal" id="community"><div class="sheet"><div class="sheet-head"><h3>Zurich community</h3><button class="close">×</button></div><div class="card"><h4>5,420 price-neutral swaps</h4><p>City challenge progress towards a VBZ public transport reward raffle.</p><div class="progress" style="width:100%;margin-top:14px"><b></b></div><p style="margin-top:8px;color:#576653;font-size:13px;font-weight:1000">64% unlocked</p></div></div></div>
 
-  <div class="modal" id="history"><div class="sheet"><div class="sheet-head"><h3>Purchase history</h3><button class="close">×</button></div><div class="history-row"><div class="store">COOP</div><div><p><b>16.05 · CHF 23.25</b><br>Protein and imported berries drove impact.</p></div><div class="hist-grade">B+</div></div><div class="history-row"><div class="store">MIGROS</div><div><p><b>09.05 · CHF 24.30</b><br>Seasonal produce and legumes.</p></div><div class="hist-grade">A-</div></div><div class="history-row"><div class="store">ALDI</div><div><p><b>02.05 · CHF 31.10</b><br>Budget-friendly but packaging-heavy.</p></div><div class="hist-grade">B</div></div></div></div>
+  <div class="modal" id="history"><div class="sheet"><div class="sheet-head"><h3>Purchase history</h3><button class="close">×</button></div><div class="card history-row"><div class="store">COOP</div><div><p><b>16.05 · CHF 23.25</b><br>Protein and imported berries drove impact.</p></div><div class="hist-grade">B+</div></div><div class="card history-row"><div class="store">MIGROS</div><div><p><b>09.05 · CHF 24.30</b><br>Seasonal produce and legumes.</p></div><div class="hist-grade">A-</div></div><div class="card history-row"><div class="store">ALDI</div><div><p><b>02.05 · CHF 31.10</b><br>Budget-friendly but packaging-heavy.</p></div><div class="hist-grade">B</div></div></div></div>
 
-  <div class="modal" id="scan"><div class="sheet dark"><div class="sheet-head"><h3>Receipt camera</h3><button class="close">×</button></div><div style="border:2px dashed rgba(255,255,255,.35);border-radius:26px;padding:20px;text-align:center"><div style="font-size:62px">📷</div><p style="font-size:16px;line-height:1.35;font-weight:800;color:rgba(255,255,255,.8)">Point your camera at a receipt. GreenBasket reads products, estimates the basket score, and suggests swaps.</p><button class="wing" style="margin-top:16px;width:100%;background:#b8ea8a">Analyse sample receipt</button></div></div></div>
+  <div class="modal" id="scan"><div class="sheet dark"><div class="sheet-head"><h3>Receipt camera</h3><button class="close">×</button></div><div style="border:2px dashed rgba(255,255,255,.35);border-radius:26px;padding:20px;text-align:center"><div style="display:grid;place-items:center;width:82px;height:82px;margin:0 auto 14px;border-radius:50%;background:rgba(255,255,255,.08)"><svg viewBox="0 0 24 24" style="width:34px;height:34px" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h2l1.4-1.7h4.2L15.5 6h2A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-8Z"></path><circle cx="12" cy="12.5" r="3.2"></circle></svg></div><p style="font-size:16px;line-height:1.35;font-weight:800;color:rgba(255,255,255,.8)">Point your camera at a receipt. GreenBasket reads products, estimates the basket score, and suggests swaps.</p><button style="margin-top:16px;width:100%;height:54px;border-radius:999px;background:#b8ea8a;color:#17351f;font-size:15px;font-weight:1000">Analyse sample receipt</button></div></div></div>
 
-  <div class="modal" id="swap"><div class="sheet"><div class="sheet-head"><h3 id="swapTitle">Swap detail</h3><button class="close">×</button></div><div class="info-card"><h4 id="swapHeadline">Same meal role, better basket</h4><p id="swapBody">This swap keeps the same shopping role while reducing the basket impact.</p></div></div></div>
+  <div class="modal" id="swap"><div class="sheet"><div class="sheet-head"><h3 id="swapTitle">Swap detail</h3><button class="close">×</button></div><div class="card"><h4 id="swapHeadline">Same meal role, better basket</h4><p id="swapBody">This swap keeps the same shopping role while reducing the basket impact.</p></div></div></div>
 
   <script>
+    const iconSet = {
+      gift:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v8H4v-8"></path><path d="M2 7h20v5H2z"></path><path d="M12 20V7"></path><path d="M12 7H7.5a2.5 2.5 0 1 1 0-5C10 2 12 7 12 7Z"></path><path d="M12 7h4.5a2.5 2.5 0 1 0 0-5C14 2 12 7 12 7Z"></path></svg>',
+      apple:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-4.35-6-10a6 6 0 0 1 12 0c0 5.65-6 10-6 10Z"></path><path d="M12 7c-1.8 0-3.4.94-4.3 2.36"></path><path d="M12 7c1.8 0 3.4.94 4.3 2.36"></path></svg>',
+      leaf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21c6.6-1.2 12-6.9 12-15-8.1 0-13.8 5.4-15 12"></path><path d="M6 21c2.3-4.1 5.5-7.3 10-10"></path></svg>',
+      flame:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.8 2c.35 2.14-.37 3.83-1.6 5.24-1.23 1.4-2.96 2.53-3.65 4.65-.79 2.43.5 5.11 2.74 6.23 2.34 1.17 5.15.54 6.61-1.38 1.7-2.23 1.34-5.07-.2-7.01-.73-.93-1.67-1.62-2.48-2.5-1.17-1.27-2-2.78-1.42-5.23Z"></path><path d="M10.8 13.1c-.83 1.18-.76 2.77.27 3.83 1.13 1.16 2.96 1.28 4.18.18 1.17-1.06 1.28-2.83.46-4.02-.55-.8-1.35-1.28-2.17-1.94-.88.55-1.9 1.01-2.74 1.95Z"></path></svg>'
+    };
     const stories = {
       offers:[
-        {emoji:'🥣', title:'CHF 1.50 off Oatly Oatgurt', text:'Triggered by your recent dairy yoghurt basket. Valid at Coop or Migros this week.'},
-        {emoji:'🍎', title:'20% off seasonal apples', text:'A price-neutral alternative to imported berries. Best fit for your recent fruit pattern.'},
-        {emoji:'🚋', title:'VBZ reward raffle', text:'Zurich unlocks the transport-credit raffle when the city reaches the monthly swap target.'}
+        {icon:'gift', title:'CHF 1.50 off Oatly Oatgurt', text:'Triggered by your recent dairy yoghurt basket. Valid at Coop or Migros this week.'},
+        {icon:'gift', title:'20% off seasonal apples', text:'A price-neutral alternative to imported berries. Best fit for your recent fruit pattern.'},
+        {icon:'gift', title:'VBZ reward raffle', text:'Zurich unlocks the transport-credit raffle when the city reaches the monthly swap target.'}
       ],
       info:[
-        {emoji:'🍎', title:'Choose seasonal fruit first', text:'Swiss and nearby seasonal fruit is usually the easiest low-friction win: familiar, cheap, and available.'},
-        {emoji:'🫘', title:'Swap the role, not the meal', text:'Replace one meat-based protein with lentils or beans when the recipe still works.'},
-        {emoji:'🌍', title:'Supply watch', text:'When trade routes, fuel costs, or weather shocks affect imports, local seasonal substitutes become more attractive.'}
+        {icon:'apple', title:'Seasonal fruit watch', text:'Swiss and nearby seasonal fruit is usually the easiest low-friction win: familiar, cheap, and available.'},
+        {icon:'leaf', title:'Swap the role, not the meal', text:'Replace one meat-based protein with lentils or beans when the recipe still works.'},
+        {icon:'leaf', title:'Supply watch', text:'When shipping routes or geopolitical shocks affect imports, local substitutes often become more attractive.'}
       ]
     };
     const state = {offers:0, info:0};
@@ -123,112 +348,23 @@
       ['Blueberries → Gala apples','Save CHF 0.90 and move from B to A by choosing seasonal domestic fruit.'],
       ['Yoghurt → Oatly Oatgurt','Use the coupon to make the plant-based breakfast swap price-friendly.']
     ];
-    function openModal(id){document.getElementById(id)?.classList.add('open')}
-    function closeModal(el){el.closest('.modal')?.classList.remove('open')}
+    function openModal(id){ document.getElementById(id)?.classList.add('open'); }
+    function closeModal(el){ el.closest('.modal')?.classList.remove('open'); }
     document.querySelectorAll('[data-modal]').forEach(b=>b.addEventListener('click',()=>openModal(b.dataset.modal)));
     document.querySelectorAll('.close').forEach(b=>b.addEventListener('click',()=>closeModal(b)));
-    document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
-    document.querySelectorAll('[data-swap]').forEach(b=>b.addEventListener('click',()=>{const d=swapData[+b.dataset.swap];document.getElementById('swapTitle').textContent=d[0];document.getElementById('swapBody').textContent=d[1];openModal('swap')}));
-    function renderStory(type){const box=document.querySelector(`[data-story="${type}"]`); if(!box) return; const s=stories[type][state[type]]; box.querySelector('.big').textContent=s.emoji; box.querySelector('h4').textContent=s.title; box.querySelector('p').textContent=s.text; box.querySelectorAll('.story-bars i').forEach((bar,i)=>bar.classList.toggle('active', i<=state[type]));}
-    document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{const type=b.closest('[data-story]').dataset.story; state[type]=(state[type]+1)%stories[type].length; renderStory(type)}));
-    document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click',()=>{const type=b.closest('[data-story]').dataset.story; state[type]=(state[type]+stories[type].length-1)%stories[type].length; renderStory(type)}));
-  </script>
-</body>
-</html>    <main class="shell">
-      <header>
-        <div class="brand">
-          <div class="brand-icon">🧺</div>
-          <div class="brand-copy">
-            <div class="brand-title">GreenBasket</div>
-            <div class="brand-sub">@clara.meier · Zurich</div>
-          </div>
-        </div>
-        <button class="streak" data-modal="streak"><strong>🔥 4-week streak</strong><span>6 improved shops</span></button>
-      </header>
-
-      <section class="top-grid">
-        <div class="average card">
-          <div class="row"><div class="eyebrow">Recent basket average</div><button class="tiny-btn" data-modal="overview">All items</button></div>
-          <div class="grade-row"><div class="big-grade">B+</div><div class="score">70/100</div></div>
-          <div class="metrics">
-            <div class="metric"><span>Main driver</span><strong>Protein</strong></div>
-            <div class="metric"><span>Best win</span><strong>Seasonal</strong></div>
-            <div class="metric"><span>Next step</span><strong>1 smart swap</strong></div>
-          </div>
-          <div class="pattern">Strongest pattern: local produce. Biggest opportunity: lighter protein and yoghurt swaps.</div>
-        </div>
-        <div class="side-stack">
-          <div class="mini-card">
-            <div class="mini-head"><h3>Recent</h3><button class="tiny-btn" data-modal="purchaseList">All</button></div>
-            <div id="tinyReceipts"></div>
-          </div>
-          <button class="mini-card offers" data-modal="reward"><h3>Offers</h3><strong>3 active</strong><p>Oatly · VBZ · Coop</p></button>
-        </div>
-      </section>
-
-      <section class="swaps">
-        <div class="swaps-head"><h2>Suggested swaps</h2><button class="why" data-modal="guide">Why?</button></div>
-        <div class="swap-list" id="swapList"></div>
-      </section>
-
-      <section class="bottom-grid">
-        <button class="info-card" data-modal="community"><h3>Zurich community</h3><p>5,420 price-neutral swaps.</p><div class="progress-label"><span>VBZ reward</span><span>64%</span></div><div class="progress-track"><div class="progress-fill"></div></div></button>
-        <button class="info-card promo" data-modal="promotion"><div class="promo-head"><div><h3>Try oat yoghurt</h3><span class="pill blue">Sponsored</span></div><img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Oatly_logo.svg" alt="Oatly logo"></div><p>CHF 1.50 off at Coop or Migros.</p></button>
-      </section>
-
-      <section class="actions">
-        <button class="circle-action" data-modal="lesson"><span class="circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H20v16H7.5A2.5 2.5 0 0 0 5 21.5v-16Z"/><path d="M5 5.5A2.5 2.5 0 0 0 2.5 8v11.5A2.5 2.5 0 0 1 5 17h15"/><path d="M9 7h7"/><path d="M9 10h5"/></svg>Lesson</span></button>
-        <button class="circle-action" data-modal="scan"><span class="circle scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h2l1.4-1.7h4.2L15.5 6h2A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-8Z"/><circle cx="12" cy="12.5" r="3.2"/></svg>Scan</span></button>
-        <button class="circle-action" data-modal="guide"><span class="circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 5-4.8 2 2.2-5 4.8-2Z"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>Guide</span></button>
-      </section>
-    </main>
-  </div>
-
-  <div class="modal story" id="lesson"><div class="modal-panel"><div class="story-bars"><div></div><div></div><div></div></div><div class="modal-head"><p class="story-label">today’s lesson</p><button class="close" data-close>×</button></div><div class="story-emoji">🥩 → 🫘</div><h2 class="story-title">Swap the role, not the whole meal.</h2><p class="story-body">Your highest-impact item this month is animal protein. Replace one minced-beef purchase with lentils to lower footprint while keeping the same protein role.</p><div class="story-box"><div class="story-box-grid"><div><strong>⏱️</strong><span>No extra time</span></div><div><strong>💸</strong><span>Cheaper</span></div><div><strong>C → A-</strong><span>Visible lift</span></div></div></div></div></div>
-
-  <div class="modal story yellow" id="guide"><div class="modal-panel"><div class="story-bars"><div></div><div></div><div></div></div><div class="modal-head"><p class="story-label">shopping guide</p><button class="close" data-close>×</button></div><h2 class="story-title">Three taps before your next shop.</h2><div class="guide-step"><div class="step-icon">🎯</div><div><h3>1. Pick one target</h3><p>This week: reduce dairy impact without spending more.</p></div></div><div class="guide-step"><div class="step-icon">🛒</div><div><h3>2. Compare same-use items</h3><p>Breakfast yoghurt against breakfast yoghurt, not random products.</p></div></div><div class="guide-step"><div class="step-icon">🎁</div><div><h3>3. Use the coupon</h3><p>Oatly oat yoghurt: CHF 1.50 off at Coop or Migros.</p></div></div></div></div>
-
-  <div class="modal" id="streak"><div class="modal-panel"><div class="modal-head"><h2>Shopping rhythm</h2><button class="close" data-close>×</button></div><div style="border-radius:26px;background:#ffd37a;padding:18px"><div style="font-size:14px;font-weight:950;color:#8a5a0a">4-week streak</div><h3 style="margin:8px 0 0;font-size:30px;line-height:1;font-weight:950;letter-spacing:-.06em">At least one improved shop each week</h3></div><div class="white-card" style="margin-top:10px"><div class="calendar-grid" id="calendarGrid"></div><div class="stat-grid"><div class="stat"><strong>6</strong><span>logged shops</span></div><div class="stat"><strong>4</strong><span>active weeks</span></div><div class="stat"><strong>A-</strong><span>best basket</span></div></div></div></div></div>
-
-  <div class="modal" id="community"><div class="modal-panel"><div class="modal-head"><h2>Zurich community</h2><button class="close" data-close>×</button></div><div class="dark-card"><div class="sub">City challenge</div><h3>5,420 price-neutral swaps this month</h3><p>The challenge rewards normal weekly shopping decisions, not extra purchases. If Zurich reaches 8,500 swaps, users unlock a VBZ public transport credit raffle.</p><div class="progress-label" style="color:rgba(255,255,255,.75)"><span>Collective progress</span><span>64%</span></div><div class="progress-track" style="background:rgba(255,255,255,.2)"><div class="progress-fill" style="background:#b8ea8a"></div></div></div><div class="stat-grid"><div class="stat"><strong>1,846</strong><span>active shoppers</span></div><div class="stat"><strong>CHF 0</strong><span>avg price increase</span></div><div class="stat"><strong>64%</strong><span>reward unlocked</span></div></div></div></div>
-
-  <div class="modal" id="overview"><div class="modal-panel"><div class="modal-head"><h2>30-day product overview</h2><button class="close" data-close>×</button></div><div class="dark-card"><div class="sub">Average score</div><div style="display:flex;align-items:flex-end;gap:8px"><div style="font-size:58px;line-height:.9;font-weight:950;letter-spacing:-.08em">B+</div><div style="margin-bottom:8px;font-size:14px;font-weight:950;color:rgba(255,255,255,.55)">70/100</div></div><p>All products read from connected Coop, Migros and Aldi baskets.</p></div><div class="product-grid" id="productGrid"></div></div></div>
-
-  <div class="modal" id="purchaseList"><div class="modal-panel"><div class="modal-head"><h2>Historical baskets</h2><button class="close" data-close>×</button></div><div id="historyList"></div></div></div>
-  <div class="modal" id="reward"><div class="modal-panel"><div class="modal-head"><h2>Rewards & coupons</h2><button class="close" data-close>×</button></div><div id="rewardList"></div></div></div>
-  <div class="modal" id="promotion"><div class="modal-panel"><div class="modal-head"><h2>Product offer</h2><button class="close" data-close>×</button></div><div class="white-card"><div class="row"><div><span class="pill yellow">Sponsored</span><h3 style="margin:14px 0 0;font-size:24px;line-height:1;font-weight:950;letter-spacing:-.06em">CHF 1.50 off Oatly oat yoghurt</h3></div><img style="height:54px;max-width:150px;object-fit:contain" src="https://upload.wikimedia.org/wikipedia/commons/1/12/Oatly_logo.svg" alt="Oatly logo"></div><p style="font-size:14px;line-height:1.45;font-weight:650;color:var(--muted)">You bought dairy yoghurt in recent baskets. Try a lower-impact breakfast swap this week at Coop or Migros.</p><div style="margin-top:14px;border-radius:22px;background:var(--soft);padding:14px"><strong style="font-size:14px">Valid until Sunday</strong><div style="font-size:20px;font-weight:950;margin-top:3px">Applied automatically at checkout</div><small style="font-size:12px;font-weight:800;color:#52604d">No code needed.</small></div></div></div></div>
-
-  <div class="modal dark" id="scan"><div class="modal-panel"><div class="modal-head"><h2>Receipt camera</h2><button class="close" data-close>×</button></div><div class="scan-zone"><div class="scan-receipt"><div>COOP ZURICH HB</div><div>Prix Garantie beef&nbsp;&nbsp;12.45</div><div>Imported berries&nbsp;&nbsp;4.20</div><div>Dairy yoghurt&nbsp;&nbsp;2.80</div><div>Pasta&nbsp;&nbsp;1.70</div><div style="margin-top:8px;border-top:1px solid #b7aa90;padding-top:8px;font-weight:950">TOTAL CHF 23.25</div></div><button class="primary-btn" id="analyseBtn">Analyse receipt</button></div></div></div>
-  <div class="modal" id="receipt"><div class="modal-panel"><div class="modal-head"><h2>Receipt analysis</h2><button class="close" data-close>×</button></div><div id="receiptContent"></div></div></div>
-  <div class="modal" id="swapDetail"><div class="modal-panel"><div class="modal-head"><h2>Swap detail</h2><button class="close" data-close>×</button></div><div id="swapDetailContent"></div></div></div>
-
-  <script>
-    (function(){
-      const logos={Coop:"https://upload.wikimedia.org/wikipedia/commons/0/0a/Coop.svg",Migros:"https://upload.wikimedia.org/wikipedia/commons/e/e8/Migros.svg",Aldi:"https://upload.wikimedia.org/wikipedia/commons/e/e5/Aldi_S%C3%BCd_2017_logo.svg"};
-      const productImages={yoghurt:"https://image.migros.ch/d/2017-large/cc96137d44101981b58af4bd0fea3fc059328110.png",oatgurt:"https://digitalcontent.api.tesco.com/v2/media/ghs/0be57439-a50b-4c54-a005-7f2fd13bfc6d/546630ea-d352-4a6b-a45e-07630d68cc9e_276289086.jpeg?h=960&w=960",beef:"https://www.coop.ch/img/produkte/155_155/RGB/7369961_002.jpg?_=1766530152565",lentils:"https://www.coop.ch/img/produkte/155_155/RGB/3030958_001.jpg?_=1749770085446",blueberries:"https://image.migros.ch/d/mo-boxed/v-w-1000-h-1000/o-af-1-t.clr-fff/469531769f9c7117db405eef1d2a8680ed3cb4da/bio-blueberries.jpg",apples:"https://image.migros.ch/d/mo-boxed/v-w-960-h-720/o-af-1-t.clr-fff/c97e0c09968deb7a66bf5644e78563eda3e8e94a/bio-aepfel-gala.jpg"};
-      const swaps=[{from:"Coop Prix Garantie lean beef mince ca. 600g",to:"Coop Naturaplan Organic Lentils 500g",priceChip:"-CHF 9.25",gradeLift:"C → A-",note:"Comparable protein role, much lower footprint.",icon:"🥩",toIcon:"🫘",fromImage:productImages.beef,toImage:productImages.lentils},{from:"Migros Bio blueberries 250g",to:"Migros Bio Gala apples pack",priceChip:"-CHF 0.90",gradeLift:"B → A",note:"Seasonal domestic fruit, fewer transport miles.",icon:"🫐",toIcon:"🍎",fromImage:productImages.blueberries,toImage:productImages.apples},{from:"Migros Budget yoghurt nature 500g",to:"Oatly Oatgurt Plain 400g",priceChip:"+CHF 0.35",gradeLift:"B- → B+",note:"Plant-based alternative to dairy yoghurt.",icon:"🥛",toIcon:"🌾",fromImage:productImages.yoghurt,toImage:productImages.oatgurt}];
-      const receipts=[{shop:"Coop",date:"Today",shortDate:"16.05",grade:"B+",score:67,total:"CHF 23.25",headline:"Good weekly top-up",note:"Protein and imported berries were the main impact drivers.",items:[{name:"Coop Prix Garantie lean beef mince ca. 600g",price:"CHF 12.45",driver:"Protein",icon:"🥩",image:productImages.beef},{name:"Migros Bio blueberries 250g",price:"CHF 4.20",driver:"Imported produce",icon:"🫐",image:productImages.blueberries},{name:"Migros Budget yoghurt nature 500g",price:"CHF 2.80",driver:"Dairy",icon:"🥛",image:productImages.yoghurt},{name:"Pasta penne 500g",price:"CHF 1.70",driver:"Low concern",icon:"🍝"}]},{shop:"Migros",date:"Last week",shortDate:"09.05",grade:"A-",score:81,total:"CHF 24.30",headline:"Strong seasonal basket",note:"Mostly local produce and legumes. One packaged snack slightly reduced the score.",items:[{name:"Migros Bio Gala apples pack",price:"CHF 3.30",driver:"Seasonal",icon:"🍎",image:productImages.apples},{name:"Coop Naturaplan Organic Lentils 500g",price:"CHF 3.20",driver:"Plant protein",icon:"🫘",image:productImages.lentils},{name:"Birchermüesli",price:"CHF 4.80",driver:"Packaging",icon:"🥣"},{name:"Carrots 1kg",price:"CHF 2.20",driver:"Low concern",icon:"🥕"}]},{shop:"Aldi",date:"2 weeks ago",shortDate:"02.05",grade:"B",score:62,total:"CHF 31.10",headline:"Budget-friendly but packaging-heavy",note:"Good price control. Biggest opportunity is choosing fewer individually packed items.",items:[{name:"Chicken nuggets",price:"CHF 5.95",driver:"Processed protein",icon:"🍗"},{name:"Snack multipack",price:"CHF 4.40",driver:"Packaging",icon:"🍪"},{name:"Tomatoes 500g",price:"CHF 2.50",driver:"Produce",icon:"🍅"},{name:"Oat drink 1L",price:"CHF 1.95",driver:"Positive swap",icon:"🌾"}]}];
-      const purchaseHistory=[...receipts,{shop:"Coop",date:"26 Apr",shortDate:"26.04",grade:"B+",score:70,total:"CHF 42.60",headline:"Dinner shop",note:"Cheese and meat drove most of the footprint.",items:receipts[0].items},{shop:"Migros",date:"22 Apr",shortDate:"22.04",grade:"A",score:86,total:"CHF 19.40",headline:"Seasonal top-up",note:"Mostly Swiss produce and plant proteins.",items:receipts[1].items},{shop:"Aldi",date:"18 Apr",shortDate:"18.04",grade:"B-",score:58,total:"CHF 34.25",headline:"Budget shop",note:"Strong on price, weaker on packaging.",items:receipts[2].items}];
-      const allItems=receipts.flatMap(r=>r.items.map(i=>({...i,shop:r.shop,date:r.date})));
-      function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]))}
-      function logo(shop,cls="small"){return `<span class="logo ${cls}"><img src="${logos[shop]}" alt="${shop} logo"></span>`}
-      function thumb(item){return item.image?`<span class="thumb"><img src="${item.image}" alt="${esc(item.name)}"></span>`:`<span class="thumb">${item.icon||"•"}</span>`}
-      function openModal(id){document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));const el=document.getElementById(id);if(el){el.classList.add('open');document.body.style.overflow='hidden';}}
-      function closeModal(){document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));document.body.style.overflow='';}
-      window.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
-      document.addEventListener('click',e=>{const open=e.target.closest('[data-modal]'); if(open){openModal(open.dataset.modal);return;} if(e.target.matches('[data-close]')||e.target.classList.contains('modal')) closeModal();});
-      document.getElementById('tinyReceipts').innerHTML=receipts.slice(0,2).map((r,i)=>`<button class="receipt-tiny" data-receipt="${i}">${logo(r.shop)}<span><span class="tiny-date-grade"><span>${r.shortDate}</span><span>${r.grade}</span></span><span class="tiny-total">${r.total}</span></span></button>`).join('');
-      document.getElementById('swapList').innerHTML=swaps.map((s,i)=>`<button class="swap-card" data-swap="${i}"><span class="swap-from"><img class="product-img" src="${s.fromImage}" alt="${esc(s.from)}"><span class="swap-name-old">${esc(s.from)}</span></span><span class="arrow">→</span><span class="swap-to"><img class="product-img" src="${s.toImage}" alt="${esc(s.to)}"><span><span class="swap-title">${esc(s.to)}</span><span class="swap-note">${esc(s.note)}</span><span class="chips"><span class="pill neutral">${s.priceChip}</span><span class="pill yellow">${s.gradeLift}</span></span></span></span></button>`).join('');
-      document.getElementById('historyList').innerHTML=purchaseHistory.map((r,i)=>`<button class="history-row" data-history="${i}">${logo(r.shop)}<span><strong>${r.shortDate||r.date}</strong><small>${r.shop}</small></span><span class="total">${r.total}</span><span class="hist-grade">${r.grade}</span></button>`).join('');
-      document.getElementById('productGrid').innerHTML=allItems.map(i=>`<div class="product-card"><div class="product-card-top">${thumb(i)}${logo(i.shop)}</div><h3>${esc(i.name)}</h3><p>${esc(i.driver)} · ${esc(i.date)}</p></div>`).join('');
-      document.getElementById('rewardList').innerHTML=[["Oatly oat yoghurt","CHF 1.50 off","Triggered by dairy-heavy baskets. Partner pays for promoted lower-impact trial.","Sponsored"],["Migros Bio apples","20% off seasonal produce","Price-neutral seasonal swap for imported berries.","Reward"],["VBZ monthly pass raffle","CHF 50 transport credit","Unlocked if Zurich reaches the collective swap target.","Reward"],["Coop Karma range","Buy 2, save CHF 3","Promotes plant-based alternatives without pushing larger basket size.","Reward"]].map((r,i)=>`<div class="reward-card"><div class="reward-top"><span class="pill ${i===0?'yellow':'green'}">${r[1]}</span><span style="font-size:10px;font-weight:950;color:var(--muted)">${r[3]}</span></div><h3>${r[0]}</h3><p>${r[2]}</p></div>`).join('');
-      const days=["20","21","22 A","23","24","25 B+","26","27","28 A-","29","30","1","2 B","3","4","5","6 A","7","8","9 A-","10","11","12","13","14","15","16 B+","17"];
-      document.getElementById('calendarGrid').innerHTML=days.map(d=>{let cls='cal-day'; if(d.includes(' A')||d.includes('A-')) cls+=' good'; else if(d.includes('B+')) cls+=' mid'; else if(d.includes(' B')) cls+=' warn'; let [day,...g]=d.split(' '); return `<div class="${cls}"><span>${day}</span>${g.length?`<span>${g.join(' ')}</span>`:''}</div>`}).join('');
-      function renderReceipt(r){document.getElementById('receiptContent').innerHTML=`<div class="receipt-analysis-grid"><div class="receipt-main"><div class="shoprow">${logo(r.shop,'big')}<span class="date">${r.date}</span></div><div class="label">Basket grade</div><div style="display:flex;align-items:flex-end;gap:8px"><div class="receipt-grade">${r.grade}</div><div style="margin-bottom:9px;font-size:14px;font-weight:950;color:rgba(255,255,255,.55)">${r.score}/100</div></div><p>${esc(r.note)}</p></div><div class="receipt-side"><small>Total</small><strong>${r.total}</strong><div class="divider"></div><small>Main driver</small><div style="font-size:23px;margin-top:4px">${r.items[0].icon}</div><strong style="font-size:10px">${r.items[0].driver}</strong></div></div><div class="white-card" style="margin-top:10px"><strong style="font-size:14px">Items read from receipt</strong>${r.items.map(i=>`<div class="item-row">${thumb(i)}<span><span class="item-name">${esc(i.name)}</span><span class="item-driver">${esc(i.driver)}</span></span><span class="item-price">${i.price}</span></div>`).join('')}</div><div style="margin-top:10px">${swaps.slice(0,2).map((s,i)=>`<button class="receipt-swap-btn" data-swap="${i}"><strong>${s.icon} → ${s.toIcon} ${esc(s.from)}</strong><span>Try: ${esc(s.to)} · ${s.priceChip} · ${s.gradeLift}</span></button>`).join('')}</div>`;openModal('receipt')}
-      function renderSwap(s){document.getElementById('swapDetailContent').innerHTML=`<div class="white-card"><div class="detail-products"><img src="${s.fromImage}" alt="${esc(s.from)}"><div class="arrow">→</div><img src="${s.toImage}" alt="${esc(s.to)}"></div><h3 class="detail-title">${esc(s.from)} → ${esc(s.to)}</h3><p class="detail-note">${esc(s.note)}</p><div class="chips"><span class="pill neutral">${s.priceChip}</span><span class="pill yellow">${s.gradeLift}</span></div></div>`;openModal('swapDetail')}
-      document.addEventListener('click',e=>{const rb=e.target.closest('[data-receipt]'); if(rb){renderReceipt(receipts[Number(rb.dataset.receipt)]);return;} const hb=e.target.closest('[data-history]'); if(hb){renderReceipt(purchaseHistory[Number(hb.dataset.history)]);return;} const sb=e.target.closest('[data-swap]'); if(sb){renderSwap(swaps[Number(sb.dataset.swap)]);return;}});
-      document.getElementById('analyseBtn').addEventListener('click',()=>renderReceipt(receipts[0]));
-    })();
+    document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+    document.querySelectorAll('[data-swap]').forEach(b=>b.addEventListener('click',()=>{ const d=swapData[+b.dataset.swap]; document.getElementById('swapTitle').textContent=d[0]; document.getElementById('swapBody').textContent=d[1]; openModal('swap'); }));
+    function renderStory(type){
+      const box=document.querySelector(`[data-story="${type}"]`); if(!box) return;
+      const s=stories[type][state[type]];
+      box.querySelector('.story-icon').innerHTML = iconSet[s.icon];
+      box.querySelector('h4').textContent=s.title;
+      box.querySelector('p').textContent=s.text;
+      box.querySelectorAll('.story-bars i').forEach((bar,i)=>bar.classList.toggle('active', i<=state[type]));
+    }
+    document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{ const type=b.closest('[data-story]').dataset.story; state[type]=(state[type]+1)%stories[type].length; renderStory(type); }));
+    document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click',()=>{ const type=b.closest('[data-story]').dataset.story; state[type]=(state[type]+stories[type].length-1)%stories[type].length; renderStory(type); }));
+    renderStory('offers'); renderStory('info');
   </script>
 </body>
 </html>
