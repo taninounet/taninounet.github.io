@@ -98,6 +98,8 @@
       .gb-bottom { height: 78px; }
       .gb-bottom-wing { height: 68px; }
       .gb-scan { width: 74px; height: 74px; }
+      .gb-story-label { font-size: 7.8px !important; max-width: 42px !important; transform: translateY(-2px) !important; }
+      .gb-score-block { transform: translateY(-2px) !important; }
     }
 
     .gb-modal-scroll {
@@ -111,10 +113,12 @@
     }
     .gb-story-label {
       max-width: 46px;
-      font-size: 8.3px;
-      line-height: 1;
-      letter-spacing: -0.02em;
+      font-size: 8.2px;
+      line-height: 0.95;
+      letter-spacing: -0.025em;
+      transform: translateY(-2.5px);
     }
+    .gb-score-block { transform: translateY(-3px); }
     @media (min-width: 481px) {
       html, body { background: var(--app-bg); }
       .gb-app { box-shadow: 0 18px 54px rgba(20, 32, 24, 0.14); }
@@ -582,7 +586,7 @@ function Home() {
             <div className="pointer-events-none absolute -left-2 -top-3 h-10 w-12 rounded-full bg-white/25 blur-[2px]" />
             <div className="pointer-events-none absolute -bottom-3 right-0 h-9 w-10 rounded-full bg-black/10 blur-[3px]" />
             <div className="relative scale-[0.62] leading-none">{icon}</div>
-            <div className="gb-story-label relative mt-[-1px] truncate font-black text-white drop-shadow-sm">{label}</div>
+            <div className="gb-story-label relative mt-[-1px] whitespace-nowrap font-black text-white drop-shadow-sm">{label}</div>
           </div>
         </div>
       </div>
@@ -613,7 +617,7 @@ function Home() {
               </section>
 
               <button onClick={() => setModal("overview")} className="gb-average grid shrink-0 grid-cols-[78px_1fr] items-center gap-3 overflow-hidden rounded-[28px] bg-[#fff8e8] p-3 text-left shadow-sm">
-                <div className="flex h-full min-w-0 flex-col justify-center">
+                <div className="gb-score-block flex h-full min-w-0 flex-col justify-center">
                   <p className="text-[9px] font-black uppercase tracking-[0.14em] text-[#697662]">Average</p>
                   <span className="mt-0.5 block text-[54px] font-black leading-[0.82] tracking-[-0.1em] text-[#2f7b42]">B+</span>
                   <span className="mt-1 block text-[11px] font-black leading-none text-[#697662]">{average}/100</span>
@@ -681,8 +685,8 @@ function Home() {
                   <div className="grid grid-cols-[32px_1fr_28px] items-center gap-1.5">
                     <StoreLogo shop={receipts[0].shop} small />
                     <div className="min-w-0">
-                      <p className="text-[8.5px] font-black leading-tight text-[#172019]">{receipts[0].total}</p>
-                      <p className="text-[7.4px] font-bold leading-tight text-[#65725f]">{receipts[0].shortDate} · {receipts[0].shop}</p>
+                      <p className="whitespace-nowrap text-[8.5px] font-black leading-tight text-[#172019]">{receipts[0].total}</p>
+                      <p className="text-[7.4px] font-bold leading-tight text-[#65725f]">{receipts[0].shortDate}</p>
                     </div>
                     <p className="text-right text-[13px] font-black leading-none text-[#2f7b42]">{receipts[0].grade}</p>
                   </div>
