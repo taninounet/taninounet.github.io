@@ -99,6 +99,22 @@
       .gb-bottom-wing { height: 68px; }
       .gb-scan { width: 74px; height: 74px; }
     }
+
+    .gb-modal-scroll {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+    }
+    .gb-modal-sheet {
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+    }
+    .gb-story-label {
+      max-width: 46px;
+      font-size: 8.3px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
     @media (min-width: 481px) {
       html, body { background: var(--app-bg); }
       .gb-app { box-shadow: 0 18px 54px rgba(20, 32, 24, 0.14); }
@@ -431,22 +447,27 @@ function CircleAction({ icon, label, onClick, variant = "soft" }) {
 }
 
 function Modal({ open, title, children, onClose, dark = false }) {
+  const sheetTone = dark ? "bg-[#142018] text-white" : "bg-[#f7f4ea] text-[#172019]";
+  const headerTone = dark ? "bg-[#142018] border-white/10" : "bg-[#f7f4ea] border-[#172019]/10";
   return (
     <AnimatePresence>
       {open && (
-        <motion.div className="absolute inset-0 z-40 bg-[#101610]/35 p-4 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div className="fixed inset-0 z-40 bg-[#101610]/35 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           <motion.div
             initial={{ y: 70, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 70, opacity: 0 }}
             transition={{ type: "spring", stiffness: 280, damping: 28 }}
-            className={`absolute inset-x-4 bottom-4 max-h-[760px] overflow-y-auto rounded-[32px] p-5 shadow-2xl ${dark ? "bg-[#142018] text-white" : "bg-[#f7f4ea] text-[#172019]"}`}
+            className={`gb-modal-sheet absolute inset-x-3 flex min-h-0 flex-col overflow-hidden rounded-[30px] shadow-2xl ${sheetTone}`}
+            style={{ top: "calc(var(--safe-top) + 12px)", bottom: "calc(var(--safe-bottom) + 12px)" }}
           >
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-2xl font-black tracking-[-0.05em]">{title}</h2>
-              <button onClick={onClose} className={`grid h-10 w-10 place-items-center rounded-full text-xl font-black ${dark ? "bg-white/10" : "bg-white"}`}>×</button>
+            <div className={`z-10 flex shrink-0 items-center justify-between gap-3 border-b px-5 pb-3 pt-5 ${headerTone}`}>
+              <h2 className="min-w-0 text-2xl font-black tracking-[-0.05em]">{title}</h2>
+              <button onClick={onClose} className={`grid h-11 w-11 shrink-0 place-items-center rounded-full text-xl font-black shadow-sm ${dark ? "bg-white/10" : "bg-white"}`}>×</button>
             </div>
-            {children}
+            <div className="gb-modal-scroll min-h-0 flex-1 overflow-y-auto px-5 pb-6 pt-4">
+              {children}
+            </div>
           </motion.div>
         </motion.div>
       )}
@@ -560,8 +581,8 @@ function Home() {
           >
             <div className="pointer-events-none absolute -left-2 -top-3 h-10 w-12 rounded-full bg-white/25 blur-[2px]" />
             <div className="pointer-events-none absolute -bottom-3 right-0 h-9 w-10 rounded-full bg-black/10 blur-[3px]" />
-            <div className="relative scale-[0.72] leading-none">{icon}</div>
-            <div className="relative mt-[-2px] text-[9.5px] font-black leading-none text-white drop-shadow-sm">{label}</div>
+            <div className="relative scale-[0.62] leading-none">{icon}</div>
+            <div className="gb-story-label relative mt-[-1px] truncate font-black text-white drop-shadow-sm">{label}</div>
           </div>
         </div>
       </div>
@@ -642,7 +663,7 @@ function Home() {
               <section className="gb-bottom relative shrink-0 overflow-visible">
                 <button
                   onClick={() => setModal("community")}
-                  className="gb-bottom-wing absolute left-0 top-1 flex flex-col justify-center overflow-hidden rounded-l-[12px] bg-white py-2 pl-3 pr-9 text-left shadow-sm ring-1 ring-[#17351f]/5"
+                  className="gb-bottom-wing absolute left-0 top-1 flex flex-col justify-start overflow-hidden rounded-l-[12px] bg-white pb-2 pl-3 pr-9 pt-2.5 text-left shadow-sm ring-1 ring-[#17351f]/5"
                   style={{ width: "calc(50% - 14px)", clipPath: "polygon(0 0,86% 0,100% 50%,86% 100%,0 100%)" }}
                 >
                   <p className="text-[10.8px] font-black leading-tight text-[#17351f]">Zurich community</p>
@@ -651,16 +672,16 @@ function Home() {
                 </button>
                 <button
                   onClick={() => setModal("purchaseList")}
-                  className="gb-bottom-wing absolute right-0 top-1 flex flex-col justify-center overflow-hidden rounded-r-[12px] bg-white py-2 pl-9 pr-3 text-left shadow-sm ring-1 ring-[#17351f]/5"
+                  className="gb-bottom-wing absolute right-0 top-1 flex flex-col justify-start overflow-hidden rounded-r-[12px] bg-white pb-2 pl-9 pr-3 pt-2.5 text-left shadow-sm ring-1 ring-[#17351f]/5"
                   style={{ width: "calc(50% - 14px)", clipPath: "polygon(14% 0,100% 0,100% 100%,14% 100%,0 50%)" }}
                 >
-                  <p className="whitespace-nowrap text-[10.8px] font-black leading-none text-[#17351f]">Purchase history</p>
-                  <p className="mt-0.5 whitespace-nowrap text-[7.8px] font-bold leading-none text-[#65725f]">{itemsThisWeek} items bought this week</p>
-                  <div className="my-1.5 h-px w-full bg-[#172019]/12" />
+                  <p className="whitespace-nowrap text-[10.8px] font-black leading-tight text-[#17351f]">Purchase history</p>
+                  <p className="mt-0.5 whitespace-nowrap text-[7.8px] font-bold leading-tight text-[#65725f]">{itemsThisWeek} items bought this week</p>
+                  <div className="my-1 h-px w-full bg-[#172019]/12" />
                   <div className="grid grid-cols-[32px_1fr_28px] items-center gap-1.5">
                     <StoreLogo shop={receipts[0].shop} small />
                     <div className="min-w-0">
-                      <p className="text-[8.7px] font-black leading-tight text-[#172019]">{receipts[0].total}</p>
+                      <p className="text-[8.5px] font-black leading-tight text-[#172019]">{receipts[0].total}</p>
                       <p className="text-[7.4px] font-bold leading-tight text-[#65725f]">{receipts[0].shortDate} · {receipts[0].shop}</p>
                     </div>
                     <p className="text-right text-[13px] font-black leading-none text-[#2f7b42]">{receipts[0].grade}</p>
