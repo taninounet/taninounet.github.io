@@ -192,8 +192,8 @@ const swaps = [
     priceChip: "-CHF 9.25",
     gradeLift: "C → A-",
     note: "Comparable protein role, much lower footprint.",
-    homeBadge: "Biggest saving",
-    homeBadgeTone: "saving",
+    homeBadge: "Best overall",
+    homeBadgeTone: "overall",
     icon: "🥩",
     toIcon: "🫘",
     fromImage: productImages.beef,
@@ -376,7 +376,8 @@ function Pill({ children, tone = "green" }) {
     score: "border-[#d8c2a5] bg-[#f3eadc] text-[#6a4d2f]",
     coupon: "border-[#a8d4f8] bg-[#e1f2ff] text-[#0f4c75]",
     saving: "border-[#b5dcb1] bg-[#dff2d7] text-[#235b2f]",
-    impact: "border-[#efb19f] bg-[#ffe0d2] text-[#9a3524]",
+    overall: "border-[#b5dcb1] bg-[#dff2d7] text-[#235b2f]",
+    impact: "border-[#ef9b85] bg-[#ffd8c8] text-[#a8321f]",
   };
 
   return (
@@ -649,17 +650,17 @@ function Home() {
                 <div className="flex min-h-0 flex-1 flex-col gap-2">
                   {swaps.map((swapItem, index) => (
                     <button key={swapItem.from} onClick={() => setSwap(swapItem)} className="min-h-0 flex flex-1 basis-0 items-center overflow-hidden rounded-[22px] bg-white p-2 text-left text-[#172019] shadow-sm">
-                      <div className="grid w-full min-w-0 grid-cols-[0.9fr_22px_1.2fr] items-center gap-1.5">
-                        <div className="grid min-w-0 grid-cols-[58px_1fr] items-center gap-1.5">
-                          <img src={swapItem.fromImage} alt={swapItem.from} className="gb-swap-img-from h-[68px] w-[58px] object-contain" />
-                          <p className="gb-swap-copy-from whitespace-normal break-words text-[9.2px] font-black leading-[1.08] text-[#6a5b48]">{swapItem.from}</p>
+                      <div className="gb-swap-grid grid w-full min-w-0 grid-cols-[0.58fr_18px_1.58fr] items-center gap-1.5">
+                        <div className="gb-swap-left grid min-w-0 grid-cols-[46px_minmax(0,1fr)] items-center gap-1">
+                          <img src={swapItem.fromImage} alt={swapItem.from} className="gb-swap-img-from h-[66px] w-[46px] object-contain" />
+                          <p className="gb-swap-copy-from whitespace-normal break-words text-[8.6px] font-black leading-[1.08] text-[#6a5b48]">{swapItem.from}</p>
                         </div>
-                        <div className="text-center text-[21px] font-black leading-none text-[#2f7b42]">→</div>
-                        <div className="grid min-w-0 grid-cols-[68px_1fr] items-center gap-1.5">
-                          <img src={swapItem.toImage} alt={swapItem.to} className="gb-swap-img-to h-[72px] w-[68px] object-contain" />
+                        <div className="gb-swap-arrow text-center text-[20px] font-black leading-none text-[#2f7b42]">→</div>
+                        <div className="gb-swap-right grid min-w-0 grid-cols-[62px_minmax(0,1fr)] items-center gap-2">
+                          <img src={swapItem.toImage} alt={swapItem.to} className="gb-swap-img-to h-[74px] w-[62px] object-contain" />
                           <div className="min-w-0">
-                            <p className={`${index === 0 ? "text-[10.8px]" : "text-[10.4px]"} gb-swap-name-to whitespace-normal break-words font-black leading-[1.08] text-[#17351f]`}>{swapItem.to}</p>
-                            <div className="mt-1.5 flex flex-wrap items-center gap-1"><Pill tone={priceTone(swapItem.priceChip)}>{swapItem.priceChip}</Pill>{swapItem.homeBadge && <Pill tone={swapItem.homeBadgeTone}>{swapItem.homeBadge}</Pill>}{swapItem.coupon && <Pill tone="coupon">CHF 1.50 off</Pill>}</div>
+                            <p className={`${index === 0 ? "text-[11.7px]" : "text-[11.2px]"} gb-swap-name-to whitespace-normal break-words font-black leading-[1.08] text-[#17351f]`}>{swapItem.to}</p>
+                            <div className="gb-swap-tags mt-1.5 flex flex-wrap items-center gap-1">{swapItem.homeBadge && <Pill tone={swapItem.homeBadgeTone}>{swapItem.homeBadge}</Pill>}<Pill tone={priceTone(swapItem.priceChip)}>{swapItem.priceChip}</Pill><Pill tone="score">{swapItem.gradeLift}</Pill>{swapItem.coupon && <Pill tone="coupon">CHF 1.50 off</Pill>}</div>
                           </div>
                         </div>
                       </div>
@@ -855,8 +856,8 @@ function Home() {
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <div className="rounded-[22px] bg-white p-4 shadow-sm">
-                  <p className="text-sm font-black text-[#17351f]">Biggest saving</p>
-                  <p className="mt-1 text-xs font-semibold leading-relaxed text-[#65725f]">Cheaper switch with a strong basket improvement.</p>
+                  <p className="text-sm font-black text-[#17351f]">Best overall</p>
+                  <p className="mt-1 text-xs font-semibold leading-relaxed text-[#65725f]">Best balance of price, impact and everyday practicality.</p>
                 </div>
                 <div className="rounded-[22px] bg-white p-4 shadow-sm">
                   <p className="text-sm font-black text-[#17351f]">Best impact</p>
