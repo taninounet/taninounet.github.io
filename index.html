@@ -2,28 +2,121 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GreenBasket Prototype v12</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7f4ea" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="GreenBasket" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>GreenBasket</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    html, body {
+    :root {
+      --app-cream: #f7f4ea;
+      --app-bg: #e7eee1;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    html, body, #root {
+      width: 100%;
+      height: 100%;
+      min-height: -webkit-fill-available;
       margin: 0;
-      min-height: 100%;
-      background: #e7eee1;
+      overflow: hidden;
+      background: var(--app-cream);
     }
-    * {
-      box-sizing: border-box;
+    html {
+      -webkit-text-size-adjust: 100%;
+      overscroll-behavior: none;
     }
+    body {
+      position: fixed;
+      inset: 0;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+      -webkit-font-smoothing: antialiased;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    * { box-sizing: border-box; }
     button {
       -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    img { -webkit-user-drag: none; }
+    .gb-app {
+      position: relative;
+      width: 100vw;
+      height: 100svh;
+      height: 100dvh;
+      height: var(--app-height, 100dvh);
+      max-width: 480px;
+      margin: 0 auto;
+      overflow: hidden;
+      background: var(--app-cream);
+    }
+    .gb-main {
+      height: 100%;
+      min-height: 0;
+      padding: calc(var(--safe-top) + 10px) 14px calc(var(--safe-bottom) + 8px);
+    }
+    .gb-story-circle {
+      width: clamp(62px, 17.2vw, 74px);
+      height: clamp(62px, 17.2vw, 74px);
+    }
+    .gb-average { height: clamp(108px, 14.4vh, 120px); height: clamp(108px, 14.4svh, 120px); }
+    .gb-bottom { height: clamp(86px, 11.5vh, 96px); height: clamp(86px, 11.5svh, 96px); }
+    .gb-bottom-wing { height: clamp(76px, 10vh, 84px); height: clamp(76px, 10svh, 84px); }
+    .gb-scan {
+      width: clamp(80px, 22vw, 90px);
+      height: clamp(80px, 22vw, 90px);
+    }
+    .gb-swaps-panel { min-height: 0; }
+    @media (max-height: 740px) {
+      .gb-main { gap: 0.5rem; padding-left: 12px; padding-right: 12px; padding-top: calc(var(--safe-top) + 8px); padding-bottom: calc(var(--safe-bottom) + 6px); }
+      .gb-average { height: 104px; border-radius: 24px !important; }
+      .gb-swaps-panel { border-radius: 24px !important; padding: 0.5rem !important; }
+      .gb-swaps-title { font-size: 22px !important; }
+      .gb-bottom { height: 84px; }
+      .gb-bottom-wing { height: 74px; }
+    }
+    @media (max-height: 675px) {
+      .gb-main { gap: 0.42rem; }
+      .gb-story-circle { width: 58px; height: 58px; }
+      .gb-average { height: 96px; padding: 0.55rem !important; }
+      .gb-average-title { font-size: 15px !important; }
+      .gb-average-note { font-size: 8.3px !important; line-height: 1.08 !important; }
+      .gb-swap-img-from { width: 48px !important; height: 58px !important; }
+      .gb-swap-img-to { width: 56px !important; height: 60px !important; }
+      .gb-swap-copy-from { font-size: 7.2px !important; }
+      .gb-swap-name-to { font-size: 8.2px !important; }
+      .gb-swap-note { font-size: 7px !important; }
+      .gb-bottom { height: 78px; }
+      .gb-bottom-wing { height: 68px; }
+      .gb-scan { width: 74px; height: 74px; }
+    }
+    @media (min-width: 481px) {
+      html, body { background: var(--app-bg); }
+      .gb-app { box-shadow: 0 18px 54px rgba(20, 32, 24, 0.14); }
     }
   </style>
 </head>
 <body>
   <div id="root"></div>
+
+  <script>
+    // Keeps the installed Safari web app pinned to the real visible viewport, avoiding bottom gaps from browser UI changes.
+    function setGreenBasketViewportHeight() {
+      document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
+    }
+    setGreenBasketViewportHeight();
+    window.addEventListener('resize', setGreenBasketViewportHeight, { passive: true });
+    window.addEventListener('orientationchange', setGreenBasketViewportHeight, { passive: true });
+  </script>
 
   <script type="text/babel" data-presets="env,react">
     const { useMemo, useState } = React;
@@ -454,7 +547,7 @@ function Home() {
   const StoryCircle = ({ icon, label, from, to, accent, onClick }) => (
     <button onClick={onClick} className="flex min-w-0 items-center justify-center text-center">
       <div
-        className="grid h-[72px] w-[72px] place-items-center rounded-full p-[5px] shadow-md"
+        className="gb-story-circle grid place-items-center rounded-full p-[5px] shadow-md"
         style={{
           background: `linear-gradient(135deg, ${from} 0%, ${accent || to} 52%, ${to} 100%)`,
           boxShadow: `0 10px 20px ${to}2f`
@@ -489,12 +582,8 @@ function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-[#e7eee1] p-6 text-[#172019]" style={{ fontFamily: "Avenir Next, Trebuchet MS, Verdana, sans-serif" }}>
-      <div className="mx-auto flex min-h-[850px] max-w-[420px] items-center justify-center">
-        <div className="w-full rounded-[42px] bg-[#142018] p-2.5 shadow-2xl">
-          <div className="relative h-[820px] overflow-hidden rounded-[33px] bg-[#f7f4ea]">
-            <div className="absolute left-1/2 top-2 z-10 h-1.5 w-20 -translate-x-1/2 rounded-full bg-[#142018]/20" />
-            <main className="flex h-full flex-col gap-2.5 px-4 pb-3 pt-6">
+    <div className="gb-app text-[#172019]" style={{ fontFamily: "Avenir Next, Trebuchet MS, Verdana, sans-serif" }}>
+      <main className="gb-main flex flex-col gap-2.5">
               <section className="grid shrink-0 grid-cols-4 gap-2 pt-1">
                 <StoryCircle icon={<PersonIcon />} label="Clara" from="#0e3b24" accent="#4fae67" to="#102417" onClick={() => setModal("profile")} />
                 <StoryCircle icon={<GiftIcon />} label="Offers" from="#ffd166" accent="#ff7a59" to="#d64b7f" onClick={() => setModal("reward")} />
@@ -502,14 +591,14 @@ function Home() {
                 <StoryCircle icon={<FlameIcon />} label="Streak" from="#ffce55" accent="#ff7a3d" to="#d93a36" onClick={() => setModal("streak")} />
               </section>
 
-              <button onClick={() => setModal("overview")} className="grid h-[118px] shrink-0 grid-cols-[78px_1fr] items-center gap-3 overflow-hidden rounded-[28px] bg-[#fff8e8] p-3 text-left shadow-sm">
+              <button onClick={() => setModal("overview")} className="gb-average grid shrink-0 grid-cols-[78px_1fr] items-center gap-3 overflow-hidden rounded-[28px] bg-[#fff8e8] p-3 text-left shadow-sm">
                 <div className="flex h-full min-w-0 flex-col justify-center">
                   <p className="text-[9px] font-black uppercase tracking-[0.14em] text-[#697662]">Average</p>
                   <span className="mt-0.5 block text-[54px] font-black leading-[0.82] tracking-[-0.1em] text-[#2f7b42]">B+</span>
                   <span className="mt-1 block text-[11px] font-black leading-none text-[#697662]">{average}/100</span>
                 </div>
                 <div className="min-w-0 pr-0.5">
-                  <p className="text-[18px] font-black leading-[1.02] tracking-[-0.045em] text-[#17351f]">Protein is your biggest opportunity.</p>
+                  <p className="gb-average-title text-[18px] font-black leading-[1.02] tracking-[-0.045em] text-[#17351f]">Protein is your biggest opportunity.</p>
                   <div className="mt-2 grid grid-cols-4 gap-1.5">
                     {[ ["Driver", "Protein", "bg-[#f1ebdc]"], ["Win", "Seasonal", "bg-[#f1ebdc]"], ["Next", "1 swap", "bg-[#f1ebdc]"], ["View", "Details", "bg-[#ddf3c8]"] ].map(([label, value, bg]) => (
                       <div key={label} className={`rounded-xl ${bg} px-1.5 py-1 text-center`}>
@@ -518,13 +607,13 @@ function Home() {
                       </div>
                     ))}
                   </div>
-                  <p className="mt-1.5 pb-2 pr-1 text-[9.4px] font-bold leading-[1.18] text-[#52604d]">Strongest pattern: local produce. Best opportunity: lighter protein and yoghurt swaps.</p>
+                  <p className="gb-average-note mt-1.5 pb-2 pr-1 text-[9.4px] font-bold leading-[1.18] text-[#52604d]">Strongest pattern: local produce. Best opportunity: lighter protein and yoghurt swaps.</p>
                 </div>
               </button>
 
-              <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[28px] bg-[#17351f] p-2.5 text-white shadow-lg">
+              <section className="gb-swaps-panel flex min-h-0 flex-1 flex-col overflow-hidden rounded-[28px] bg-[#17351f] p-2.5 text-white shadow-lg">
                 <div className="mb-2 flex items-center justify-between">
-                  <h2 className="text-[25px] font-black leading-none tracking-[-0.07em]">Suggested swaps</h2>
+                  <h2 className="gb-swaps-title text-[25px] font-black leading-none tracking-[-0.07em]">Suggested swaps</h2>
                   <button onClick={() => { setGuideSlide(0); setModal("guide"); }} className="rounded-full bg-white/12 px-3 py-1.5 text-[10px] font-black text-white/85">Why?</button>
                 </div>
                 <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -532,15 +621,15 @@ function Home() {
                     <button key={swapItem.from} onClick={() => setSwap(swapItem)} className="min-h-0 flex flex-1 basis-0 items-center overflow-hidden rounded-[22px] bg-white p-2 text-left text-[#172019] shadow-sm">
                       <div className="grid w-full min-w-0 grid-cols-[0.9fr_22px_1.2fr] items-center gap-1.5">
                         <div className="grid min-w-0 grid-cols-[58px_1fr] items-center gap-1.5">
-                          <img src={swapItem.fromImage} alt={swapItem.from} className="h-[68px] w-[58px] object-contain" />
-                          <p className="whitespace-normal break-words text-[8.2px] font-black leading-[1.05] text-[#6a5b48]">{swapItem.from}</p>
+                          <img src={swapItem.fromImage} alt={swapItem.from} className="gb-swap-img-from h-[68px] w-[58px] object-contain" />
+                          <p className="gb-swap-copy-from whitespace-normal break-words text-[8.2px] font-black leading-[1.05] text-[#6a5b48]">{swapItem.from}</p>
                         </div>
                         <div className="text-center text-[21px] font-black leading-none text-[#2f7b42]">→</div>
                         <div className="grid min-w-0 grid-cols-[68px_1fr] items-center gap-1.5">
-                          <img src={swapItem.toImage} alt={swapItem.to} className="h-[72px] w-[68px] object-contain" />
+                          <img src={swapItem.toImage} alt={swapItem.to} className="gb-swap-img-to h-[72px] w-[68px] object-contain" />
                           <div className="min-w-0">
-                            <p className={`${index === 0 ? "text-[9.6px]" : "text-[9.3px]"} whitespace-normal break-words font-black leading-[1.06] text-[#17351f]`}>{swapItem.to}</p>
-                            <p className="mt-0.5 whitespace-normal break-words text-[7.9px] font-bold leading-[1.08] text-[#52604d]">{swapItem.note}</p>
+                            <p className={`${index === 0 ? "text-[9.6px]" : "text-[9.3px]"} gb-swap-name-to whitespace-normal break-words font-black leading-[1.06] text-[#17351f]`}>{swapItem.to}</p>
+                            <p className="gb-swap-note mt-0.5 whitespace-normal break-words text-[7.9px] font-bold leading-[1.08] text-[#52604d]">{swapItem.note}</p>
                             <div className="mt-1 flex flex-wrap items-center gap-1"><Pill tone={priceTone(swapItem.priceChip)}>{swapItem.priceChip}</Pill><Pill tone="score">{swapItem.gradeLift}</Pill>{swapItem.coupon && <Pill tone="coupon">Coupon</Pill>}</div>
                           </div>
                         </div>
@@ -550,10 +639,10 @@ function Home() {
                 </div>
               </section>
 
-              <section className="relative h-[96px] shrink-0 overflow-visible">
+              <section className="gb-bottom relative shrink-0 overflow-visible">
                 <button
                   onClick={() => setModal("community")}
-                  className="absolute left-0 top-1 flex h-[84px] flex-col justify-center overflow-hidden rounded-l-[12px] bg-white py-2 pl-3 pr-9 text-left shadow-sm ring-1 ring-[#17351f]/5"
+                  className="gb-bottom-wing absolute left-0 top-1 flex flex-col justify-center overflow-hidden rounded-l-[12px] bg-white py-2 pl-3 pr-9 text-left shadow-sm ring-1 ring-[#17351f]/5"
                   style={{ width: "calc(50% - 14px)", clipPath: "polygon(0 0,86% 0,100% 50%,86% 100%,0 100%)" }}
                 >
                   <p className="text-[10.8px] font-black leading-tight text-[#17351f]">Zurich community</p>
@@ -562,7 +651,7 @@ function Home() {
                 </button>
                 <button
                   onClick={() => setModal("purchaseList")}
-                  className="absolute right-0 top-1 flex h-[84px] flex-col justify-center overflow-hidden rounded-r-[12px] bg-white py-2 pl-9 pr-3 text-left shadow-sm ring-1 ring-[#17351f]/5"
+                  className="gb-bottom-wing absolute right-0 top-1 flex flex-col justify-center overflow-hidden rounded-r-[12px] bg-white py-2 pl-9 pr-3 text-left shadow-sm ring-1 ring-[#17351f]/5"
                   style={{ width: "calc(50% - 14px)", clipPath: "polygon(14% 0,100% 0,100% 100%,14% 100%,0 50%)" }}
                 >
                   <p className="whitespace-nowrap text-[10.8px] font-black leading-none text-[#17351f]">Purchase history</p>
@@ -577,13 +666,13 @@ function Home() {
                     <p className="text-right text-[13px] font-black leading-none text-[#2f7b42]">{receipts[0].grade}</p>
                   </div>
                 </button>
-                <button onClick={() => setModal("scan")} className="absolute left-1/2 top-0 z-10 grid h-[90px] w-[90px] -translate-x-1/2 place-items-center rounded-full bg-[#2f7b42] text-white shadow-lg shadow-[#2f7b42]/25">
+                <button onClick={() => setModal("scan")} className="gb-scan absolute left-1/2 top-0 z-10 grid -translate-x-1/2 place-items-center rounded-full bg-[#2f7b42] text-white shadow-lg shadow-[#2f7b42]/25">
                   <div className="text-center"><CameraIcon /><p className="mt-1 text-[11px] font-black leading-none">Scan</p></div>
                 </button>
               </section>
-            </main>
+      </main>
 
-            <StoryModal open={modal === "lesson"} title="today’s lesson" onClose={() => setModal(null)}>
+      <StoryModal open={modal === "lesson"} title="today’s lesson" onClose={() => setModal(null)}>
               <div className="mt-8">
                 <div className="text-7xl">🥩 → 🫘</div>
                 <h2 className="mt-5 text-[42px] font-black leading-[0.88] tracking-[-0.08em]">Swap the role, not the whole meal.</h2>
@@ -833,10 +922,7 @@ function Home() {
                   )}
                 </div>
               )}
-            </Modal>
-          </div>
-        </div>
-      </div>
+      </Modal>
     </div>
   );
 }
