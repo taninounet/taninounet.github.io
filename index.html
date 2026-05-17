@@ -119,6 +119,53 @@
       transform: translateY(-2.5px);
     }
     .gb-score-block { transform: translateY(-3px); }
+
+    /* v20 swap-card readability: compact left stack, full product names, right side still prioritised */
+    .gb-swap-grid {
+      grid-template-columns: minmax(0, 0.94fr) 17px minmax(0, 1.32fr) !important;
+      gap: 0.42rem !important;
+    }
+    .gb-swap-left {
+      grid-template-columns: minmax(0, 1fr) !important;
+      grid-template-rows: 46px auto !important;
+      justify-items: center !important;
+      align-content: center !important;
+      gap: 0.16rem !important;
+      text-align: center !important;
+    }
+    .gb-swap-right {
+      grid-template-columns: 56px minmax(0, 1fr) !important;
+      gap: 0.48rem !important;
+    }
+    .gb-swap-img-from { width: 50px !important; height: 48px !important; }
+    .gb-swap-img-to { width: 56px !important; height: 68px !important; }
+    .gb-swap-copy-from {
+      width: 100%;
+      font-size: 8.9px !important;
+      line-height: 1.08 !important;
+      letter-spacing: -0.025em;
+      hyphens: auto;
+      overflow-wrap: anywhere;
+    }
+    .gb-swap-name-to {
+      font-size: 11.8px !important;
+      line-height: 1.07 !important;
+      letter-spacing: -0.026em;
+      hyphens: auto;
+      overflow-wrap: anywhere;
+    }
+    .gb-swap-tags { gap: 0.24rem !important; margin-top: 0.35rem !important; }
+    @media (max-height: 675px) {
+      .gb-swap-grid { grid-template-columns: minmax(0, 0.92fr) 15px minmax(0, 1.31fr) !important; gap: 0.34rem !important; }
+      .gb-swap-left { grid-template-rows: 40px auto !important; gap: 0.08rem !important; }
+      .gb-swap-right { grid-template-columns: 50px minmax(0, 1fr) !important; gap: 0.38rem !important; }
+      .gb-swap-img-from { width: 44px !important; height: 40px !important; }
+      .gb-swap-img-to { width: 50px !important; height: 56px !important; }
+      .gb-swap-copy-from { font-size: 7.8px !important; line-height: 1.04 !important; }
+      .gb-swap-name-to { font-size: 10.1px !important; line-height: 1.04 !important; }
+      .gb-swap-tags { gap: 0.16rem !important; margin-top: 0.25rem !important; }
+    }
+
     @media (min-width: 481px) {
       html, body { background: var(--app-bg); }
       .gb-app { box-shadow: 0 18px 54px rgba(20, 32, 24, 0.14); }
@@ -187,7 +234,9 @@ const productImages = {
 const swaps = [
   {
     from: "Coop Prix Garantie lean beef mince ca. 600g",
+    homeFrom: "Coop Prix Garantie lean beef mince ca. 600g",
     to: "Coop Naturaplan Organic Lentils 500g",
+    homeTo: "Coop Naturaplan Organic Lentils 500g",
     price: "CHF 9.25 cheaper",
     priceChip: "-CHF 9.25",
     gradeLift: "C → A-",
@@ -201,7 +250,9 @@ const swaps = [
   },
   {
     from: "Migros Bio blueberries 250g",
+    homeFrom: "Migros Bio blueberries 250g",
     to: "Migros Bio Gala apples pack",
+    homeTo: "Migros Bio Gala apples pack",
     price: "CHF 0.90 cheaper",
     priceChip: "-CHF 0.90",
     gradeLift: "B → A",
@@ -215,7 +266,9 @@ const swaps = [
   },
   {
     from: "Migros Budget yoghurt nature 500g",
+    homeFrom: "Migros Budget yoghurt nature 500g",
     to: "Oatly Oatgurt Plain 400g",
+    homeTo: "Oatly Oatgurt Plain 400g",
     price: "+CHF 0.35",
     priceChip: "+CHF 0.35",
     gradeLift: "B- → B+",
@@ -653,13 +706,13 @@ function Home() {
                       <div className="gb-swap-grid grid w-full min-w-0 grid-cols-[0.58fr_18px_1.58fr] items-center gap-1.5">
                         <div className="gb-swap-left grid min-w-0 grid-cols-[46px_minmax(0,1fr)] items-center gap-1">
                           <img src={swapItem.fromImage} alt={swapItem.from} className="gb-swap-img-from h-[66px] w-[46px] object-contain" />
-                          <p className="gb-swap-copy-from whitespace-normal break-words text-[8.6px] font-black leading-[1.08] text-[#6a5b48]">{swapItem.from}</p>
+                          <p className="gb-swap-copy-from whitespace-normal break-words text-[8.6px] font-black leading-[1.08] text-[#6a5b48]">{swapItem.homeFrom || swapItem.from}</p>
                         </div>
                         <div className="gb-swap-arrow text-center text-[20px] font-black leading-none text-[#2f7b42]">→</div>
                         <div className="gb-swap-right grid min-w-0 grid-cols-[62px_minmax(0,1fr)] items-center gap-2">
                           <img src={swapItem.toImage} alt={swapItem.to} className="gb-swap-img-to h-[74px] w-[62px] object-contain" />
                           <div className="min-w-0">
-                            <p className={`${index === 0 ? "text-[11.7px]" : "text-[11.2px]"} gb-swap-name-to whitespace-normal break-words font-black leading-[1.08] text-[#17351f]`}>{swapItem.to}</p>
+                            <p className={`${index === 0 ? "text-[11.7px]" : "text-[11.2px]"} gb-swap-name-to whitespace-normal break-words font-black leading-[1.08] text-[#17351f]`}>{swapItem.homeTo || swapItem.to}</p>
                             <div className="gb-swap-tags mt-1.5 flex flex-wrap items-center gap-1">{swapItem.homeBadge && <Pill tone={swapItem.homeBadgeTone}>{swapItem.homeBadge}</Pill>}<Pill tone={priceTone(swapItem.priceChip)}>{swapItem.priceChip}</Pill><Pill tone="score">{swapItem.gradeLift}</Pill>{swapItem.coupon && <Pill tone="coupon">CHF 1.50 off</Pill>}</div>
                           </div>
                         </div>
